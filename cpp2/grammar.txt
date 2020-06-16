@@ -1,0 +1,156 @@
+start: program
+
+program: decl+
+
+decl: variable_decl
+    | function_decl
+    | class_decl
+    | interface_decl
+
+variable_decl: variable ";"
+
+variable: type IDENT
+
+type: "int"
+    | "double"
+    | "bool"
+    | "string"
+    | IDENT
+    | type "[]"
+
+function_decl: type IDENT "(" formals ")" stmt_block
+             | "void" IDENT "(" formals ")" stmt_block
+
+formals: variables?
+
+variables: variable "," variables
+         | variable
+
+class_decl: "class" IDENT ("extends" IDENT)? ("implements" IDENT ("," IDENT)*)? "{" field* "}"
+
+field: variable_decl
+     | function_decl
+
+interface_decl: "interface" IDENT "{" prototype* "}"
+
+prototype: type IDENT "(" formals ");"
+         | "void" IDENT "(" formals ");"
+
+stmt_block: "{" variable_decl* stmt* "}"
+
+stmt: if_stmt
+
+non_if_stmt: expr? ";"
+    | while_stmt
+    | for_stmt
+    | BREAK_STMT
+    | return_stmt
+    | print_stmt
+    | stmt_block
+
+if_stmt: ms
+       | us
+
+ms: "if" be ms "else" ms
+  | non_if_stmt
+
+us: "if" be stmt
+  | "if" be ms "else" us
+
+be: "(" expr ")"
+
+while_stmt: "while" "(" expr ")" stmt
+
+for_stmt: "for" "(" expr? ";" expr ";" expr? ")" stmt
+
+return_stmt: "return" expr? ";"
+
+BREAK_STMT: "break;"
+
+print_stmt: "Print" "(" exprs ")"";"
+
+expr: e_layer1
+
+e_layer1: e_layer9 "=" e_layer1
+        | e_layer2
+
+e_layer2: e_layer3 "||" e_layer2
+        | e_layer3
+
+e_layer3: e_layer4 "&&" e_layer3
+        | e_layer4
+
+e_layer4: e_layer5 "==" e_layer4
+        | e_layer5 "!=" e_layer4
+        | e_layer5
+
+e_layer5: e_layer6 "<" e_layer5
+        | e_layer6 "<=" e_layer5
+        | e_layer6 ">" e_layer5
+        | e_layer6 ">=" e_layer5
+        | e_layer6
+
+e_layer6: e_layer7 "+" e_layer6
+        | e_layer7 "-" e_layer6
+        | e_layer7
+
+e_layer7: e_layer8 "*" e_layer7
+        | e_layer8 "/" e_layer7
+        | e_layer8 "%" e_layer7
+        | e_layer8
+
+e_layer8: "-"e_layer8
+        | "!"e_layer8
+        | e_layer9
+
+e_layer9: end_layer"["e_layer1"]"
+        | end_layer "." e_layer9
+        | end_layer
+
+end_layer: IDENT
+         | "ReadLine()"
+         | "NewArray(" e_layer1 "," type")"
+         | "ReadInteger()"
+         | call
+         | CONSTANT
+         | "this"
+         | "(" e_layer1 ")"
+         | "new" IDENT
+
+call: IDENT "(" actuals ")"
+
+actuals: exprs?
+
+exprs: expr "," exprs
+     | expr
+
+CONSTANT: DOUBLE_INT
+        | INT_CONSTANT
+        | BOOL_CONSTANT
+        | STRING_CONSTANT
+        | "null"
+
+DOUBLE_INT: DECIMAL "." /[0-9]*([eE][-+]?[0-9]+)?/
+
+BOOL_CONSTANT: "true"
+             | "false"
+
+IDENT: /[a-zA-Z]\w{0,30}/
+
+INT_CONSTANT: HEX
+            | DECIMAL
+
+HEX: /0[xX][0-9a-fA-F]+/
+
+DECIMAL: /[0-9]+/
+
+STRING_CONSTANT: /\".*\"/
+
+COMMENT: /\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\//
+       | "//"/.*/
+
+
+%import common.WS
+
+%ignore WS
+%ignore COMMENT
