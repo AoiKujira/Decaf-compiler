@@ -105,7 +105,7 @@ e_layer8: "-"e_layer8
 e_layer9:  e_layer10 "." e_layer9
         | e_layer10
 
-e_layer10:  end_layer "[" e_layer1 "]"
+e_layer10:  e_layer10 "[" e_layer1 "]"
         | end_layer
 
 end_layer: IDENT
