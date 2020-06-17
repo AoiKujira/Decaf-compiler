@@ -1,0 +1,1 @@
+difference in line #1: file: out/t024-array40.out -----> content: NO <> file: tests/t024-array40.out -----> content: YES 
