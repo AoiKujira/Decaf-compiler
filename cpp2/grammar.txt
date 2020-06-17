@@ -16,7 +16,7 @@ type: "int"
     | "bool"
     | "string"
     | IDENT
-    | type "[]"
+    | type /\[[ \n]*\]/
 
 function_decl: type IDENT "(" formals ")" stmt_block
              | "void" IDENT "(" formals ")" stmt_block
@@ -102,7 +102,7 @@ e_layer8: "-"e_layer8
         | "!"e_layer8
         | e_layer9
 
-e_layer9: end_layer"["e_layer1"]"
+e_layer9: end_layer "[" e_layer1 "]"
         | end_layer "." e_layer9
         | end_layer
 
