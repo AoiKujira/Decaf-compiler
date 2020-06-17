@@ -6,8 +6,7 @@ int fib(int n) {
 
 void main() {
   int i;
-  for(i = 0; i < 20; i++) {
+  for(i = 0; i < 20; i = i+1) {
     Print("fib(", i, "): ", fib(i), "\n");
   }
 }
-
