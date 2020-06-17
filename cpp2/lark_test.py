@@ -16,4 +16,4 @@ def check_errors(text, output_file):
         output_file.write("YES")
     except:
         output_file.write("NO")
-    parser.parse(text)
+    #parser.parse(text)
