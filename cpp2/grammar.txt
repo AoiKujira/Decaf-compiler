@@ -102,13 +102,15 @@ e_layer8: "-"e_layer8
         | "!"e_layer8
         | e_layer9
 
-e_layer9: end_layer "[" e_layer1 "]"
-        | end_layer "." e_layer9
+e_layer9:  e_layer10 "." e_layer9
+        | e_layer10
+
+e_layer10:  end_layer "[" e_layer1 "]"
         | end_layer
 
 end_layer: IDENT
          | "ReadLine" "("")"
-         | "NewArray(" e_layer1 "," type ")"
+         | "NewArray" "(" e_layer1 "," type ")"
          | "ReadInteger" "("")"
          | call
          | CONSTANT

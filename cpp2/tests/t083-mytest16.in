@@ -1,23 +1,23 @@
 void main() {
   int[][][] a;
-  int i;  
+  int i;
   int j;
   int k;
 
   a = NewArray(10, int[][]);
-  
-  for(i = 0; i < 10; i++) {
+
+  for(i = 0; i < 10; i= i + 1) {
     a[i] = NewArray(10, int[]);
-    for(j = 0; j < 10; j++) {
+    for(j = 0; j < 10; j= j + 1) {
       a[i][j] = NewArray(10, int);
-      for(k = 0; k < 10; k++) {
+      for(k = 0; k < 10; k= k + 1) {
         a[i][j][k] = i*100 + j*10 + k;
       }
     }
   }
 
-  for(i = 0; i < 10; i++) 
-    for(j = 0; j < 10; j++)
-      for(k = 0; k < 10; k++)
+  for(i = 0; i < 10; i= i + 1)
+    for(j = 0; j < 10; j= j + 1)
+      for(k = 0; k < 10; k= k + 1)
         Print(a[i][j][k]," ");
 }

@@ -1,7 +1,5 @@
-
 int main() {
+
     int a;
-    int [
-    ] b;
-    a = (2 + -1 - 8); // hmmmm...
+    corners[0].Init(x, y);
 }
