@@ -1,5 +1,24 @@
-int main() {
+class A {
+  int x;
+  void p(int a) {
+    Print("HEY!", a, "\n");
+    x = a;
+  }
+  void q() {
+    Print("BLAH!", x, "\n");
+  }
+}
 
-    int a;
-    corners[0].Init(x, y);
+void main() {
+  A[] b;
+  int i;
+  b = NewArray(100, A);
+  for(i = 0; i < 100; i = i+1) {
+    b[i] = new A;
+    b[i].p(i);
+  }
+
+  for(i = 0; i < 100; i = i+1) {
+    b[i].q();
+  }
 }
