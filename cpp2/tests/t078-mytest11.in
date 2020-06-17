@@ -12,11 +12,11 @@ void main() {
   A[] a;
   int i;
   a = NewArray(10, A);
-  for(i = 0; i < a.length(); i++) {
+  for(i = 0; i < a.length(); i = i+1) {
     a[i] = new A;
     a[i].modmyint(i*2);
   }
-  for(i = 0; i < a.length(); i++) {
+  for(i = 0; i < a.length(); i = i + 1) {
     a[i].printmyint();
   }
 }
