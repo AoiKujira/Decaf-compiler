@@ -107,9 +107,9 @@ e_layer9: end_layer"["e_layer1"]"
         | end_layer
 
 end_layer: IDENT
-         | "ReadLine()"
+         | "ReadLine" "("")"
          | "NewArray(" e_layer1 "," type ")"
-         | "ReadInteger()"
+         | "ReadInteger" "("")"
          | call
          | CONSTANT
          | "this"
