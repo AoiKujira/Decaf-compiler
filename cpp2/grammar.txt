@@ -142,7 +142,8 @@ HEX: /0[xX][0-9a-fA-F]+/
 
 DECIMAL: /[0-9]+/
 
-STRING_CONSTANT: /\".*\"/
+STRING_CONSTANT: /\"((\\\")|[^"])*\"/
+
 
 COMMENT: /\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\//
        | "//"/.*/
