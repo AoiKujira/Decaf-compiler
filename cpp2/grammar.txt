@@ -11,10 +11,10 @@ variable_decl: variable ";"
 
 variable: type IDENT
 
-type: "int"
-    | "double"
-    | "bool"
-    | "string"
+type: "int" -> int
+    | "double" -> double
+    | "bool" -> bool
+    | "string" -> str
     | IDENT
     | type /\[[ \n]*\]/
 
@@ -35,7 +35,9 @@ interface_decl: "interface" IDENT "{" prototype* "}"
 prototype: type IDENT "(" formals ")" ";"
          | "void" IDENT "(" formals ")" ";"
 
-stmt_block: "{" variable_decl* stmt* "}"
+stmt_block: push_scope "{" variable_decl* stmt* "}" pop_scope
+push_scope: -> push_scope
+pop_scope: -> pop_scope
 
 stmt: if_stmt
 
