@@ -10,17 +10,53 @@ class Test(Transformer):
         super().__init__()
         self.root_scope = Scope(None)
         self.current_scope = self.root_scope
+        self.scope_level = 0
+        self.code = ''''''
+        self.lcounter = 0
+        self.tcounter = 0
+        self.tstack = []
+        self.lstack = []
+
+    def expr(self, args):
+        self.code += "here be expression code \n"
+        name = self.make_temp()
+        self.code += name + " = " + "gotten\n"
+        self.tstack.append(name)
+
+    def make_start_label(self, args):
+        lab = self.make_label()
+        self.code += lab + ":\n"
+        self.lstack.append(lab)
+
+    def make_condition_jump(self, args):
+        t = self.tstack.pop()
+        end = self.make_label()
+        self.code += "If " + t + " zero go to " + end + "\n"
+        self.lstack.append(end)
+
+    def make_loop_jump(self, args):
+        end = self.lstack.pop()
+        start = self.lstack.pop()
+        self.code += "jump to " + start + "\n"
+        self.code += end + ":" + "\n"
+
+
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
+        self.scope_level -= 1
+
+    def stmt(self, args):
+        self.code += "Here be statement code" + "\n"
 
     def push_scope(self, args):
         new_scope = Scope(self.current_scope)
         self.current_scope.children.append(new_scope)
         self.current_scope = new_scope
+        self.scope_level += 1
 
     def variable(self, args):
-        print(args)
+        #print(args)
         (ident,) = args[1]
         self.current_scope.table[ident] = args[0]
 
@@ -39,3 +75,13 @@ class Test(Transformer):
     double = lambda self, _: "double"
     str = lambda self, _: "string"
     bool = lambda self, _: "bool"
+
+    def make_label(self):
+        lab = "l" + str(self.lcounter)
+        self.lcounter += 1
+        return lab
+
+    def make_temp(self):
+        t = "t" + str(self.tcounter)
+        self.tcounter += 1
+        return t

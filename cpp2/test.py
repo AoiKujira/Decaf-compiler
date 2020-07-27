@@ -14,4 +14,4 @@ if __name__ == "__main__":
     tree = parser.parse(text)
     trans = Test()
     trans.transform(tree)
-    print(trans.root_scope.children[0].table)
+    print(trans.code)

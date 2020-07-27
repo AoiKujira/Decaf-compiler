@@ -60,7 +60,10 @@ us: "if" be stmt
 
 be: "(" expr ")"
 
-while_stmt: "while" "(" expr ")" stmt
+while_stmt: make_start_label "while" "(" expr ")" make_condition_jump stmt make_loop_jump
+make_start_label:
+make_condition_jump:
+make_loop_jump:
 
 for_stmt: "for" "(" expr? ";" expr ";" expr? ")" stmt
 
