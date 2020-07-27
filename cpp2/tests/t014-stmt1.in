@@ -1,9 +1,9 @@
 
 int main() {
-    int x;
+    int[] x;
     int y;
     int i;
-    int j;
+    bool j;
 
     if (x < 10)
         x = 0;

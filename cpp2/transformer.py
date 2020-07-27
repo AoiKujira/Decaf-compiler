@@ -29,9 +29,11 @@ class Test(Transformer):
         return iden
 
     def type(self, type):
-        #print(type)
-        (type,) = type
-        return type[1:-1]
+        if len(type) == 1:
+            (type,) = type
+        else:
+            type = type[0].strip("\"") + "[]"
+        return type.strip("\"")
 
     int = lambda self, _: "int"
     double = lambda self, _: "double"
