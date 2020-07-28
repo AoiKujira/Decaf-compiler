@@ -15,3 +15,4 @@ if __name__ == "__main__":
     trans = Test()
     trans.transform(tree)
     print(trans.code)
+   # print(tree.pretty())

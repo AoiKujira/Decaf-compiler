@@ -41,13 +41,13 @@ pop_scope: -> pop_scope
 
 stmt: if_stmt
 
-non_if_stmt: expr? ";"
-    | while_stmt
+non_if_stmt:  while_stmt
     | for_stmt
-    | BREAK_STMT
+    | BREAK_STMT -> break_stmt
     | return_stmt
     | print_stmt
     | stmt_block
+    | expr? ";"
 
 if_stmt: ms
        | us
@@ -72,7 +72,7 @@ return_jump:
 
 return_stmt: "return" expr? ";"
 
-BREAK_STMT: "break" ";"
+
 
 print_stmt: "Print" "(" exprs ")" ";"
 
@@ -116,8 +116,7 @@ e_layer9:  e_layer10 "." e_layer9
 e_layer10:  e_layer10 "[" e_layer1 "]"
         | end_layer
 
-end_layer: IDENT
-         | "ReadLine" "(" ")"
+end_layer: "ReadLine" "(" ")"
          | "NewArray" "(" e_layer1 "," type ")"
          | "ReadInteger" "(" ")"
          | call
@@ -125,6 +124,9 @@ end_layer: IDENT
          | "this"
          | "(" e_layer1 ")"
          | "new" IDENT
+         | IDENT
+
+BREAK_STMT: "break" ";"
 
 call: IDENT "(" actuals ")"
 
@@ -143,7 +145,7 @@ DOUBLE_INT: DECIMAL "." /[0-9]*([eE][-+]?[0-9]+)?/
 BOOL_CONSTANT: "true"
              | "false"
 
-IDENT: /[a-zA-Z]\w{0,30}/
+IDENT: /(?!(break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
 
 INT_CONSTANT: HEX
             | DECIMAL

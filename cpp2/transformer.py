@@ -19,6 +19,7 @@ class Test(Transformer):
         self.tcounter = 0
         self.tstack = []
         self.lstack = []
+        self.loop_stack = []
 
     def expr(self, args):
         self.code += "here be expression code \n"
@@ -31,9 +32,11 @@ class Test(Transformer):
         self.code += lab + ":\n"
         self.lstack.append(lab)
 
+
     def make_condition_jump(self, args):
         t = self.tstack.pop()
         end = self.make_label()
+        self.loop_stack.append(end)
         self.code += "If " + t + " zero go to " + end + "\n"
         self.lstack.append(end)
 
@@ -42,12 +45,14 @@ class Test(Transformer):
         start = self.lstack.pop()
         self.code += "jump to " + start + "\n"
         self.code += end + ":" + "\n"
+        self.loop_stack.pop()
 
     def for_jump(self, args):
         t = self.tstack.pop()
         start = self.lstack.pop()
         stmt_lab = self.make_label()
         end = self.make_label()
+        self.loop_stack.append(end)
         step_lab = self.make_label()
         self.lstack.append(step_lab)
         self.lstack.append(end)
@@ -68,6 +73,13 @@ class Test(Transformer):
         step_lab = self.lstack.pop()
         self.code += "jump to " + step_lab + "\n"
         self.code += end + ":\n"
+        self.loop_stack.pop()
+
+    def break_stmt(self, args):
+        print("sssssssssssssssssag\n")
+        lab = self.loop_stack[-1]
+        self.code += "jump to " + lab + "\n"
+
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
