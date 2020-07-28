@@ -158,6 +158,13 @@ class Test(Transformer):
         self.code += t + " = " + args[0] + " < " + args[1] + "\n"
         return t
 
+    def exp_ge(self, args):
+        t = self.make_temp()
+        #print(args)
+        # typecheck here
+        self.code += t + " = " + args[0] + " >= " + args[1] + "\n"
+        return t
+
     def constant(self, args):
         return args[0]
 
