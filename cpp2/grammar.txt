@@ -80,52 +80,52 @@ print_stmt: "Print" "(" exprs ")" ";"
 
 expr: e_layer1
 
-e_layer1: e_layer9 "=" e_layer1
-        | e_layer2
+e_layer1: e_layer9 "=" e_layer1 -> exp_assign
+        | e_layer2 -> exp_normal
 
 e_layer2: e_layer3 "||" e_layer2
-        | e_layer3
+        | e_layer3 -> exp_normal
 
 e_layer3: e_layer4 "&&" e_layer3
-        | e_layer4
+        | e_layer4 -> exp_normal
 
-e_layer4: e_layer5 "==" e_layer4
-        | e_layer5 "!=" e_layer4
-        | e_layer5
+e_layer4: e_layer5 "==" e_layer4 -> exp_equal
+        | e_layer5 "!=" e_layer4 -> exp_unequal
+        | e_layer5 -> exp_normal
 
-e_layer5: e_layer6 "<" e_layer5
-        | e_layer6 "<=" e_layer5
-        | e_layer6 ">" e_layer5
-        | e_layer6 ">=" e_layer5
-        | e_layer6
+e_layer5: e_layer6 "<" e_layer5 -> exp_lt
+        | e_layer6 "<=" e_layer5 -> exp_le
+        | e_layer6 ">" e_layer5 -> exp_gt
+        | e_layer6 ">=" e_layer5 -> exp_ge
+        | e_layer6 -> exp_normal
 
-e_layer6: e_layer7 "+" e_layer6
-        | e_layer7 "-" e_layer6
-        | e_layer7
+e_layer6: e_layer7 "+" e_layer6 -> exp_sum
+        | e_layer7 "-" e_layer6 -> exp_sub
+        | e_layer7 -> exp_normal
 
-e_layer7: e_layer8 "*" e_layer7
-        | e_layer8 "/" e_layer7
-        | e_layer8 "%" e_layer7
-        | e_layer8
+e_layer7: e_layer8 "*" e_layer7 -> exp_mul
+        | e_layer8 "/" e_layer7 -> exp_div
+        | e_layer8 "%" e_layer7 -> exp_rem
+        | e_layer8 -> exp_normal
 
-e_layer8: "-"e_layer8
-        | "!"e_layer8
-        | e_layer9
+e_layer8: "-"e_layer8 -> exp_neg
+        | "!"e_layer8 -> exp_not
+        | e_layer9 -> exp_normal
 
 e_layer9:  e_layer10 "." e_layer9
-        | e_layer10
+        | e_layer10 -> exp_normal
 
 e_layer10:  e_layer10 "[" e_layer1 "]"
-        | end_layer
+        | end_layer -> exp_normal
 
-end_layer: "ReadLine" "(" ")"
-         | "NewArray" "(" e_layer1 "," type ")"
-         | "ReadInteger" "(" ")"
-         | call
-         | CONSTANT
-         | "this"
-         | "(" e_layer1 ")"
-         | "new" IDENT
+end_layer: "ReadLine" "(" ")" -> read_line
+         | "NewArray" "(" e_layer1 "," type ")" -> make_array
+         | "ReadInteger" "(" ")" -> read_int
+         | call -> function_call
+         | constant
+         | "this" -> exp_this
+         | "(" e_layer1 ")"  -> exp_par
+         | "new" IDENT -> new_class
          | IDENT
 
 BREAK_STMT: "break" ";"
@@ -136,8 +136,8 @@ actuals: exprs?
 
 exprs: expr ("," expr)*
 
-CONSTANT: DOUBLE_INT
-        | INT_CONSTANT
+constant: DOUBLE_INT
+        | int_constant
         | BOOL_CONSTANT
         | STRING_CONSTANT
         | "null"
@@ -149,8 +149,8 @@ BOOL_CONSTANT: "true"
 
 IDENT: /(?!(break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
 
-INT_CONSTANT: HEX
-            | DECIMAL
+int_constant: HEX -> hex_const
+            | DECIMAL -> dec_const
 
 HEX: /0[xX][0-9a-fA-F]+/
 

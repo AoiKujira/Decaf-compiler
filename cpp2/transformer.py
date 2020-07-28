@@ -21,11 +21,13 @@ class Test(Transformer):
         self.lstack = []
         self.loop_stack = []
 
-    def expr(self, args):
-        self.code += "here be expression code \n"
-        name = self.make_temp()
-        self.code += name + " = " + "gotten\n"
-        self.tstack.append(name)
+    # def expr(self, args):
+    #     print("expr")
+    #     print(args)
+    #     self.code += "here be expression code \n"
+    #     name = self.make_temp()
+    #     self.code += name + " = " + "gotten\n"
+    #     self.tstack.append(name)
 
     def make_start_label(self, args):
         lab = self.make_label()
@@ -88,6 +90,77 @@ class Test(Transformer):
         out = self.lstack.pop()
         self.code += out + ":\n"
 
+    def exp_assign(self, args):
+        self.tstack.append(args[1])
+        self.code += "this needs fixing: " + args[0] + " = " + args[1] + "\n"
+        return args[1]
+
+    def dec_const(self, args):
+        t = self.make_temp()
+        dec = args[0]
+        self.code += t + " = " + dec + "\n"
+        return t
+
+    def hex_const(self, args):
+        t = self.make_temp()
+        dec = int(args[0], 16)
+        self.code += t + " = " + dec + "\n"
+        return t
+
+    def exp_not(self, args):
+        t = self.make_temp()
+        # typecheck here
+        self.code += t + " = not(" + args[0] + ")\n"
+        return t
+
+    def exp_neg(self, args):
+        t = self.make_temp()
+        # typecheck here
+        self.code += t + " = (-1) * " + args[0] + "\n"
+        return t
+
+    def exp_mul(self, args):
+        t = self.make_temp()
+        # print(args)
+        # typecheck here
+        self.code += t + " = " + args[0] + " * " + args[1] + "\n"
+        return t
+
+    def exp_div(self, args):
+        t = self.make_temp()
+        # typecheck here
+        self.code += t + " = " + args[0] + " / " + args[1] + "\n"
+        return t
+
+    def exp_rem(self, args):
+        t = self.make_temp()
+        # typecheck here
+        self.code += t + " = " + args[0] + " % " + args[1] + "\n"
+        return t
+
+    def exp_sum(self, args):
+        t = self.make_temp()
+        # typecheck here
+        # print(args)
+        self.code += t + " = " + args[0] + " + " + args[1] + "\n"
+        return t
+
+    def exp_sub(self, args):
+        t = self.make_temp()
+        # typecheck here
+        self.code += t + " = " + args[0] + " - " + args[1] + "\n"
+        return t
+
+    def exp_lt(self, args):
+        t = self.make_temp()
+        #print(args)
+        # typecheck here
+        self.code += t + " = " + args[0] + " < " + args[1] + "\n"
+        return t
+
+    def constant(self, args):
+        return args[0]
+
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
         self.scope_level -= 1
@@ -108,7 +181,22 @@ class Test(Transformer):
 
     def IDENT(self, iden):
         # print(iden)
-        return iden
+        return str(iden)
+
+    def exp_normal(self, args):
+        try:
+            ret = args[0].children[0]
+            self.tstack.append(ret)
+            return ret
+        except:
+            # print(args)
+            self.tstack.append(args[0])
+            return args[0]
+
+    def STRING_CONSTANT(self, args):
+        #print(args)
+        return args
+
 
     def type(self, type):
         if len(type) == 1:
