@@ -1,9 +1,12 @@
 from lark import Transformer
+
+
 class Scope:
     def __init__(self, parent):
         self.children = []
         self.table = {}
         self.parent = parent
+
 
 class Test(Transformer):
     def __init__(self):
@@ -40,7 +43,31 @@ class Test(Transformer):
         self.code += "jump to " + start + "\n"
         self.code += end + ":" + "\n"
 
+    def for_jump(self, args):
+        t = self.tstack.pop()
+        start = self.lstack.pop()
+        stmt_lab = self.make_label()
+        end = self.make_label()
+        step_lab = self.make_label()
+        self.lstack.append(step_lab)
+        self.lstack.append(end)
+        self.lstack.append(stmt_lab)
+        self.lstack.append(start)
+        self.code += "If " + t + " zero go to " + end + "\n"
+        self.code += "jump to " + stmt_lab + "\n"
+        self.code += step_lab + ":\n"
 
+    def step_jump(self, args):
+        start = self.lstack.pop()
+        stmt_lab = self.lstack.pop()
+        self.code += "jump to " + start + "\n"
+        self.code += stmt_lab + ":\n"
+
+    def return_jump(self, args):
+        end = self.lstack.pop()
+        step_lab = self.lstack.pop()
+        self.code += "jump to " + step_lab + "\n"
+        self.code += end + ":\n"
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
@@ -56,12 +83,12 @@ class Test(Transformer):
         self.scope_level += 1
 
     def variable(self, args):
-        #print(args)
+        # print(args)
         (ident,) = args[1]
         self.current_scope.table[ident] = args[0]
 
     def IDENT(self, iden):
-        #print(iden)
+        # print(iden)
         return iden
 
     def type(self, type):

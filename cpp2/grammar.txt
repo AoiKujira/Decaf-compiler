@@ -65,7 +65,10 @@ make_start_label:
 make_condition_jump:
 make_loop_jump:
 
-for_stmt: "for" "(" expr? ";" expr ";" expr? ")" stmt
+for_stmt: "for" "(" expr? ";" make_start_label expr for_jump ";" expr? step_jump ")" stmt return_jump
+step_jump:
+for_jump:
+return_jump:
 
 return_stmt: "return" expr? ";"
 
