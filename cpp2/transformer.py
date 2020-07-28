@@ -32,7 +32,6 @@ class Test(Transformer):
         self.code += lab + ":\n"
         self.lstack.append(lab)
 
-
     def make_condition_jump(self, args):
         t = self.tstack.pop()
         end = self.make_label()
@@ -76,10 +75,18 @@ class Test(Transformer):
         self.loop_stack.pop()
 
     def break_stmt(self, args):
-        print("sssssssssssssssssag\n")
         lab = self.loop_stack[-1]
         self.code += "jump to " + lab + "\n"
 
+    def if_cond(self, args):
+        t = self.tstack.pop()
+        lab = self.make_label()
+        self.code += "If " + t + " zero go to " + lab + "\n"
+        self.lstack.append(lab)
+
+    def if_out_label(self, args):
+        out = self.lstack.pop()
+        self.code += out + ":\n"
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
