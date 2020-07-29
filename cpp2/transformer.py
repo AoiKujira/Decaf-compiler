@@ -21,7 +21,7 @@ class Test(Transformer):
         self.lstack = []
         self.loop_stack = []
 
-    #def expr(self, args):
+    # def expr(self, args):
     #    print("expr")
     #    
     #     self.code += "here be expression code \n"
@@ -207,7 +207,6 @@ class Test(Transformer):
         self.code += t + " = " + args[0] + " <= " + args[1] + "\n"
         return t
 
-
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
         self.scope_level -= 1
@@ -231,8 +230,7 @@ class Test(Transformer):
         return str(iden)
 
     def exp_normal(self, args):
-        
-        
+
         try:
             ret = args[0].children[0]
             self.tstack.append(ret)
@@ -243,8 +241,8 @@ class Test(Transformer):
             return args[0]
 
     def str_const(self, args):
-        #print("strrrring")
-        (str_con, ) = args
+        # print("strrrring")
+        (str_con,) = args
         print(str_con)
         return str_con
 
@@ -257,8 +255,6 @@ class Test(Transformer):
         t = self.make_temp()
         self.code = t + " = ReadInt()"
         return t
-
-
 
     def type(self, type):
         if len(type) == 1:
