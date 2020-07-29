@@ -27,7 +27,7 @@ variables: variable ("," variable)*
 
 class_decl: "class" IDENT ("extends" IDENT)? ("implements" IDENT ("," IDENT)*)? "{" field* "}"
 
-field: variable_decl
+field: variable_decl -> var_field
      | function_decl
 
 interface_decl: "interface" IDENT "{" prototype* "}"
@@ -140,14 +140,14 @@ constant: DOUBLE_INT
         | int_constant
         | BOOL_CONSTANT
         | STRING_CONSTANT
-        | "null"
+        | "null" -> null
 
 DOUBLE_INT: DECIMAL "." /[0-9]*([eE][-+]?[0-9]+)?/
 
 BOOL_CONSTANT: "true"
              | "false"
 
-IDENT: /(?!(break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
+IDENT: /(?!(int|bool|string|double|break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
 
 int_constant: HEX -> hex_const
             | DECIMAL -> dec_const

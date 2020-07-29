@@ -266,6 +266,7 @@ class Test(Transformer):
     double = lambda self, _: "double"
     str = lambda self, _: "string"
     bool = lambda self, _: "bool"
+    null = lambda self,_: "null"
 
     def make_label(self):
         lab = "l" + str(self.lcounter)
