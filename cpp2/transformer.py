@@ -21,9 +21,9 @@ class Test(Transformer):
         self.lstack = []
         self.loop_stack = []
 
-    # def expr(self, args):
-    #     print("expr")
-    #     print(args)
+    #def expr(self, args):
+    #    print("expr")
+    #    
     #     self.code += "here be expression code \n"
     #     name = self.make_temp()
     #     self.code += name + " = " + "gotten\n"
@@ -121,7 +121,7 @@ class Test(Transformer):
 
     def exp_mul(self, args):
         t = self.make_temp()
-        # print(args)
+        # 
         # typecheck here
         self.code += t + " = " + args[0] + " * " + args[1] + "\n"
         return t
@@ -141,7 +141,7 @@ class Test(Transformer):
     def exp_sum(self, args):
         t = self.make_temp()
         # typecheck here
-        # print(args)
+        # 
         self.code += t + " = " + args[0] + " + " + args[1] + "\n"
         return t
 
@@ -153,20 +153,60 @@ class Test(Transformer):
 
     def exp_lt(self, args):
         t = self.make_temp()
-        #print(args)
+        #
         # typecheck here
         self.code += t + " = " + args[0] + " < " + args[1] + "\n"
         return t
 
+    def exp_gt(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " > " + args[1] + "\n"
+        return t
+
     def exp_ge(self, args):
         t = self.make_temp()
-        #print(args)
+        #
         # typecheck here
         self.code += t + " = " + args[0] + " >= " + args[1] + "\n"
         return t
 
-    def constant(self, args):
-        return args[0]
+    def exp_equal(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " == " + args[1] + "\n"
+        return t
+
+    def exp_unequal(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " != " + args[1] + "\n"
+        return t
+
+    def exp_and(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " && " + args[1] + "\n"
+        return t
+
+    def exp_or(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " || " + args[1] + "\n"
+        return t
+
+    def exp_le(self, args):
+        t = self.make_temp()
+        #
+        # typecheck here
+        self.code += t + " = " + args[0] + " <= " + args[1] + "\n"
+        return t
+
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
@@ -182,7 +222,7 @@ class Test(Transformer):
         self.scope_level += 1
 
     def variable(self, args):
-        # print(args)
+        # 
         (ident,) = args[1]
         self.current_scope.table[ident] = args[0]
 
@@ -191,18 +231,33 @@ class Test(Transformer):
         return str(iden)
 
     def exp_normal(self, args):
+        
+        
         try:
             ret = args[0].children[0]
             self.tstack.append(ret)
             return ret
         except:
-            # print(args)
+            # 
             self.tstack.append(args[0])
             return args[0]
 
-    def STRING_CONSTANT(self, args):
-        #print(args)
-        return args
+    def str_const(self, args):
+        #print("strrrring")
+        (str_con, ) = args
+        print(str_con)
+        return str_con
+
+    def read_line(self, args):
+        t = self.make_temp()
+        self.code = t + " = Readline()"
+        return t
+
+    def read_int(self, args):
+        t = self.make_temp()
+        self.code = t + " = ReadInt()"
+        return t
+
 
 
     def type(self, type):

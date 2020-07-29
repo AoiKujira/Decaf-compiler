@@ -83,10 +83,10 @@ expr: e_layer1
 e_layer1: e_layer9 "=" e_layer1 -> exp_assign
         | e_layer2 -> exp_normal
 
-e_layer2: e_layer3 "||" e_layer2
+e_layer2: e_layer3 "||" e_layer2 -> exp_or
         | e_layer3 -> exp_normal
 
-e_layer3: e_layer4 "&&" e_layer3
+e_layer3: e_layer4 "&&" e_layer3 -> exp_and
         | e_layer4 -> exp_normal
 
 e_layer4: e_layer5 "==" e_layer4 -> exp_equal
