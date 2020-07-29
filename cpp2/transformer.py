@@ -211,8 +211,7 @@ class Test(Transformer):
         self.current_scope = self.current_scope.parent
         self.scope_level -= 1
 
-    def stmt(self, args):
-        self.code += "Here be statement code" + "\n"
+
 
     def push_scope(self, args):
         new_scope = Scope(self.current_scope)
