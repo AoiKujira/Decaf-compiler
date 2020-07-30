@@ -1,5 +1,6 @@
 class A {
-    int a;
+    B ar;
+    int[] b;
 }
 
 class B {
@@ -15,9 +16,9 @@ int main() {
     C c;
     A a;
     c = new C;
-    c.do_job();
 
-    a = c;
+
+    y = a.ar.b;
     c = null;
 
     return 99;

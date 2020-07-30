@@ -1,25 +1,30 @@
 from lark import Transformer
+from Symbols import Class
 
 
 class Scope:
-    def __init__(self, parent):
+    def __init__(self, parent, number):
         self.children = []
         self.table = {}
         self.parent = parent
+        self.number = number
 
 
 class Test(Transformer):
-    def __init__(self):
+    def __init__(self, classes: dict):
         super().__init__()
-        self.root_scope = Scope(None)
+        self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
-        self.scope_level = 0
+        self.scope_counter = 0
         self.code = ''''''
         self.lcounter = 0
         self.tcounter = 0
         self.tstack = []
         self.lstack = []
         self.loop_stack = []
+        self.classes = classes
+        self.var_types = {}
+        self.mem_checker = False
 
     # def expr(self, args):
     #    print("expr")
@@ -91,9 +96,41 @@ class Test(Transformer):
         self.code += out + ":\n"
 
     def exp_assign(self, args):
-        self.tstack.append(args[1])
-        self.code += "this needs fixing: " + args[0] + " = " + args[1] + "\n"
+        # cur0 = self.current_scope
+        # try:
+        #     while not(cur0.table.keys().__contains__(args[0])):
+        #         cur0 = self.current_scope.parent
+        #     num = str(cur0.number)
+        # except:
+        #     num = ""
+        #
+        self.code += args[0] + " = " + args[1] + "\n"
         return args[1]
+
+    def exp_ident(self, args):
+        iden = args[0]
+        # print(iden)
+        cur = self.current_scope
+        try:
+            while not (cur.table.keys().__contains__(iden)):
+                cur = cur.parent
+            self.var_types[iden + str(cur.number)] = cur.table[iden]
+            return iden + str(cur.number)
+        except:
+            return iden
+
+    def exp_mem(self, args):
+        self.mem_checker = True
+
+        # print(args)
+        if isinstance(args[1], list):
+            lee = [args[0]]
+            for a in args[1]:
+                # print(a)
+                lee.append(a)
+            return lee
+        else:
+            return [args[0], args[1]]
 
     def dec_const(self, args):
         t = self.make_temp()
@@ -121,7 +158,7 @@ class Test(Transformer):
 
     def exp_mul(self, args):
         t = self.make_temp()
-        # 
+        #
         # typecheck here
         self.code += t + " = " + args[0] + " * " + args[1] + "\n"
         return t
@@ -141,7 +178,7 @@ class Test(Transformer):
     def exp_sum(self, args):
         t = self.make_temp()
         # typecheck here
-        # 
+        #
         self.code += t + " = " + args[0] + " + " + args[1] + "\n"
         return t
 
@@ -209,20 +246,17 @@ class Test(Transformer):
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
-        self.scope_level -= 1
-
-
 
     def push_scope(self, args):
-        new_scope = Scope(self.current_scope)
+        self.scope_counter += 1
+        new_scope = Scope(self.current_scope, self.scope_counter)
         self.current_scope.children.append(new_scope)
         self.current_scope = new_scope
-        self.scope_level += 1
 
     def variable(self, args):
-        # 
-        (ident,) = args[1]
-        self.current_scope.table[ident] = args[0]
+        if self.scope_counter > 0:
+            ident = args[1]
+            self.current_scope.table[ident] = args[0]
 
     def IDENT(self, iden):
         # print(iden)
@@ -235,9 +269,37 @@ class Test(Transformer):
             self.tstack.append(ret)
             return ret
         except:
-            # 
+            #
             self.tstack.append(args[0])
             return args[0]
+
+    def exp_nine(self, args):
+        if not self.mem_checker:
+            try:
+                ret = args[0].children[0]
+                self.tstack.append(ret)
+                return ret
+            except:
+                #
+                self.tstack.append(args[0])
+                return args[0]
+        else:
+            self.mem_checker = False
+            temp = self.make_temp()
+            lee = args[0]
+            first = lee[0]
+            for i in range(1, len(lee)):
+                sec = lee[i]
+                t = self.var_types[first]
+                c: Class = self.classes[t]
+                print(sec)
+                o = c.var_offsets[sec]
+                self.code += temp + " = " + first + " + " + str(o) + "\n"
+                if i != len(lee) - 1:
+                    self.code += temp + " = " + "*(" + temp + ")\n"
+                self.var_types[temp] = c.var_types[sec]
+                first = temp
+            return "*(" + temp + ")"
 
     def str_const(self, args):
         # print("strrrring")
@@ -266,7 +328,7 @@ class Test(Transformer):
     double = lambda self, _: "double"
     str = lambda self, _: "string"
     bool = lambda self, _: "bool"
-    null = lambda self,_: "null"
+    null = lambda self, _: "null"
 
     def make_label(self):
         lab = "l" + str(self.lcounter)
@@ -274,6 +336,6 @@ class Test(Transformer):
         return lab
 
     def make_temp(self):
-        t = "t" + str(self.tcounter)
+        t = "tempo" + str(self.tcounter)
         self.tcounter += 1
         return t

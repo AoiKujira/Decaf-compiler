@@ -110,12 +110,12 @@ e_layer7: e_layer8 "*" e_layer7 -> exp_mul
 
 e_layer8: "-"e_layer8 -> exp_neg
         | "!"e_layer8 -> exp_not
-        | e_layer9 -> exp_normal
+        | e_layer9 -> exp_nine
 
-e_layer9:  e_layer10 "." e_layer9
+e_layer9:  e_layer10 "." e_layer9 -> exp_mem
         | e_layer10 -> exp_normal
 
-e_layer10:  e_layer10 "[" e_layer1 "]"
+e_layer10:  e_layer10 "[" e_layer1 "]" -> exp_arr
         | end_layer -> exp_normal
 
 end_layer: "ReadLine" "(" ")" -> read_line
@@ -126,7 +126,7 @@ end_layer: "ReadLine" "(" ")" -> read_line
          | "this" -> exp_this
          | "(" e_layer1 ")"  -> exp_par
          | "new" IDENT -> new_class
-         | IDENT
+         | IDENT -> exp_ident
 
 BREAK_STMT: "break" ";"
 
@@ -147,7 +147,7 @@ DOUBLE_INT: DECIMAL "." /[0-9]*([eE][-+]?[0-9]+)?/
 BOOL_CONSTANT: "true"
              | "false"
 
-IDENT: /(?!(int|bool|string|double|break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
+IDENT: /(?!(tempo|int|bool|string|double|break|return|true|false|this|new)\b)[a-zA-Z]\w{0,30}/
 
 int_constant: HEX -> hex_const
             | DECIMAL -> dec_const
