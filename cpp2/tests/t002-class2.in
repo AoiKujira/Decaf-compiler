@@ -4,6 +4,7 @@ class A {
 }
 
 class B {
+    int afadf;
     int b;
 }
 
@@ -18,7 +19,7 @@ int main() {
     c = new C;
 
 
-    y = a.ar.b;
+    y = a.ar[2].b;
     c = null;
 
     return 99;

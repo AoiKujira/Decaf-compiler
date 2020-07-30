@@ -1,3 +1,5 @@
+import re
+
 from lark import Transformer
 from Symbols import Class
 
@@ -290,9 +292,30 @@ class Test(Transformer):
             first = lee[0]
             for i in range(1, len(lee)):
                 sec = lee[i]
+                print(sec)
                 t = self.var_types[first]
                 c: Class = self.classes[t]
-                print(sec)
+                # handle array members
+                if re.match(".*\[.*\]", sec):
+                    name = re.sub("\[.*\]", "", sec)
+                    ty = re.sub("\[.*\]", "", c.var_types[name])
+                    print(name, ty)
+                    if ["int", "bool", "double", "string"].__contains__(ty):
+                        size = 4
+                    else:
+                        size = self.classes[ty].size
+                    hold = re.match(".*(\[.*\])", sec)
+                    #print(hold)
+                    ind = hold.group(1).strip("[").strip("]")
+                    o = c.var_offsets[name]
+                    tem = self.make_temp()
+                    self.code += tem + " = " + first + " + " + str(o) + "\n"
+                    self.code += temp + " = " + "*(" + tem + ")" + "\n"
+                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += temp + " = " + temp + " + " + tem + "\n"
+                    self.var_types[temp] = ty
+                    first = temp
+                    continue
                 o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
@@ -300,6 +323,10 @@ class Test(Transformer):
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
             return "*(" + temp + ")"
+
+    def exp_arr(self, args):
+        # print(args)
+        return args[0] + "[" + args[1] + "]"
 
     def str_const(self, args):
         # print("strrrring")
