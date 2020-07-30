@@ -98,16 +98,61 @@ class Test(Transformer):
         self.code += out + ":\n"
 
     def exp_assign(self, args):
-        # cur0 = self.current_scope
-        # try:
-        #     while not(cur0.table.keys().__contains__(args[0])):
-        #         cur0 = self.current_scope.parent
-        #     num = str(cur0.number)
-        # except:
-        #     num = ""
-        #
-        self.code += args[0] + " = " + args[1] + "\n"
-        return args[1]
+        if not isinstance(args[0], list):
+            # print(args[0])
+            if re.match(".*\[.*\]", args[0]):
+                name = re.sub("\[.*\]", "", args[0])
+                ty = self.var_types[name]
+                if ["int", "bool", "double", "string"].__contains__(ty):
+                    size = 4
+                else:
+                    size = self.classes[ty].size
+                ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
+                tem = self.make_temp()
+                self.code += tem + " = " + str(size) + " * " + ind + "\n"
+                self.code += tem + " = " + name + " + " + tem + "\n"
+                self.code += "*(" + tem + ")" + " = " + args[1] + "\n"
+                return args[1]
+            self.code += args[0] + " = " + args[1] + "\n"
+            return args[1]
+        else:
+            self.mem_checker = False
+            temp = self.make_temp()
+            lee = args[0]
+            first = lee[0]
+            for i in range(1, len(lee)):
+                sec = lee[i]
+                t = self.var_types[first]
+                c: Class = self.classes[t]
+                # handle array members
+                if re.match(".*\[.*\]", sec):
+                    name = re.sub("\[.*\]", "", sec)
+                    ty = re.sub("\[.*\]", "", c.var_types[name])
+                    # print(name, ty)
+                    if ["int", "bool", "double", "string"].__contains__(ty):
+                        size = 4
+                    else:
+                        size = self.classes[ty].size
+                    hold = re.match(".*(\[.*\])", sec)
+                    # print(hold)
+                    ind = hold.group(1).strip("[").strip("]")
+                    o = c.var_offsets[name]
+                    tem = self.make_temp()
+                    self.code += tem + " = " + first + " + " + str(o) + "\n"
+                    self.code += temp + " = " + "*(" + tem + ")" + "\n"
+                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += temp + " = " + temp + " + " + tem + "\n"
+                    self.var_types[temp] = ty
+                    first = temp
+                    continue
+                o = c.var_offsets[sec]
+                self.code += temp + " = " + first + " + " + str(o) + "\n"
+                if i != len(lee) - 1:
+                    self.code += temp + " = " + "*(" + temp + ")\n"
+                self.var_types[temp] = c.var_types[sec]
+                first = temp
+            self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
+            return args[1]
 
     def exp_ident(self, args):
         iden = args[0]
@@ -277,35 +322,49 @@ class Test(Transformer):
 
     def exp_nine(self, args):
         if not self.mem_checker:
-            try:
+            if not isinstance(args[0], str):
                 ret = args[0].children[0]
                 self.tstack.append(ret)
                 return ret
-            except:
-                #
+            else:
+                if re.match(".*\[.*\]", args[0]):
+                    name = re.sub("\[.*\]", "", args[0])
+                    ty = self.var_types[name]
+                    if ["int", "bool", "double", "string"].__contains__(ty):
+                        size = 4
+                    else:
+                        size = self.classes[ty].size
+                    ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
+                    tem = self.make_temp()
+                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += tem + " = " + name + " + " + tem + "\n"
+                    self.code += tem + " = " + "*(" + tem + ")" + "\n"
+                    return tem
                 self.tstack.append(args[0])
                 return args[0]
         else:
             self.mem_checker = False
+            if not isinstance(args[0], list):
+                self.mem_checker = True
+                return args[0]
             temp = self.make_temp()
             lee = args[0]
             first = lee[0]
             for i in range(1, len(lee)):
                 sec = lee[i]
-                print(sec)
                 t = self.var_types[first]
                 c: Class = self.classes[t]
                 # handle array members
                 if re.match(".*\[.*\]", sec):
                     name = re.sub("\[.*\]", "", sec)
                     ty = re.sub("\[.*\]", "", c.var_types[name])
-                    print(name, ty)
+                    # print(name, ty)
                     if ["int", "bool", "double", "string"].__contains__(ty):
                         size = 4
                     else:
                         size = self.classes[ty].size
                     hold = re.match(".*(\[.*\])", sec)
-                    #print(hold)
+                    # print(hold)
                     ind = hold.group(1).strip("[").strip("]")
                     o = c.var_offsets[name]
                     tem = self.make_temp()
@@ -315,14 +374,19 @@ class Test(Transformer):
                     self.code += temp + " = " + temp + " + " + tem + "\n"
                     self.var_types[temp] = ty
                     first = temp
+                    if i == len(lee) - 1:
+                        self.code += temp + " = " + "*(" + temp + ")\n"
                     continue
                 o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
-                if i != len(lee) - 1:
+                if i != len(lee) - 1 or (
+                        i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
                     self.code += temp + " = " + "*(" + temp + ")\n"
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
-            return "*(" + temp + ")"
+
+            #self.code += temp + " = *(" + temp + ")" + "\n"
+            return temp
 
     def exp_arr(self, args):
         # print(args)
