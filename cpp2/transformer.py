@@ -145,11 +145,14 @@ class Test(Transformer):
                     self.var_types[temp] = ty
                     first = temp
                     continue
-                o = c.var_offsets[sec]
+
+                # todo sec????
+                o = c.var_offsets[sec[:-1]]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
                     self.code += temp + " = " + "*(" + temp + ")\n"
-                self.var_types[temp] = c.var_types[sec]
+                # todo sec????
+                self.var_types[temp] = c.var_types[sec[:-1]]
                 first = temp
             self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
             return args[1]
@@ -227,7 +230,7 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         #
-        self.code += t + " = " + args[0] + " + " + args[1] + "\n"
+        self.code += t + " = " + str(args[0]) + " + " + str(args[1]) + "\n"
         return t
 
     def exp_sub(self, args):
@@ -292,18 +295,18 @@ class Test(Transformer):
         self.code += t + " = " + args[0] + " <= " + args[1] + "\n"
         return t
 
-    def pop_scope(self):
+    def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
         self.scope_counter -= 1 #edited
 
-    def push_scope(self):
+    def push_scope(self, args):
         self.scope_counter += 1
         new_scope = Scope(self.current_scope, self.scope_counter)
         self.current_scope.children.append(new_scope)
         self.current_scope = new_scope
 
     def variable(self, args):
-        (ident,) = args[1]
+        ident = args[1] # edited
         self.current_scope.table[ident] = args[0]
 
     def IDENT(self, iden):
