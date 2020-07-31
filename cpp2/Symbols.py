@@ -46,13 +46,13 @@ class SymbolTable(Transformer):
         for field in fields:
             if not (the_class.var_offsets.keys().__contains__(field[1])):
                 if self.primitives.__contains__(field[0]):
-                    #print(field[1], the_class.name)
+                    # print(field[1], the_class.name)
                     the_class.var_offsets[field[1]] = the_class.size
                     the_class.size += 4
                     the_class.var_types[field[1]] = field[0]
                     self.has_finished = False
                 elif self.classes.keys().__contains__(field[0]) and self.classes[field[0]].is_finished:
-                    #print(field[1], the_class.name)
+                    # print(field[1], the_class.name)
                     the_class.var_offsets[field[1]] = the_class.size
                     the_class.size += self.classes[field[0]].size
                     the_class.var_types[field[1]] = field[0]
