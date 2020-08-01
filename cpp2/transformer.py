@@ -36,26 +36,26 @@ class Test(Transformer):
     #     self.code += name + " = " + "gotten\n"
     #     self.tstack.append(name)
 
-    def make_start_label(self, args):
+    def make_start_label(self):
         lab = self.make_label()
         self.code += lab + ":\n"
         self.lstack.append(lab)
 
-    def make_condition_jump(self, args):
+    def make_condition_jump(self):
         t = self.tstack.pop()
         end = self.make_label()
         self.loop_stack.append(end)
         self.code += "If " + t + " zero go to " + end + "\n"
         self.lstack.append(end)
 
-    def make_loop_jump(self, args):
+    def make_loop_jump(self):
         end = self.lstack.pop()
         start = self.lstack.pop()
         self.code += "jump to " + start + "\n"
         self.code += end + ":" + "\n"
         self.loop_stack.pop()
 
-    def for_jump(self, args):
+    def for_jump(self):
         t = self.tstack.pop()
         start = self.lstack.pop()
         stmt_lab = self.make_label()
@@ -70,30 +70,30 @@ class Test(Transformer):
         self.code += "jump to " + stmt_lab + "\n"
         self.code += step_lab + ":\n"
 
-    def step_jump(self, args):
+    def step_jump(self):
         start = self.lstack.pop()
         stmt_lab = self.lstack.pop()
         self.code += "jump to " + start + "\n"
         self.code += stmt_lab + ":\n"
 
-    def return_jump(self, args):
+    def return_jump(self):
         end = self.lstack.pop()
         step_lab = self.lstack.pop()
         self.code += "jump to " + step_lab + "\n"
         self.code += end + ":\n"
         self.loop_stack.pop()
 
-    def break_stmt(self, args):
+    def break_stmt(self):
         lab = self.loop_stack[-1]
         self.code += "jump to " + lab + "\n"
 
-    def if_cond(self, args):
+    def if_cond(self):
         t = self.tstack.pop()
         lab = self.make_label()
         self.code += "If " + t + " zero go to " + lab + "\n"
         self.lstack.append(lab)
 
-    def if_out_label(self, args):
+    def if_out_label(self):
         out = self.lstack.pop()
         self.code += out + ":\n"
 
@@ -145,11 +145,14 @@ class Test(Transformer):
                     self.var_types[temp] = ty
                     first = temp
                     continue
-                o = c.var_offsets[sec]
+
+                # todo sec????
+                o = c.var_offsets[sec[:-1]]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
                     self.code += temp + " = " + "*(" + temp + ")\n"
-                self.var_types[temp] = c.var_types[sec]
+                # todo sec????
+                self.var_types[temp] = c.var_types[sec[:-1]]
                 first = temp
             self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
             return args[1]
@@ -158,6 +161,7 @@ class Test(Transformer):
         iden = args[0]
         # print(iden)
         cur = self.current_scope
+        # noinspection PyBroadException
         try:
             while not (cur.table.keys().__contains__(iden)):
                 cur = cur.parent
@@ -188,7 +192,7 @@ class Test(Transformer):
     def hex_const(self, args):
         t = self.make_temp()
         dec = int(args[0], 16)
-        self.code += t + " = " + dec + "\n"
+        self.code += t + " = " + str(dec) + "\n"
         return t
 
     def exp_not(self, args):
@@ -226,7 +230,7 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         #
-        self.code += t + " = " + args[0] + " + " + args[1] + "\n"
+        self.code += t + " = " + str(args[0]) + " + " + str(args[1]) + "\n"
         return t
 
     def exp_sub(self, args):
@@ -293,6 +297,7 @@ class Test(Transformer):
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
+        self.scope_counter -= 1 #edited
 
     def push_scope(self, args):
         self.scope_counter += 1
@@ -301,16 +306,15 @@ class Test(Transformer):
         self.current_scope = new_scope
 
     def variable(self, args):
-        if self.scope_counter > 0:
-            ident = args[1]
-            self.current_scope.table[ident] = args[0]
+        ident = args[1] # edited
+        self.current_scope.table[ident] = args[0]
 
     def IDENT(self, iden):
         # print(iden)
         return str(iden)
 
     def exp_normal(self, args):
-
+        # noinspection PyBroadException
         try:
             ret = args[0].children[0]
             self.tstack.append(ret)
@@ -320,100 +324,30 @@ class Test(Transformer):
             self.tstack.append(args[0])
             return args[0]
 
-    def exp_nine(self, args):
-        if not self.mem_checker:
-            if not isinstance(args[0], str):
-                ret = args[0].children[0]
-                self.tstack.append(ret)
-                return ret
-            else:
-                if re.match(".*\[.*\]", args[0]):
-                    name = re.sub("\[.*\]", "", args[0])
-                    ty = self.var_types[name]
-                    if ["int", "bool", "double", "string"].__contains__(ty):
-                        size = 4
-                    else:
-                        size = self.classes[ty].size
-                    ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
-                    tem = self.make_temp()
-                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += tem + " = " + name + " + " + tem + "\n"
-                    self.code += tem + " = " + "*(" + tem + ")" + "\n"
-                    return tem
-                self.tstack.append(args[0])
-                return args[0]
-        else:
-            self.mem_checker = False
-            if not isinstance(args[0], list):
-                self.mem_checker = True
-                return args[0]
-            temp = self.make_temp()
-            lee = args[0]
-            first = lee[0]
-            for i in range(1, len(lee)):
-                sec = lee[i]
-                t = self.var_types[first]
-                c: Class = self.classes[t]
-                # handle array members
-                if re.match(".*\[.*\]", sec):
-                    name = re.sub("\[.*\]", "", sec)
-                    ty = re.sub("\[.*\]", "", c.var_types[name])
-                    # print(name, ty)
-                    if ["int", "bool", "double", "string"].__contains__(ty):
-                        size = 4
-                    else:
-                        size = self.classes[ty].size
-                    hold = re.match(".*(\[.*\])", sec)
-                    # print(hold)
-                    ind = hold.group(1).strip("[").strip("]")
-                    o = c.var_offsets[name]
-                    tem = self.make_temp()
-                    self.code += tem + " = " + first + " + " + str(o) + "\n"
-                    self.code += temp + " = " + "*(" + tem + ")" + "\n"
-                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += temp + " = " + temp + " + " + tem + "\n"
-                    self.var_types[temp] = ty
-                    first = temp
-                    if i == len(lee) - 1:
-                        self.code += temp + " = " + "*(" + temp + ")\n"
-                    continue
-                o = c.var_offsets[sec]
-                self.code += temp + " = " + first + " + " + str(o) + "\n"
-                if i != len(lee) - 1 or (
-                        i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
-                    self.code += temp + " = " + "*(" + temp + ")\n"
-                self.var_types[temp] = c.var_types[sec]
-                first = temp
-
-            #self.code += temp + " = *(" + temp + ")" + "\n"
-            return temp
-
-    def exp_arr(self, args):
-        # print(args)
-        return args[0] + "[" + args[1] + "]"
-
-    def str_const(self, args):
+    @staticmethod
+    def str_const(args):
         # print("strrrring")
         (str_con,) = args
         print(str_con)
         return str_con
 
-    def read_line(self, args):
+    def read_line(self):
         t = self.make_temp()
         self.code = t + " = Readline()"
         return t
 
-    def read_int(self, args):
+    def read_int(self):
         t = self.make_temp()
         self.code = t + " = ReadInt()"
         return t
 
-    def type(self, type):
-        if len(type) == 1:
-            (type,) = type
+    @staticmethod
+    def type(type_arg):
+        if len(type_arg) == 1:
+            (type_arg,) = type_arg
         else:
-            type = type[0].strip("\"") + "[]"
-        return type.strip("\"")
+            type_arg = type_arg[0].strip("\"") + "[]"
+        return type_arg.strip("\"")
 
     int = lambda self, _: "int"
     double = lambda self, _: "double"
