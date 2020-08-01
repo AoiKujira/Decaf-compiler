@@ -6,8 +6,9 @@ class Func:
         self.name = name
         self.ret_type = ret_type
         self.vars = {}
-        for var in vars:
-            self.vars[var[1]] = var[0]
+        if vars is not None:
+            for var in vars:
+                self.vars[var[1]] = var[0]
 
 
 class Class:
