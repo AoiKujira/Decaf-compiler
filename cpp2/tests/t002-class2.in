@@ -20,6 +20,7 @@ int main() {
     int yo;
     c = new C;
 
+
     sag[6] = 2;
     yo = sag[6] + 7;
     a.ar[5] = 3 + a.ar[2].b;
