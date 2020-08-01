@@ -1,6 +1,15 @@
 from lark import Transformer
 
 
+class Func:
+    def __init__(self, name, ret_type, vars):
+        self.name = name
+        self.ret_type = ret_type
+        self.vars = {}
+        for var in vars:
+            self.vars[var[1]] = var[0]
+
+
 class Class:
     def __init__(self, name):
         self.name = name
@@ -8,6 +17,8 @@ class Class:
         self.vtable = "here be pointer to vtable"
         self.var_offsets = {}
         self.var_types = {}
+        self.functions = {}
+        self.parents = []
         self.is_finished = False
 
 
@@ -37,12 +48,14 @@ class SymbolTable(Transformer):
             self.has_finished = False
         the_class: Class = self.classes[class_name]
         fields = []
-        parents = []
         for arg in args[1:]:
             if isinstance(arg, list):
                 fields.append(arg)
+            elif isinstance(arg, Func):
+                the_class.functions[arg.name] = arg
             else:
-                parents.append(arg)
+                if not the_class.parents.__contains__(arg):
+                    the_class.parents.append(arg)
         for field in fields:
             if not (the_class.var_offsets.keys().__contains__(field[1])):
                 if self.primitives.__contains__(field[0]):
@@ -68,6 +81,17 @@ class SymbolTable(Transformer):
         else:
             args = args[0].strip("\"") + "[]"
         return args.strip("\"")
+
+    def formals(self, args):
+        if len(args) > 0:
+            return args[0].children
+
+    def func_field(self, args):
+        lee = args[0].children
+        if len(lee) == 3:
+            return Func(lee[0], "void", lee[1])
+        else:
+            return Func(lee[1], lee[0], lee[2])
 
     def IDENT(self, iden):
         # print(iden)

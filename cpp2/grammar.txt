@@ -28,7 +28,7 @@ variables: variable ("," variable)*
 class_decl: "class" IDENT ("extends" IDENT)? ("implements" IDENT ("," IDENT)*)? "{" field* "}"
 
 field: variable_decl -> var_field
-     | function_decl
+     | function_decl -> func_field
 
 interface_decl: "interface" IDENT "{" prototype* "}"
 

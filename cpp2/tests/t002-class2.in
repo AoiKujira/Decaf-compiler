@@ -10,7 +10,7 @@ class B {
 
 // inheritance at its finest!
 class C extends A {
-    void do_job() {}
+    int do_job(string a, int b) {}
 }
 
 int main() {

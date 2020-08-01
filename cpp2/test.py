@@ -21,6 +21,7 @@ if __name__ == "__main__":
         # print("doing the thing")
         sym.prep()
         sym.transform(tree)
+    #print(sym.classes["C"].functions["do_job"].vars)
     trans = Test(sym.classes)
     trans.transform(tree)
     print(trans.code)
