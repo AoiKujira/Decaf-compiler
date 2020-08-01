@@ -19,3 +19,12 @@ int read_input_and_check() {
         return a;
     return -1;
 }
+
+int main() {
+    int a;
+    int b;
+    a = 2;
+    b = 3;
+    a = func1(a, b);
+    return 0;
+}

@@ -146,12 +146,10 @@ class Test(Transformer):
                     first = temp
                     continue
 
-                # todo sec????
                 o = c.var_offsets[sec[:-1]]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
                     self.code += temp + " = " + "*(" + temp + ")\n"
-                # todo sec????
                 self.var_types[temp] = c.var_types[sec[:-1]]
                 first = temp
             self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
@@ -367,6 +365,19 @@ class Test(Transformer):
         # print(args)
         return args[0] + "[" + args[1] + "]"
 
+    # todo func
+    def function_call(self, args):
+        #print(args)
+        self.code += "go to " + args[0] + "\n"
+        t = self.make_temp()
+        self.code += "pop " + t + "\n"
+        return t
+
+    def push_args(self, args):
+        for x in args:
+            self.code += "push " + x.children[0] + "\n"
+        return ""
+
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
 
@@ -403,12 +414,12 @@ class Test(Transformer):
 
     def read_line(self, args):
         t = self.make_temp()
-        self.code = t + " = Readline()"
+        self.code = t + " = Readline()" + "\n"
         return t
 
     def read_int(self, args):
         t = self.make_temp()
-        self.code = t + " = ReadInt()"
+        self.code = t + " = ReadInt()" + "\n"
         return t
 
     def type(self, type):
