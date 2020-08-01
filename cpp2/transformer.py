@@ -18,7 +18,7 @@ class Test(Transformer):
         self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
         self.scope_counter = 0
-        self.code = '''\n'''
+        self.code = '''$'''
         self.lcounter = 0
         self.tcounter = 0
         self.tstack = []
@@ -385,13 +385,16 @@ class Test(Transformer):
 
     def function(self, args):
         child = args[0].children
-        print(child)
+        # print(child)
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
         else:
             add_to_code = args[0].children[0]
-        self.code += "return from " + add_to_code + "\n\n"
-        print(self.code.find("\n"))
+        self.code += "return from " + add_to_code + "\n\n$"
+        before = self.code[:self.code.find("$")]
+        after = self.code[(self.code.find("$") + 1):]
+        self.code = before + add_to_code + ":\n" + after
+        # print("func", self.code[self.code.find("\n"):], "\n\n\n")
 
     def return_function(self, args):
         # print(args, self.code, "\n\n\n")
