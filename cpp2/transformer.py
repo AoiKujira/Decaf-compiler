@@ -147,12 +147,12 @@ class Test(Transformer):
                     continue
 
                 # todo sec????
-                o = c.var_offsets[sec[:-1]]
+                o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
                     self.code += temp + " = " + "*(" + temp + ")\n"
                 # todo sec????
-                self.var_types[temp] = c.var_types[sec[:-1]]
+                self.var_types[temp] = c.var_types[sec]
                 first = temp
             self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
             return args[1]
