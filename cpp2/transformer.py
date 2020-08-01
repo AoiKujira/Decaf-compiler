@@ -13,18 +13,19 @@ class Scope:
 
 
 class Test(Transformer):
-    def __init__(self, classes: dict):
+    def __init__(self, sym):
         super().__init__()
         self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
         self.scope_counter = 0
-        self.code = ''''''
+        self.code = '''\n'''
         self.lcounter = 0
         self.tcounter = 0
         self.tstack = []
         self.lstack = []
         self.loop_stack = []
-        self.classes = classes
+        self.classes = sym.classes
+        self.sym = sym
         self.var_types = {}
         self.mem_checker = False
 
@@ -382,10 +383,30 @@ class Test(Transformer):
         # print(args)
         return args[0] + "[" + args[1] + "]"
 
+    def function(self, args):
+        child = args[0].children
+        print(child)
+        if isinstance(args[0].children[1], str):
+            add_to_code = args[0].children[1]
+        else:
+            add_to_code = args[0].children[0]
+        self.code += "return from " + add_to_code + "\n\n"
+        print(self.code.find("\n"))
+
+    def return_function(self, args):
+        # print(args, self.code, "\n\n\n")
+        # self.code += "\n" + args[1] + ":\n"
+        return ""
+
+    def non_return_function(self, args):
+        # print(args, self.code, "\n\n\n")
+        # self.code += "\n" + args[0] + ":\n"
+        return ""
+
     # todo func
     def function_call(self, args):
         # print(args)
-        self.code += "go to " + args[0] + "\n"
+        self.code += "Lcall " + args[0] + "\n"
         t = self.make_temp()
         self.code += "pop " + t + "\n"
         return t
@@ -431,12 +452,12 @@ class Test(Transformer):
 
     def read_line(self, args):
         t = self.make_temp()
-        self.code = t + " = Readline()" + "\n"
+        self.code += t + " = Readline()" + "\n"
         return t
 
     def read_int(self, args):
         t = self.make_temp()
-        self.code = t + " = ReadInt()" + "\n"
+        self.code += t + " = ReadInt()" + "\n"
         return t
 
     def type(self, type):

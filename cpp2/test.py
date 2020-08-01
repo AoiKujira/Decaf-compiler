@@ -6,7 +6,7 @@ from transformer import Test
 from Symbols import SymbolTable
 
 if __name__ == "__main__":
-    input_file = open("tests/t002-class2.in", "r")
+    input_file = open("tests/t008-function1.in", "r")
     # input_file = open("tests/t014-stmt1.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         sym.prep()
         sym.transform(tree)
     #print(sym.classes["C"].functions["do_job"].vars)
-    trans = Test(sym.classes)
+    trans = Test(sym)
     trans.transform(tree)
     print(trans.code)
     # print(sym.classes["A"].var_offsets)

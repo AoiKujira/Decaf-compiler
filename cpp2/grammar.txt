@@ -3,7 +3,7 @@ start: program
 program: decl+
 
 decl: variable_decl
-    | function_decl
+    | function_decl -> function
     | class_decl
     | interface_decl
 
