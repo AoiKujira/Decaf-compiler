@@ -121,7 +121,7 @@ e_layer10:  e_layer10 "[" e_layer1 "]" -> exp_arr
 end_layer: "ReadLine" "(" ")" -> read_line
          | "NewArray" "(" e_layer1 "," type ")" -> make_array
          | "ReadInteger" "(" ")" -> read_int
-         | call -> function_call
+         | call
          | constant
          | "this" -> exp_this
          | "(" e_layer1 ")"  -> exp_par
@@ -130,11 +130,11 @@ end_layer: "ReadLine" "(" ")" -> read_line
 
 BREAK_STMT: "break" ";"
 
-call: IDENT "(" actuals ")"
+call: IDENT "(" actuals ")" -> function_call
 
 actuals: exprs?
 
-exprs: expr ("," expr)*
+exprs: expr ("," expr)* -> push_args
 
 constant: DOUBLE_INT
         | int_constant

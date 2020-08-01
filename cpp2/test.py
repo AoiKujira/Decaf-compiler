@@ -6,7 +6,7 @@ from transformer import Test
 from Symbols import SymbolTable
 
 if __name__ == "__main__":
-    input_file = open("tests/t002-class2.in", "r")
+    input_file = open("tests/t008-function1.in", "r")
     # input_file = open("tests/t014-stmt1.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     grammar = open_file.read()
     parser = Lark(grammar, parser='lalr', debug=False)
     tree = parser.parse(text)
-    # print(tree.pretty())
+    #print(tree.children)
     sym = SymbolTable()
     while not (sym.has_finished):
         # print("doing the thing")
