@@ -20,7 +20,7 @@ int main() {
     int yo;
     c = new C;
 
-
+    seg = NewArray(10, int);
     sag[2] = 3;
     sag[6] = 2;
     yo = sag[6] + 7;

@@ -155,6 +155,23 @@ class Test(Transformer):
             self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
             return args[1]
 
+    def new_class(self, args):
+        size = self.classes[args[0]].size
+        t = self.make_temp()
+        self.code += t + " = Allocate " + str(size) + "\n"
+        return t
+
+    def make_array(self, args):
+        ty = args[1]
+        if ["int", "bool", "double", "string"].__contains__(ty):
+            size = 4
+        else:
+            size = self.classes[ty].size
+        t = self.make_temp()
+        self.code += t + " = " + args[0] + " * " + str(size) + "\n"
+        self.code += t + " = Allocate " + t + "\n"
+        return t
+
     def exp_ident(self, args):
         iden = args[0]
         # print(iden)
@@ -367,7 +384,7 @@ class Test(Transformer):
 
     # todo func
     def function_call(self, args):
-        #print(args)
+        # print(args)
         self.code += "go to " + args[0] + "\n"
         t = self.make_temp()
         self.code += "pop " + t + "\n"
