@@ -19,7 +19,7 @@ int main() {
     int sag;
     int yo;
     c = new C;
-
+    Print(3);
     seg = NewArray(10, int);
     sag[2] = 3;
     sag[6] = 2;

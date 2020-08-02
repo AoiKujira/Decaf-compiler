@@ -15,7 +15,7 @@ if __name__ == "__main__":
     grammar = open_file.read()
     parser = Lark(grammar, parser='lalr', debug=False)
     tree = parser.parse(text)
-    #print(tree.children)
+    #print(tree.pretty())
     sym = SymbolTable()
     while not (sym.has_finished):
         # print("doing the thing")
