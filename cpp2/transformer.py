@@ -28,6 +28,7 @@ class Test(Transformer):
         self.sym = sym
         self.var_types = {}
         self.mem_checker = False
+        self.function_types = {}
 
     # def expr(self, args):
     #    print("expr")
@@ -396,8 +397,10 @@ class Test(Transformer):
     def function(self, args):
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
+            self.function_types[add_to_code] = 'return'
         else:
             add_to_code = args[0].children[0]
+            self.function_types[add_to_code] = 'no_return'
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
@@ -418,10 +421,14 @@ class Test(Transformer):
         # print(args)
         self.code += "Lcall " + args[0] + "\n"
         t = self.make_temp()
-        self.code += "pop " + t + "\n"
+        print(self.function_types, args[0])
+        if self.function_types[str(args[0])] == 'return':
+            self.code += "pop " + t + "\n"
         return t
 
     def print(self, args):
+        # print(args)
+        # todo
         self.code += "Lcall Print " + str(args[0]) + "\n"
 
     def push_args(self, args):
