@@ -100,6 +100,7 @@ class Test(Transformer):
         self.code += out + ":\n"
 
     def exp_assign(self, args):
+        # print("exp assign", args)
         if str(args).__contains__('exp_this'):
             return 'exp_this'
         if not isinstance(args[0], list):
@@ -160,6 +161,8 @@ class Test(Transformer):
             return args[1]
 
     def new_class(self, args):
+        # print("new_class", self.classes, args)
+        # print(self.code)
         size = self.classes[args[0]].size
         t = self.make_temp()
         self.code += t + " = Allocate " + str(size) + "\n"
@@ -190,8 +193,12 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
+        if isinstance(args[0], str):
+            self.code = self.code[:self.code.find("Lcall " + args[1])]
+            self.code += "push address of " + args[0] + "\n"
+            self.code += "Lcall " + self.var_types[args[0]] + "_" + args[1] + "\n"
+            return ""
         self.mem_checker = True
-
         # print(args)
         if isinstance(args[1], list):
             lee = [args[0]]
@@ -308,7 +315,7 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        #print(args)
+        # print(args)
         for arg in args[0]:
             self.code += "Print " + arg + "\n"
 
@@ -320,6 +327,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
+        # print("exp nine", args)
         if str(args).__contains__('exp_this'):
             return 'exp_this'
         if not self.mem_checker:
@@ -396,7 +404,27 @@ class Test(Transformer):
     def init_func(self, args):
         self.code += "init_func\n"
 
+    def init_class(self, args):
+        self.code += "init_class\n"
+
+    def class_decl(self, args):
+        # print("class decl", args)
+        # print(self.code)
+        before = self.code[:self.code.find("init_class")]
+        code = self.code[self.code.find("init_class") + len("init_class") + 1:]
+        after = code[code.find("end_class") + len("end_class") + 1:]
+        code = code[:code.find("end_class")]
+        code = code.replace("init_", args[1] + "_")
+        self.code = before + code + after
+        # code = code.find()
+        # print("class_decl\n\n", self.code, "end_class_decl\n\n\n")
+        return args
+
+    def end_class(self, args):
+        self.code += "end_class\n"
+
     def function(self, args):
+        # print("here")
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
             self.function_types[add_to_code] = 'return'
@@ -408,14 +436,35 @@ class Test(Transformer):
         after = self.code[(self.code.find("init_func") + 10):]
         self.code = before + add_to_code + ":\n" + after
 
+    def func_field(self, args):
+        # print("func_field", args)
+        child = args[0].children
+        if isinstance(child[1], str):
+            add_to_code = child[1]
+            self.function_types[add_to_code] = 'return'
+        else:
+            add_to_code = child[0]
+            self.function_types[add_to_code] = 'no_return'
+        self.code += "return from " + add_to_code + "\n\n"
+        # print(self.code.find("init_func"))
+        before = self.code[:self.code.find("init_func")]
+        after = self.code[(self.code.find("init_func") + 10):]
+        # print("before", before, "\n\n\n")
+        self.code = before + "init_" + add_to_code + ":\n" + after
+        # print("new code: \n", self.code, "\n\n\n")
+        return args
+
     # todo func
     def function_call(self, args):
         # print(args)
-        self.code += "Lcall " + args[0] + "\n"
-        t = self.make_temp()
-        print(self.function_types, args[0])
-        if self.function_types[str(args[0])] == 'return':
-            self.code += "pop " + t + "\n"
+        try:
+            # if self.var_types[]
+            self.code += "Lcall " + args[0] + "\n"
+            t = self.make_temp()
+            if self.function_types[str(args[0])] == 'return':
+                self.code += "pop " + t + "\n"
+        except:
+            t = args[0]
         return t
 
     def print(self, args):
@@ -463,7 +512,7 @@ class Test(Transformer):
     def str_const(self, args):
         # print("strrrring")
         (str_con,) = args
-        print(str_con)
+        # print(str_con)
         return str_con
 
     def read_line(self, args):

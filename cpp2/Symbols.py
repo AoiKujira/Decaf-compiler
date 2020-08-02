@@ -43,7 +43,7 @@ class SymbolTable(Transformer):
         return args[0]
 
     def class_decl(self, args):
-        class_name = args[0]
+        class_name = args[1]
         if not (self.classes.keys().__contains__(class_name)):
             self.classes[class_name] = Class(class_name)
             self.has_finished = False

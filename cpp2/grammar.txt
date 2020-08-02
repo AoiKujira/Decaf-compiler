@@ -27,7 +27,10 @@ formals: variables?
 
 variables: variable ("," variable)*
 
-class_decl: "class" IDENT ("extends" IDENT)? ("implements" IDENT ("," IDENT)*)? "{" field* "}"
+class_decl: init_class "class" IDENT ("extends" IDENT)? ("implements" IDENT ("," IDENT)*)? "{" field* "}" end_class -> class_decl
+
+init_class: -> init_class
+end_class: -> end_class
 
 field: variable_decl -> var_field
      | function_decl -> func_field
@@ -126,7 +129,7 @@ end_layer: "ReadLine" "(" ")" -> read_line
          | call
          | constant
          | "this" -> exp_this
-         | "(" e_layer1 ")"  -> exp_par
+         | "(" e_layer1 ")" -> exp_par
          | "new" IDENT -> new_class
          | IDENT -> exp_ident
 
