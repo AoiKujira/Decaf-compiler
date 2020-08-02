@@ -32,7 +32,7 @@ class Test(Transformer):
 
     # def expr(self, args):
     #    print("expr")
-    #    
+    #
     #     self.code += "here be expression code \n"
     #     name = self.make_temp()
     #     self.code += name + " = " + "gotten\n"
@@ -47,7 +47,7 @@ class Test(Transformer):
         t = self.tstack.pop()
         end = self.make_label()
         self.loop_stack.append(end)
-        self.code += "If " + t + " zero go to " + end + "\n"
+        self.code += "Ifz " + t + " goto " + end + "\n"
         self.lstack.append(end)
 
     def make_loop_jump(self, args):
@@ -68,7 +68,7 @@ class Test(Transformer):
         self.lstack.append(end)
         self.lstack.append(stmt_lab)
         self.lstack.append(start)
-        self.code += "If " + t + " zero go to " + end + "\n"
+        self.code += "Ifz " + t + " goto " + end + "\n"
         self.code += "jump to " + stmt_lab + "\n"
         self.code += step_lab + ":\n"
 
@@ -92,7 +92,7 @@ class Test(Transformer):
     def if_cond(self, args):
         t = self.tstack.pop()
         lab = self.make_label()
-        self.code += "If " + t + " zero go to " + lab + "\n"
+        self.code += "Ifz " + t + " goto " + lab + "\n"
         self.lstack.append(lab)
 
     def if_out_label(self, args):
