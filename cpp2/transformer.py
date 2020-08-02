@@ -121,8 +121,10 @@ class Test(Transformer):
             temp = self.make_temp()
             lee = args[0]
             first = lee[0]
+            print(self.code)
             for i in range(1, len(lee)):
                 sec = lee[i]
+                #print(args)
                 t = self.var_types[first]
                 c: Class = self.classes[t]
                 # handle array members
@@ -304,6 +306,11 @@ class Test(Transformer):
         self.code += t + " = " + args[0] + " || " + args[1] + "\n"
         return t
 
+    def print_stmt(self, args):
+        #print(args)
+        for arg in args[0]:
+            self.code += "Print " + arg + "\n"
+
     def exp_le(self, args):
         t = self.make_temp()
         #
@@ -415,9 +422,11 @@ class Test(Transformer):
         return t
 
     def push_args(self, args):
+        lee = []
         for x in args:
             self.code += "push " + x.children[0] + "\n"
-        return ""
+            lee.append(x.children[0])
+        return lee
 
     def pop_scope(self, args):
         self.current_scope = self.current_scope.parent
