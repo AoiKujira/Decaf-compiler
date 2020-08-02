@@ -100,6 +100,8 @@ class Test(Transformer):
         self.code += out + ":\n"
 
     def exp_assign(self, args):
+        if str(args).__contains__('exp_this'):
+            return 'exp_this'
         if not isinstance(args[0], list):
             # print(args[0])
             if re.match(".*\[.*\]", args[0]):
@@ -122,10 +124,8 @@ class Test(Transformer):
             temp = self.make_temp()
             lee = args[0]
             first = lee[0]
-            print(self.code)
             for i in range(1, len(lee)):
                 sec = lee[i]
-                #print(args)
                 t = self.var_types[first]
                 c: Class = self.classes[t]
                 # handle array members
@@ -320,6 +320,8 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
+        if str(args).__contains__('exp_this'):
+            return 'exp_this'
         if not self.mem_checker:
             if not isinstance(args[0], str):
                 ret = args[0].children[0]
@@ -405,16 +407,6 @@ class Test(Transformer):
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
         self.code = before + add_to_code + ":\n" + after
-
-    def return_function(self, args):
-        # print(args, self.code, "\n\n\n")
-        # self.code += "\n" + args[1] + ":\n"
-        return ""
-
-    def non_return_function(self, args):
-        # print(args, self.code, "\n\n\n")
-        # self.code += "\n" + args[0] + ":\n"
-        return ""
 
     # todo func
     def function_call(self, args):

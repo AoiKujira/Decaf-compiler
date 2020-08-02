@@ -6,7 +6,7 @@ from transformer import Test
 from Symbols import SymbolTable
 
 if __name__ == "__main__":
-    input_file = open("tests/t042-function1.in", "r")
+    input_file = open("tests/t001-class1.in", "r")
     # input_file = open("tests/t014-stmt1.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()

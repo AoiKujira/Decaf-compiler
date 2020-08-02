@@ -7,7 +7,7 @@ class Func:
         self.ret_type = ret_type
         self.vars = {}
         if vars is not None:
-            for var in vars:
+            for var in self.vars:
                 self.vars[var[1]] = var[0]
 
 
@@ -89,10 +89,13 @@ class SymbolTable(Transformer):
 
     def func_field(self, args):
         lee = args[0].children
+        # print(lee[0], lee[1])
         if len(lee) == 3:
+            # print(lee, lee[0])
             return Func(lee[0], "void", lee[1])
         else:
-            return Func(lee[1], lee[0], lee[2])
+            # print(lee, lee[1])
+            return Func(lee[1], lee[0], lee[0])
 
     def IDENT(self, iden):
         # print(iden)
