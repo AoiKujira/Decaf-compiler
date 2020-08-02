@@ -194,6 +194,8 @@ class Test(Transformer):
 
     def exp_mem(self, args):
         if isinstance(args[0], str):
+            # print("mem", args)
+            # code =
             self.code = self.code[:self.code.find("Lcall " + args[1])]
             self.code += "push address of " + args[0] + "\n"
             self.code += "Lcall " + self.var_types[args[0]] + "_" + args[1] + "\n"
@@ -463,6 +465,7 @@ class Test(Transformer):
             t = self.make_temp()
             if self.function_types[str(args[0])] == 'return':
                 self.code += "pop " + t + "\n"
+            t = args[0]
         except:
             t = args[0]
         return t
