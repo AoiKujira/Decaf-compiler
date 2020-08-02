@@ -285,7 +285,7 @@ class Test(Transformer):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " >= " + args[1] + "\n"
+        self.code += t + " = " + args[1] + " <= " + args[0] + "\n"
         return t
 
     def exp_equal(self, args):
