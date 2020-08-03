@@ -53,7 +53,7 @@ class Test(Transformer):
     def make_loop_jump(self, args):
         end = self.lstack.pop()
         start = self.lstack.pop()
-        self.code += "jump to " + start + "\n"
+        self.code += "jumpto " + start + "\n"
         self.code += end + ":" + "\n"
         self.loop_stack.pop()
 
@@ -69,25 +69,25 @@ class Test(Transformer):
         self.lstack.append(stmt_lab)
         self.lstack.append(start)
         self.code += "Ifz " + t + " goto " + end + "\n"
-        self.code += "jump to " + stmt_lab + "\n"
+        self.code += "jumpto " + stmt_lab + "\n"
         self.code += step_lab + ":\n"
 
     def step_jump(self, args):
         start = self.lstack.pop()
         stmt_lab = self.lstack.pop()
-        self.code += "jump to " + start + "\n"
+        self.code += "jumpto " + start + "\n"
         self.code += stmt_lab + ":\n"
 
     def return_jump(self, args):
         end = self.lstack.pop()
         step_lab = self.lstack.pop()
-        self.code += "jump to " + step_lab + "\n"
+        self.code += "jumpto " + step_lab + "\n"
         self.code += end + ":\n"
         self.loop_stack.pop()
 
     def break_stmt(self, args):
         lab = self.loop_stack[-1]
-        self.code += "jump to " + lab + "\n"
+        self.code += "jumpto " + lab + "\n"
 
     def if_cond(self, args):
         t = self.tstack.pop()
