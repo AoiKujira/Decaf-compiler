@@ -30,8 +30,9 @@ class Test(Transformer):
         self.function_types = {}
         self.function_vars = sym.function_vars
 
-    # def expr(self, args):
-    #    print("expr")
+    def expr(self, args):
+        # print("expr", args)
+        return args[0]
     #
     #     self.code += "here be expression code \n"
     #     name = self.make_temp()
@@ -498,8 +499,8 @@ class Test(Transformer):
         return args
 
     def return_func(self, args):
-        # print("return_func", args)
-        self.code += args[0].children[0] + " \n"
+        print("return_func", args)
+        self.code += "push " + args[0] + " \n"
         return args[0]
 
     # todo func
@@ -517,7 +518,7 @@ class Test(Transformer):
         return t
 
     def print(self, args):
-        print(args)
+        # print(args)
         count = args
         while isinstance(count[0], list):
             count = count[0]
@@ -530,15 +531,12 @@ class Test(Transformer):
         lee = []
         for x in args:
             # print(x.children, "push_args")
-            while isinstance(x.children[0], list):
-                x.children = x.children[0]
-                # x = x.children
             count += 1
-            if str(x.children[0]).count("this"):
-                self.code += x.children[0] + " \n"
+            if str(x[0]).count("this"):
+                self.code += x[0] + " \n"
             else:
-                self.code += "push " + x.children[0] + " \n"
-            lee.append(x.children[0])
+                self.code += "push " + x[0] + " \n"
+            lee.append(x[0])
         return lee
 
     def pop_scope(self, args):
