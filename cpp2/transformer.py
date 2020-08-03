@@ -1,6 +1,5 @@
 import re
 
-from lark import Transformer
 from Symbols import *
 
 
@@ -29,6 +28,7 @@ class Test(Transformer):
         self.var_types = {}
         self.mem_checker = False
         self.function_types = {}
+        self.function_vars = sym.function_vars
 
     # def expr(self, args):
     #    print("expr")
@@ -402,7 +402,6 @@ class Test(Transformer):
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
 
-            # self.code += temp + " = *(" + temp + ")" + "\n"
             return temp
 
     def exp_arr(self, args):
@@ -416,24 +415,29 @@ class Test(Transformer):
         self.code += "init_class\n"
 
     def class_decl(self, args):
-        # print("class decl", args)
-        # print(self.code, "hehe \n\n")
-        # print("class_decl", args)
         before = self.code[:self.code.find("init_class")]
         code = self.code[self.code.find("init_class") + len("init_class") + 1:]
         after = code[code.find("end_class") + len("end_class") + 1:]
         code = code[:code.find("end_class")]
         code = code.replace("init_", args[1] + "_")
+        for x in self.function_vars:
+            if str(x).startswith(args[1] + "_"):
+                for obj in self.function_vars[x][-1::]:
+                    other_code = code[code.find(obj):]
+                    closer = other_code.find(" ")
+                    if other_code.find("\n") < closer:
+                        closer = other_code.find("\n")
+                    obj = other_code[:closer]
+                    code = code.replace(x + ":\n", x + ":\npop " + obj + "\n")
+
         code = code.replace(":\n", ":\npop " + args[1] + "_this\n")
         self.code = before + code + after
 
         while str(self.code).count(args[1] + "_this."):
-            # print(self.code + "\n\n hehe \n \n")
             before = self.code[:self.code.find(args[1] + "_this.")]
             code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
             after = code[code.find("\n") + 1:]
             code = code[:code.find(" ")]
-            # print(self.classes[args[1]].functions)
             offset = self.classes[args[1]].var_offsets[code]
             code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
             code = code[:code.find("\n")]
@@ -443,23 +447,17 @@ class Test(Transformer):
                 code = code[code.find("= ") + 2:]
                 value = code
                 add_code += "*(" + t + ") = " + value + "\n"
-                # add_code +=
             else:
                 add_code += "*(" + t + ") = " + t + "\n"
                 add_code += "push " + t + "\n"
 
             self.code = before + add_code + after
-            # print("class decl ", offset, value)
-
-        # code = code.find()
-        # print("class_decl\n\n", self.code, "end_class_decl\n\n\n")
         return args
 
     def end_class(self, args):
         self.code += "end_class\n"
 
     def function(self, args):
-        print("function", args)
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
             self.function_types[add_to_code] = 'return'

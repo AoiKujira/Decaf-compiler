@@ -19,7 +19,6 @@ class Class:
         self.var_offsets = {}
         self.var_types = {}
         self.functions = {}
-        self.function_vars = {}
         self.parents = []
         self.is_finished = False
 
@@ -29,6 +28,7 @@ class SymbolTable(Transformer):
         super().__init__()
         self.primitives = ["int", "bool", "double", "string"]
         self.classes = {}
+        self.function_vars = {}
         self.has_finished = False
 
     def prep(self):
@@ -44,7 +44,14 @@ class SymbolTable(Transformer):
         return args[0]
 
     def class_decl(self, args):
-        # print(args)
+        # print(args[1])
+        new_function_vars = {}
+        for x in self.function_vars:
+            if str(x).count("init_"):
+                new_function_vars[args[1] + "_" + str(x)[str(x).find("_") + 1:]] = self.function_vars[x]
+            else:
+                new_function_vars[x] = self.function_vars[x]
+        self.function_vars = new_function_vars
         class_name = args[1]
         if not (self.classes.keys().__contains__(class_name)):
             self.classes[class_name] = Class(class_name)
@@ -91,7 +98,13 @@ class SymbolTable(Transformer):
 
     def func_field(self, args):
         lee = args[0].children
-        # print(lee[0], lee[1])
+        if lee[2] is not None and isinstance(lee[2], list):
+            ls = lee[2][0]
+            if isinstance(lee[1], str):
+                name = lee[1]
+            else:
+                name = lee[0]
+            self.function_vars["init_" + name] = ls
         if len(lee) == 3:
             # print(lee, lee[0])
             return Func(lee[0], "void", lee[1])
