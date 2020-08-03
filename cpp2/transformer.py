@@ -197,7 +197,7 @@ class Test(Transformer):
             # print("mem", args)
             # code =
             self.code = self.code[:self.code.find("Lcall " + args[1])]
-            self.code += "push address of " + args[0] + "\n"
+            self.code += "pushaddressof " + args[0] + "\n"
             self.code += "Lcall " + self.var_types[args[0]] + "_" + args[1] + "\n"
             return ""
         self.mem_checker = True
