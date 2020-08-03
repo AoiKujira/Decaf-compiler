@@ -430,7 +430,8 @@ class Test(Transformer):
         for x in self.function_vars:
             before = code[:str(code).find(x)]
             after = code[str(code).find("return from " + x):]
-            code = code[str(code).find(x):][:str(code).find("return from " + x)]
+            code = code[str(code).find(x):]
+            code = code[:str(code).find("return from " + x)]
             # print(code, "\n hehe\n\n")
             # print(self.function_vars[x][::-1])
             if str(x).startswith(args[1] + "_"):
@@ -499,7 +500,7 @@ class Test(Transformer):
         return args
 
     def return_func(self, args):
-        print("return_func", args)
+        # print("return_func", args)
         self.code += "push " + args[0] + " \n"
         return args[0]
 
