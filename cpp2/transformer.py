@@ -29,6 +29,8 @@ class Test(Transformer):
         self.mem_checker = False
         self.function_types = {}
         self.function_vars = sym.function_vars
+        self.in_class = False
+        self.last_code = ''''''
 
     def expr(self, args):
         # print("expr", args)
@@ -198,9 +200,13 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        # print("exp_mem", args, self.var_types)
+
         if isinstance(args[0], str) and dict(self.var_types).__contains__(args[0]) and\
                 dict(self.function_vars).__contains__(self.var_types[args[0]] + "_" + str(args[1])):
+            # print("exp_mem", args, self.var_types)
+            # print(self.last_code, "\n\n\n\nhehe\n\n")
+            # print("mem", args[1])
+            self.code = self.last_code
             self.code = self.code[:self.code.find("Lcall " + args[1])]
             self.code += "pushaddressof " + args[0] + "\n"
             self.code += "Lcall " + self.var_types[args[0]] + "_" + args[1] + "\n"
@@ -335,8 +341,19 @@ class Test(Transformer):
 
     def exp_nine(self, args):
         # print("exp_nine", args, self.var_types)
+        if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1]):
+            # print(args)
+            t = self.make_temp()
+            offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
+            self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
+            self.code += "*(" + t + ") = " + args[0][1] + "\n"
+            return t
         if self.var_types.__contains__(args[0][0]):
-            return args[0][0] + "." + args[0][1]
+            # print(self.last_code, "\n\nhehe\n\n")
+            self.code = self.last_code
+            self.code += "push " + args[0][0] + "\n"
+            self.code += "Lcall init_" + args[0][1] + "\n"
+            return ""
         if str(args).__contains__('exp_this'):
         # /    print("exp_this", args)
             # self.code += 'init_this.' + args[0][1] + " \n"
@@ -420,6 +437,7 @@ class Test(Transformer):
 
     def init_class(self, args):
         self.code += "init_class\n"
+        self.in_class = True
 
     def class_decl(self, args):
         before_here = self.code[:self.code.find("init_class")]
@@ -445,7 +463,7 @@ class Test(Transformer):
         code = code.replace(":\n", ":\npop " + args[1] + "_this\n")
         self.code = before_here + code + after_here
 
-        while str(self.code).count(args[1] + "."):
+        while str(self.code).count(args[1] + "_this."):
             before = self.code[:self.code.find(args[1] + "_this.")]
             code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
             after = code[code.find("\n") + 1:]
@@ -468,6 +486,7 @@ class Test(Transformer):
 
     def end_class(self, args):
         self.code += "end_class\n"
+        self.in_class = False
 
     def function(self, args):
         if isinstance(args[0].children[1], str):
@@ -506,10 +525,14 @@ class Test(Transformer):
 
     # todo func
     def function_call(self, args):
-        # print("function call", args)
+        # print("function call", args, self.in_class)
         try:
-            # if self.var_types[]
-            self.code += "Lcall " + args[0] + "\n"
+            self.last_code = self.code
+            add = args[0]
+            if self.in_class:
+                self.code += "push init_this\n"
+                add = "init_" + add
+            self.code += "Lcall " + add + "\n"
             t = self.make_temp()
             if self.function_types[str(args[0])] == 'return':
                 self.code += "pop " + t + "\n"
@@ -521,7 +544,8 @@ class Test(Transformer):
     def print(self, args):
         # print(args)
         count = args
-        while isinstance(count[0], list):
+        # print("print", count)
+        while len(count) and isinstance(count[0], list):
             count = count[0]
         count = len(count)
         self.code += "Lcall Print " + str(count) + "\n"
@@ -530,14 +554,16 @@ class Test(Transformer):
         # print("push_args", args)
         count = 0
         lee = []
+        # print("pushshhhh", self.code)
         for x in args:
-            # print(x.children, "push_args")
-            count += 1
-            if str(x[0]).count("this"):
-                self.code += x[0] + " \n"
-            else:
-                self.code += "push " + x[0] + " \n"
-            lee.append(x[0])
+            if not isinstance(x, list):
+                # print(x, "push_args")
+                count += 1
+                if str(x).count("this"):
+                    self.code += x + " \n"
+                else:
+                    self.code += "push " + x + " \n"
+                lee.append(x)
         return lee
 
     def pop_scope(self, args):
