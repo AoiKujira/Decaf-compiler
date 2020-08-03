@@ -77,7 +77,7 @@ step_jump:
 for_jump:
 return_jump:
 
-return_stmt: "return" expr? ";"
+return_stmt: "return" expr? ";" -> return_func
 
 
 

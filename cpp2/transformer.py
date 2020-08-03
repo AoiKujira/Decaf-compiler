@@ -1,7 +1,7 @@
 import re
 
 from lark import Transformer
-from Symbols import Class
+from Symbols import *
 
 
 class Scope:
@@ -100,9 +100,13 @@ class Test(Transformer):
         self.code += out + ":\n"
 
     def exp_assign(self, args):
-        # print("exp assign", args)
         if str(args).__contains__('exp_this'):
-            return 'exp_this'
+            # c: Class = self.classes[]
+            # print("exp assign", args, "\n", self.code, "\n\n\n")
+            # print("exp assign", args)
+            # print(self.code)
+            self.code += 'init_this.' + args[0][1] + " = " + args[1] + "\n"
+            return 'init_this'
         if not isinstance(args[0], list):
             # print(args[0])
             if re.match(".*\[.*\]", args[0]):
@@ -193,6 +197,7 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
+        # print(args)
         if isinstance(args[0], str):
             # print("mem", args)
             # code =
@@ -329,9 +334,10 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp nine", args)
         if str(args).__contains__('exp_this'):
-            return 'exp_this'
+            # print("exp nine", args)
+            # self.code += 'init_this.' + args[0][1] + " \n"
+            return 'init_this.' + args[0][1]
         if not self.mem_checker:
             if not isinstance(args[0], str):
                 ret = args[0].children[0]
@@ -411,13 +417,40 @@ class Test(Transformer):
 
     def class_decl(self, args):
         # print("class decl", args)
-        # print(self.code)
+        # print(self.code, "hehe \n\n")
+        # print("class_decl", args)
         before = self.code[:self.code.find("init_class")]
         code = self.code[self.code.find("init_class") + len("init_class") + 1:]
         after = code[code.find("end_class") + len("end_class") + 1:]
         code = code[:code.find("end_class")]
         code = code.replace("init_", args[1] + "_")
+        code = code.replace(":\n", ":\npop " + args[1] + "_this\n")
         self.code = before + code + after
+
+        while str(self.code).count(args[1] + "_this."):
+            # print(self.code + "\n\n hehe \n \n")
+            before = self.code[:self.code.find(args[1] + "_this.")]
+            code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
+            after = code[code.find("\n") + 1:]
+            code = code[:code.find(" ")]
+            # print(self.classes[args[1]].functions)
+            offset = self.classes[args[1]].var_offsets[code]
+            code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
+            code = code[:code.find("\n")]
+            t = self.make_temp()
+            add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
+            if code.count("= "):
+                code = code[code.find("= ") + 2:]
+                value = code
+                add_code += "*(" + t + ") = " + value + "\n"
+                # add_code +=
+            else:
+                add_code += "*(" + t + ") = " + t + "\n"
+                add_code += "push " + t + "\n"
+
+            self.code = before + add_code + after
+            # print("class decl ", offset, value)
+
         # code = code.find()
         # print("class_decl\n\n", self.code, "end_class_decl\n\n\n")
         return args
@@ -426,7 +459,7 @@ class Test(Transformer):
         self.code += "end_class\n"
 
     def function(self, args):
-        # print("here")
+        print("function", args)
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
             self.function_types[add_to_code] = 'return'
@@ -437,9 +470,9 @@ class Test(Transformer):
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
         self.code = before + add_to_code + ":\n" + after
+        return args[0]
 
     def func_field(self, args):
-        # print("func_field", args)
         child = args[0].children
         if isinstance(child[1], str):
             add_to_code = child[1]
@@ -447,7 +480,7 @@ class Test(Transformer):
         else:
             add_to_code = child[0]
             self.function_types[add_to_code] = 'no_return'
-        self.code += "return from " + add_to_code + "\n\n"
+        self.code += "return from init_" + add_to_code + "\n\n"
         # print(self.code.find("init_func"))
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
@@ -455,6 +488,11 @@ class Test(Transformer):
         self.code = before + "init_" + add_to_code + ":\n" + after
         # print("new code: \n", self.code, "\n\n\n")
         return args
+
+    def return_func(self, args):
+        # print("return_func", args)
+        self.code += args[0].children[0] + " \n"
+        return args[0]
 
     # todo func
     def function_call(self, args):
@@ -473,14 +511,19 @@ class Test(Transformer):
     def print(self, args):
         # print(args)
         # todo
-        self.code += "Lcall Print " + str(args[0]) + "\n"
+        self.code += "Lcall Print " + str(len(args)) + "\n"
 
     def push_args(self, args):
+        # print("push_args", args)
         count = 0
         lee = []
         for x in args:
+            # print(x.children[0], "push_args")
             count += 1
-            self.code += "push " + x.children[0] + "\n"
+            if str(x.children[0]).count("this"):
+                self.code += x.children[0] + " \n"
+            else:
+                self.code += "push " + x.children[0] + " \n"
             lee.append(x.children[0])
         return lee
 
@@ -499,7 +542,7 @@ class Test(Transformer):
             self.current_scope.table[ident] = args[0]
 
     def IDENT(self, iden):
-        # print(iden)
+        # pr(iden)
         return str(iden)
 
     def exp_normal(self, args):

@@ -19,6 +19,7 @@ class Class:
         self.var_offsets = {}
         self.var_types = {}
         self.functions = {}
+        self.function_vars = {}
         self.parents = []
         self.is_finished = False
 
@@ -43,6 +44,7 @@ class SymbolTable(Transformer):
         return args[0]
 
     def class_decl(self, args):
+        # print(args)
         class_name = args[1]
         if not (self.classes.keys().__contains__(class_name)):
             self.classes[class_name] = Class(class_name)
