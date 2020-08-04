@@ -215,8 +215,8 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        # print("exp_mem", args)
-        if args[1][1] == "correct_init_this":
+        print("exp_mem", args)
+        if isinstance(args[1], list) and args[1][1] == "correct_init_this":
             # print("heyyyyyy")
             before = self.code[:args[1][2]]
             code = self.code[args[1][2]:]
@@ -227,10 +227,6 @@ class Test(Transformer):
             return [args[1][3], args[1][0], args[0]]
         if isinstance(args[0], str) and dict(self.var_types).__contains__(args[0]) and \
                 dict(self.function_vars).__contains__(self.var_types[args[0]] + "_" + str(args[1])):
-            # print("1")
-            # print("exp_mem", args, self.var_types)
-            # print(self.last_code, "\n\n\n\nhehe\n\n")
-            # print("mem", args[1])
             self.code = self.last_code
             self.code = self.code[:self.code.find("Lcall " + args[1])]
             self.code += "pushaddressof " + args[0] + "\n"
@@ -378,7 +374,7 @@ class Test(Transformer):
             self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
             self.code += "*(" + t + ") = " + args[0][1] + "\n"
             return t
-        if self.var_types.__contains__(args[0][0]):
+        if self.var_types.__contains__(args[0][0]) and self.function_types.__contains__(args[0][1]):
             self.code = self.last_code
             self.code += "push " + args[0][0] + "\n"
             if self.var_types.__contains__(args[0][0]):
@@ -416,6 +412,7 @@ class Test(Transformer):
                 self.tstack.append(args[0])
                 return args[0]
         else:
+            print("memmmmm")
             self.mem_checker = False
             if not isinstance(args[0], list):
                 self.mem_checker = True
