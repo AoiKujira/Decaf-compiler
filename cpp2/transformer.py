@@ -215,18 +215,20 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        print("exp_mem", args)
+        # print("exp_mem", args, self.last_class)
         if isinstance(args[1], list) and args[1][1] == "correct_init_this":
             # print("heyyyyyy")
             before = self.code[:args[1][2]]
             code = self.code[args[1][2]:]
             after = code[code.find("\n"):]
-            code = "push " + args[0]
-            self.code = before + code + after
-            # print(args[1][1])
+            code = "push "
+            if self.last_class != "":
+                self.code = before + code + after
+            # print(args[1][1])+ args[0]
             return [args[1][3], args[1][0], args[0]]
         if isinstance(args[0], str) and dict(self.var_types).__contains__(args[0]) and \
                 dict(self.function_vars).__contains__(self.var_types[args[0]] + "_" + str(args[1])):
+            # print("here3")
             self.code = self.last_code
             self.code = self.code[:self.code.find("Lcall " + args[1])]
             self.code += "pushaddressof " + args[0] + "\n"
@@ -239,8 +241,10 @@ class Test(Transformer):
             for a in args[1]:
                 # print(a)
                 lee.append(a)
+            # print(lee)
             return lee
         else:
+            # print([args[0], args[1]])
             return [args[0], args[1]]
 
     def dec_const(self, args):
@@ -369,16 +373,17 @@ class Test(Transformer):
         if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1])\
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             t = self.make_temp()
-            # print(self.var_types)
+            print("heh", args)
             offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
             self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
-            self.code += "*(" + t + ") = " + args[0][1] + "\n"
+            self.code += t + " = *(" + t + ")\n"
             return t
-        if self.var_types.__contains__(args[0][0]) and self.function_types.__contains__(args[0][1]):
+        if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(args[0][1]):
+            # print("yaaaaaaaaay")
             self.code = self.last_code
-            self.code += "push " + args[0][0] + "\n"
-            if self.var_types.__contains__(args[0][0]):
-                self.code += "Lcall " + self.var_types[args[0][0]] + "_" + args[0][1] + "\n"
+            self.code += "push " + args[0][2] + "\n"
+            if self.var_types.__contains__(args[0][2]):
+                self.code += "Lcall " + self.var_types[args[0][2]] + "_" + args[0][1] + "\n"
             else:
                 self.code += "Lcall init_" + args[0][1] + "\n"
             t = ""
@@ -387,8 +392,10 @@ class Test(Transformer):
                 self.code += "pop " + t + "\n"
             return t
         if str(args).__contains__('exp_this'):
+            print("here")
             return 'init_this.' + args[0][1]
-        if isinstance(args[0], list):
+        if isinstance(args[0], list) and (not self.mem_checker or str(args).__contains__("correct_init_this")):
+            # print("here")
             return args
         if not self.mem_checker:
             if not isinstance(args[0], str):
@@ -412,7 +419,7 @@ class Test(Transformer):
                 self.tstack.append(args[0])
                 return args[0]
         else:
-            print("memmmmm")
+            # print("memmmmm")
             self.mem_checker = False
             if not isinstance(args[0], list):
                 self.mem_checker = True
@@ -420,6 +427,7 @@ class Test(Transformer):
             temp = self.make_temp()
             lee = args[0]
             first = lee[0]
+            # print(self.code)
             for i in range(1, len(lee)):
                 sec = lee[i]
                 t = self.var_types[first]
@@ -467,10 +475,12 @@ class Test(Transformer):
 
     def class_decl(self, args):
         # print("class_decl")
+        # print(self.code, "\n\nhahah\n\n")
         before_here = self.code[:self.code.find("init_class")]
         code = self.code[self.code.find("init_class") + len("init_class") + 1:]
         after_here = code[code.find("end_class") + len("end_class") + 1:]
         code = code[:code.find("end_class")]
+        # print("class_decl", args[1], self.last_class)
         code = code.replace("init_", args[1] + "_")
         for x in self.function_vars:
             before = code[:str(code).find(x)]
@@ -512,6 +522,8 @@ class Test(Transformer):
                 before = found
 
             self.code = before + add_code + after
+
+        # print(self.code, "\n\nhehe\n\n")
         return args
 
     def end_class(self, args):
@@ -532,6 +544,7 @@ class Test(Transformer):
         return args[0]
 
     def func_field(self, args):
+        # print(self.code, "\n\nhehe\n\n")
         child = args[0].children
         if isinstance(child[1], str):
             add_to_code = child[1]
@@ -540,12 +553,9 @@ class Test(Transformer):
             add_to_code = child[0]
             self.function_types[add_to_code] = 'no_return'
         self.code += "return from init_" + add_to_code + "\n\n"
-        # print(self.code.find("init_func"))
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
-        # print("before", before, "\n\n\n")
         self.code = before + "init_" + add_to_code + ":\n" + after
-        # print("new code: \n", self.code, "\n\n\n")
         return args
 
     def return_func(self, args):
@@ -555,24 +565,23 @@ class Test(Transformer):
 
     # todo func
     def function_call(self, args):
-        # print("function call", args, self.in_class)
+        # print("function call", args, self.last_class)
         try:
+            # print("here2")
             self.last_code = self.code
             add = args[0]
             length = len(self.code)
-            if self.in_class:
-                # print(self.function_types)
-                self.code += "push init_this\n"
-                if self.last_class != "":
-                    add = self.last_class + "_" + add
-                else:
-                    add = "init_" + add
+            self.code += "push init_this\n"
+            if self.last_class != "":
+                add = self.last_class + "_" + add
+            else:
+                add = "init_" + add
             self.code += "Lcall " + add + "\n"
             t = self.make_temp()
             if self.function_types[str(args[0])] == 'return':
                 self.code += "pop " + t + "\n"
             t = [args[0], "correct_init_this", length, t]
-            # print("pop", t)
+            # print("pop", self.code, "\n\npop\n\n")
         except:
             t = args[0]
         return t
@@ -585,6 +594,7 @@ class Test(Transformer):
             count = count[0]
         count = len(count)
         self.code += "Lcall Print " + str(count) + "\n"
+        # print(self.code, "\n\nhehe\n\n")
 
     def push_args(self, args):
         # print("push_args", args)
@@ -594,9 +604,10 @@ class Test(Transformer):
         for x in args:
             if not isinstance(x, list):
                 count += 1
-                if not str(x).__contains__("this"):
-                    self.code += "push " + x + " \n"
+                # if not str(x).__contains__("this"):
+                self.code += "push " + x + " \n"
                 lee.append(x)
+        # print(self.code, "\n\nhaha\n\n")
         return lee
 
     def pop_scope(self, args):
