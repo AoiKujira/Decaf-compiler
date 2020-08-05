@@ -15,7 +15,7 @@ void main()
 	int score;
 	Deck deck;
 	p = new Player;
-	//deck = p.d;
+	deck = p.d;
 	p.Init(new Deck);
 	score = p.GetDeck().GetDeck().score;
 }

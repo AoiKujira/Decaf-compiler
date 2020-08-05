@@ -213,6 +213,7 @@ class Test(Transformer):
         try:
             while not (cur.table.keys().__contains__(iden)):
                 cur = cur.parent
+                #print(cur.table, "asdfasf", cur.number)
             self.var_types[iden + str(cur.number)] = cur.table[iden]
             return iden + str(cur.number)
         except:
@@ -536,7 +537,7 @@ class Test(Transformer):
                     if i == len(lee) - 1:
                         self.code += temp + " = " + "*(" + temp + ")\n"
                     continue
-                print(c.var_offsets)
+                print(c.var_offsets, sec)
                 o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
@@ -714,9 +715,10 @@ class Test(Transformer):
         self.current_scope = new_scope
 
     def variable(self, args):
-        if self.scope_counter > 0:
+        if self.current_scope.number > 0:
             ident = args[1]
             self.current_scope.table[ident] = args[0]
+            #print(self.current_scope.table, self.current_scope.number)
 
     def IDENT(self, iden):
         # pr(iden)
