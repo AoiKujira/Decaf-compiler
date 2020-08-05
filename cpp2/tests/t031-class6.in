@@ -13,5 +13,5 @@ void main()
 	Player p;
 	p = new Player;
 	p.Init(new Deck);
-	p.GetDeck().Shuffle();
+	p.GetDeck().GetDeck().Shuffle();
 }

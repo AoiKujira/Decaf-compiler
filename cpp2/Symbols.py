@@ -98,13 +98,13 @@ class SymbolTable(Transformer):
 
     def func_field(self, args):
         lee = args[0].children
-        # print(lee)
-        if lee[2] is not None and isinstance(lee[2], list):
-            ls = lee[2]
+        if lee[2] is not None:
             if isinstance(lee[1], str):
                 name = lee[1]
+                ls = lee[3]
             else:
                 name = lee[0]
+                ls = lee[2]
             self.function_vars["init_" + name] = ls
         # print(self.function_vars)
         if len(lee) == 3:

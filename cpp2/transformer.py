@@ -33,12 +33,13 @@ class Test(Transformer):
         self.last_code = ''''''
         self.new = False
         self.last_class = ""
+        self.function_class = {}
 
     def expr(self, args):
         # print("expr", args)
         # print("normal", args)
         if self.new and not isinstance(args[0], str):
-            self.code += "Lcall " + self.last_class + "_" + args[0][0][1] + "\n"
+        #     self.code += "Lcall " + self.last_class + "_" + args[0][0][1] + "\n"
             self.new = False
             self.last_class = ""
         return args[0]
@@ -103,8 +104,8 @@ class Test(Transformer):
     def if_cond(self, args):
         t = self.tstack.pop()
         lab = self.make_label()
-        print("lab", t)
-        print(self.code)
+        # print("lab", t)
+        # print(self.code)
         self.code += "Ifz " + t + " goto " + lab + "\n"
         self.lstack.append(lab)
 
@@ -215,13 +216,16 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        # print("exp_mem", args, self.last_class)
+        # print("exp_mem", args)
+        if isinstance(args[0], list) and isinstance(args[1], list):
+            return args
         if isinstance(args[1], list) and args[1][1] == "correct_init_this":
-            # print("heyyyyyy")
+            # print("heyyyyyy", self.last_class, args)
+            # print(self.code, "\n\n")
             before = self.code[:args[1][2]]
             code = self.code[args[1][2]:]
             after = code[code.find("\n"):]
-            code = "push "
+            code = "push " + args[0]
             if self.last_class != "":
                 self.code = before + code + after
             # print(args[1][1])+ args[0]
@@ -370,6 +374,28 @@ class Test(Transformer):
         # print(self.code, "\n\nhehe\n\n")
         if not isinstance(args[0], list) and str(args).__contains__("exp_this"):
             return "init_this"
+        if isinstance(args[0], list) and isinstance(args[0][1], list):
+            args = args[0]
+            push = args[0]
+            length = 0
+            # lee = []
+            # print(self.code, "\n\nhihhi\n\n")
+            for i in range(1, str(args).count("correct_init_this") + 1):
+                # print(args)
+                before = self.code[:args[1][2] - length]
+                code = self.code[args[1][2]:]
+                after = code[code.find("\n"):]
+                code = "push " + push
+                push = args[1][3]
+                if self.last_class != "":
+                    self.code = before + code + after
+                length += len("push init_this") - len(push) - 1
+                if len(args) > 2:
+                    if isinstance(args[2][0], list):
+                        args = [args[0], args[2][0], args[2][1]]
+                    else:
+                        args = [args[0], args[2]]
+            return [args[1][3], args[1][0], args[0]]
         if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1])\
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             t = self.make_temp()
@@ -480,7 +506,6 @@ class Test(Transformer):
         code = self.code[self.code.find("init_class") + len("init_class") + 1:]
         after_here = code[code.find("end_class") + len("end_class") + 1:]
         code = code[:code.find("end_class")]
-        # print("class_decl", args[1], self.last_class)
         code = code.replace("init_", args[1] + "_")
         for x in self.function_vars:
             before = code[:str(code).find(x)]
@@ -488,7 +513,7 @@ class Test(Transformer):
             code = code[str(code).find(x):]
             code = code[:str(code).find("return from " + x)]
             # print(code, "\n hehe\n\n")
-            # print(self.function_vars[x][::-1])
+            # print(x, self.function_vars[x])
             if str(x).startswith(args[1] + "_"):
                 for obj in self.function_vars[x]:
                     obj = obj[1]
@@ -497,7 +522,9 @@ class Test(Transformer):
                             obj = y
                     code = code.replace(x + ":\n", x + ":\npop " + obj + "\n")
             code = before + code + after
-        code = code.replace(":\n", ":\npop " + args[1] + "_this\n")
+        # print("class_decl", self.function_vars)
+        for x in self.function_vars:
+            code = code.replace(x + ":\n", x + ":\npop " + args[1] + "_this\n")
         self.code = before_here + code + after_here
 
         while str(self.code).count(args[1] + "_this."):
@@ -531,6 +558,8 @@ class Test(Transformer):
         self.in_class = False
 
     def function(self, args):
+        # print("function", args[0].children)
+        self.function_class[args[0].children[0]] = "global"
         if isinstance(args[0].children[1], str):
             add_to_code = args[0].children[1]
             self.function_types[add_to_code] = 'return'
@@ -571,16 +600,19 @@ class Test(Transformer):
             self.last_code = self.code
             add = args[0]
             length = len(self.code)
-            self.code += "push init_this\n"
             if self.last_class != "":
                 add = self.last_class + "_" + add
             else:
                 add = "init_" + add
+            # print(self.function_class, add[len("init_"):])
+            if not self.function_class.__contains__(add[len("init_"):]):
+                self.code += "push init_this\n"
             self.code += "Lcall " + add + "\n"
             t = self.make_temp()
             if self.function_types[str(args[0])] == 'return':
                 self.code += "pop " + t + "\n"
             t = [args[0], "correct_init_this", length, t]
+            # print(t)
             # print("pop", self.code, "\n\npop\n\n")
         except:
             t = args[0]
