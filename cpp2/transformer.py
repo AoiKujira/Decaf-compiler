@@ -219,7 +219,7 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        # print("exp_mem", self.func_call, args)
+        print("exp_mem", args)
         if self.func_call:
             if isinstance(args[0], str) and len(args[1]) == 4:
                 self.func_call = False
@@ -405,7 +405,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp_nine", self.new, args)
+        print("exp_nine", args)
         # print(self.code, "\n\nhehe\n\n")
         if self.new:
             self.new = False
@@ -413,7 +413,7 @@ class Test(Transformer):
         if not isinstance(args[0], list) and str(args).__contains__("exp_this"):
             return "init_this"
         if isinstance(args[0], list) and isinstance(args[0][1], list) and self.func_call:
-            # print("here")
+            print("here")
             args = args[0]
             push = args[0]
             add = self.var_types[args[0]] + "_" + args[1][0]
@@ -428,12 +428,16 @@ class Test(Transformer):
                 push = args[1][3]
                 if len(args) > 2:
                     if isinstance(args[2][0], list):
+                        print(args)
                         args = [args[0], args[2][0], args[2][1]]
                     else:
-                        args = [args[0], args[2]]
+                        print(args)
+                        args = [add, args[1][3], args[2]]
                 if self.function_types_specific.__contains__(add):
                     add = self.function_types_specific[add] + "_" + args[1][0]
-            return [args[1][3], args[1][0], args[0]]
+            print(add, args, self.mem_checker)
+            # return self.exp_mem(args)
+            # print(args, [args[1][3], args[1][0], args[0]]
         if self.func_call:
             # print("heyyy", args, self.function_types)
             self.func_call = False
@@ -497,7 +501,7 @@ class Test(Transformer):
                 self.tstack.append(args[0])
                 return args[0]
         else:
-            # print("memmmmm")
+            print("memmmmm")
             # print(self.code)
             self.mem_checker = False
             if not isinstance(args[0], list):
@@ -532,6 +536,7 @@ class Test(Transformer):
                     if i == len(lee) - 1:
                         self.code += temp + " = " + "*(" + temp + ")\n"
                     continue
+                print(c.var_offsets)
                 o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
