@@ -127,7 +127,7 @@ end_layer: "ReadLine" "(" ")" -> read_line
          | "NewArray" "(" e_layer1 "," type ")" -> make_array
          | "ReadInteger" "(" ")" -> read_int
          | call
-         | constant
+         | constant -> expr_const
          | "this" -> exp_this
          | "(" e_layer1 ")" -> exp_par
          | "new" IDENT -> new_class

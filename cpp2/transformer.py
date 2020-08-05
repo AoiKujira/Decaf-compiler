@@ -1,5 +1,7 @@
 import re
 
+from lark import Token
+
 from Symbols import *
 
 
@@ -41,7 +43,7 @@ class Test(Transformer):
         # print("expr", args)
         # print("normal", args)
         if self.new and not isinstance(args[0], str):
-        #     self.code += "Lcall " + self.last_class + "_" + args[0][0][1] + "\n"
+            #     self.code += "Lcall " + self.last_class + "_" + args[0][0][1] + "\n"
             self.new = False
             self.last_class = ""
         return args[0]
@@ -225,7 +227,7 @@ class Test(Transformer):
                 self.code += "push " + args[0] + "\n"
                 self.code += "Lcall " + add + "\n"
                 # print(self.function_types)
-                if (self.function_types.__contains__(add) and self.function_types[add] == 'return')\
+                if (self.function_types.__contains__(add) and self.function_types[add] == 'return') \
                         or (self.function_types.__contains__("init_" + args[1][0]) and
                             self.function_types["init_" + args[1][0]] == 'return'):
                     self.code += "pop " + args[1][3] + "\n"
@@ -267,12 +269,14 @@ class Test(Transformer):
     def dec_const(self, args):
         t = self.make_temp()
         dec = args[0]
+        self.var_types[t] = "int"
         self.code += t + " = " + dec + "\n"
         return t
 
     def hex_const(self, args):
         t = self.make_temp()
         dec = int(args[0], 16)
+        self.var_types[t] = "int"
         self.code += t + " = " + str(dec) + "\n"
         return t
 
@@ -370,6 +374,24 @@ class Test(Transformer):
         self.code += t + " = " + args[0] + " || " + args[1] + "\n"
         return t
 
+    def expr_const(self, args):
+        if isinstance(args[0], str):
+            return args[0]
+        if not isinstance(args[0].children[0], Token):
+            return args[0].children[0]
+        ty = args[0].children[0].type
+        print(ty, print(args[0].children[0]))
+        t = self.make_temp()
+        if ty == "STRING_CONSTANT":
+            self.var_types[t] = "string"
+        elif ty == "BOOL_CONSTANT":
+            self.var_types[t] = "bool"
+        elif ty == "int_constant":
+            self.var_types[t] = "int"
+        elif ty == "DOUBLE_INT":
+            self.var_types[t] = "double"
+        self.code += t + " = " + args[0].children[0] + "\n"
+        return t
     def print_stmt(self, args):
         # print(args)
         for arg in args[0]:
@@ -428,7 +450,7 @@ class Test(Transformer):
                 temp = self.make_temp()
                 self.code += "pop " + temp + "\n"
             return temp
-        if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1])\
+        if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1]) \
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             t = self.make_temp()
             # print("heh", args)
@@ -436,7 +458,8 @@ class Test(Transformer):
             self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
             self.code += t + " = *(" + t + ")\n"
             return t
-        if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(args[0][1]):
+        if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(
+                args[0][1]):
             # print("yaaaaaaaaay")
             self.code = self.last_code
             self.code += "push " + args[0][2] + "\n"
@@ -742,5 +765,8 @@ class Test(Transformer):
 
     def make_temp(self):
         t = "tempo" + str(self.tcounter)
+        while self.var_types.keys().__contains__(t):
+            self.tcounter += 1
+            t = "tempo" + str(self.tcounter)
         self.tcounter += 1
         return t
