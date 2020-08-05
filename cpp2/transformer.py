@@ -26,6 +26,7 @@ class Test(Transformer):
         self.tstack = []
         self.lstack = []
         self.loop_stack = []
+        self.is_funcy = False
         self.classes = sym.classes
         self.sym = sym
         self.var_types = {}
@@ -573,7 +574,11 @@ class Test(Transformer):
         return args[0] + "[" + args[1] + "]"
 
     def init_func(self, args):
+        self.is_funcy = True
         self.code += "init_func\n"
+
+    def exit_func(self, args):
+        self.is_funcy = False
 
     def init_class(self, args):
         self.code += "init_class\n"
@@ -738,7 +743,8 @@ class Test(Transformer):
 
     def variable(self, args):
         ident = args[1]
-        self.current_scope.table[ident] = args[0]
+        if self.is_funcy:
+            self.current_scope.table[ident] = args[0]
         # print(self.current_scope.table, self.current_scope.number)
 
     def IDENT(self, iden):
@@ -747,6 +753,7 @@ class Test(Transformer):
 
     def exp_normal(self, args):
         # print("normal", args)
+        self.afterdot = False
         try:
             # print(args[0].children)
             ret = args[0].children[0]

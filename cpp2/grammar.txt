@@ -18,9 +18,9 @@ type: "int" -> int
     | IDENT
     | type /\[[ \n]*\]/
 
-function_decl: type IDENT init_func "(" formals ")" stmt_block
-             | "void" IDENT init_func "(" formals ")" stmt_block
-
+function_decl: type IDENT init_func "(" formals ")" stmt_block exit_func
+             | "void" IDENT init_func "(" formals ")" stmt_block exit_func
+exit_func:
 init_func: -> init_func
 
 formals: variables?
