@@ -231,56 +231,60 @@ class Test(Transformer):
             return iden
 
     def exp_mem(self, args):
-        print("exp_mem", args)
+        lee = []
+        for a in args:
+            if a is not None:
+                lee.append(a)
+        print("exp_mem", lee)
         self.afterdot = False
         if self.func_call:
-            if isinstance(args[0], str) and len(args[1]) == 4:
+            if isinstance(lee[0], str) and len(lee[1]) == 4:
                 self.func_call = False
-                add = self.var_types[args[0]] + "_" + args[1][0]
-                self.code += "push " + args[0] + "\n"
+                add = self.var_types[lee[0]] + "_" + lee[1][0]
+                self.code += "push " + lee[0] + "\n"
                 self.code += "Lcall " + add + "\n"
                 # print(self.function_types)
                 if (self.function_types.__contains__(add) and self.function_types[add] == 'return') \
-                        or (self.function_types.__contains__("init_" + args[1][0]) and
-                            self.function_types["init_" + args[1][0]] == 'return'):
-                    self.code += "pop " + args[1][3] + "\n"
-                return args[1][3]
+                        or (self.function_types.__contains__("init_" + lee[1][0]) and
+                            self.function_types["init_" + lee[1][0]] == 'return'):
+                    self.code += "pop " + lee[1][3] + "\n"
+                return lee[1][3]
             elif self.new:
                 # print(3)
                 # print(self.code)
                 # print(args)
                 self.new = False
                 self.func_call = False
-                self.code += "push " + args[0][0] + "\n"
-                add = args[0][1] + "_" + args[1][0]
+                self.code += "push " + lee[0][0] + "\n"
+                add = lee[0][1] + "_" + lee[1][0]
                 self.code += "Lcall " + add + "\n"
                 if self.function_types[add] == 'return':
-                    self.code += "pop " + args[1][3] + "\n"
-                return args[1][3]
-        if isinstance(args[0], list) and isinstance(args[1], list):
-            return args
-        if isinstance(args[0], str) and dict(self.var_types).__contains__(args[0]) and \
-                dict(self.function_vars).__contains__(self.var_types[args[0]] + "_" + str(args[1])):
+                    self.code += "pop " + lee[1][3] + "\n"
+                return lee[1][3]
+        if isinstance(lee[0], list) and isinstance(lee[1], list):
+            return lee
+        if isinstance(lee[0], str) and dict(self.var_types).__contains__(lee[0]) and \
+                dict(self.function_vars).__contains__(self.var_types[lee[0]] + "_" + str(lee[1])):
             self.code = self.last_code
-            self.code = self.code[:self.code.find("Lcall " + args[1])]
-            self.code += "\npushaddressof " + args[0] + "\n"
-            self.code += "Lcall " + self.var_types[args[0]] + "_" + args[1] + "\n"
-            return args
+            self.code = self.code[:self.code.find("Lcall " + lee[1])]
+            self.code += "\npushaddressof " + lee[0] + "\n"
+            self.code += "Lcall " + self.var_types[lee[0]] + "_" + lee[1] + "\n"
+            return lee
         self.mem_checker = True
-        if isinstance(args[1], list):
+        if isinstance(lee[1], list):
             # print(2)
-            lee = [args[0]]
-            for a in args[1]:
+            lee = [lee[0]]
+            for a in lee[1]:
                 # print(a)
                 if a is not None:
                     lee.append(a)
             # print(lee)
             return lee
-        elif len(args) == 3:
+        elif len(lee) == 3:
             # print([args[0], args[1]])
-            return [args[0], args[2]]
+            return [lee[0], lee[2]]
         else:
-            return [args[0], args[1]]
+            return [lee[0], lee[1]]
 
     def dec_const(self, args):
         t = self.make_temp()
