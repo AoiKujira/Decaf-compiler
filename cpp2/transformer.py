@@ -16,6 +16,7 @@ class Scope:
 class Test(Transformer):
     def __init__(self, sym):
         super().__init__()
+        self.afterdot = False
         self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
         self.scope_counter = 0
@@ -48,7 +49,9 @@ class Test(Transformer):
             self.last_class = ""
         return args[0]
 
-    #
+    def after_dot(self, args):
+        self.afterdot = True
+
     #     self.code += "here be expression code \n"
     #     name = self.make_temp()
     #     self.code += name + " = " + "gotten\n"
@@ -116,6 +119,12 @@ class Test(Transformer):
     def if_out_label(self, args):
         out = self.lstack.pop()
         self.code += out + ":\n"
+
+    def start_vars(self, args):
+        self.is_varring = True
+
+    def stop_vars(self, args):
+        self.is_varring = False
 
     def exp_assign(self, args):
         # print("exp assign", args)
@@ -211,9 +220,11 @@ class Test(Transformer):
         cur = self.current_scope
         # noinspection PyBroadException
         try:
+            if self.afterdot:
+                raise Exception()
             while not (cur.table.keys().__contains__(iden)):
                 cur = cur.parent
-                #print(cur.table, "asdfasf", cur.number)
+                # print(cur.table, "asdfasf", cur.number)
             self.var_types[iden + str(cur.number)] = cur.table[iden]
             return iden + str(cur.number)
         except:
@@ -221,6 +232,7 @@ class Test(Transformer):
 
     def exp_mem(self, args):
         print("exp_mem", args)
+        self.afterdot = False
         if self.func_call:
             if isinstance(args[0], str) and len(args[1]) == 4:
                 self.func_call = False
@@ -260,11 +272,14 @@ class Test(Transformer):
             lee = [args[0]]
             for a in args[1]:
                 # print(a)
-                lee.append(a)
+                if a is not None:
+                    lee.append(a)
             # print(lee)
             return lee
-        else:
+        elif len(args) == 3:
             # print([args[0], args[1]])
+            return [args[0], args[2]]
+        else:
             return [args[0], args[1]]
 
     def dec_const(self, args):
@@ -393,6 +408,7 @@ class Test(Transformer):
             self.var_types[t] = "double"
         self.code += t + " = " + args[0].children[0] + "\n"
         return t
+
     def print_stmt(self, args):
         # print(args)
         for arg in args[0]:
@@ -517,6 +533,7 @@ class Test(Transformer):
                 t = self.var_types[first]
                 c: Class = self.classes[t]
                 # handle array members
+                print(lee)
                 if re.match(".*\[.*\]", sec):
                     name = re.sub("\[.*\]", "", sec)
                     ty = re.sub("\[.*\]", "", c.var_types[name])
@@ -709,16 +726,16 @@ class Test(Transformer):
         self.current_scope = self.current_scope.parent
 
     def push_scope(self, args):
+        self.start_vars = True
         self.scope_counter += 1
         new_scope = Scope(self.current_scope, self.scope_counter)
         self.current_scope.children.append(new_scope)
         self.current_scope = new_scope
 
     def variable(self, args):
-        if self.current_scope.number > 0:
-            ident = args[1]
-            self.current_scope.table[ident] = args[0]
-            #print(self.current_scope.table, self.current_scope.number)
+        ident = args[1]
+        self.current_scope.table[ident] = args[0]
+        # print(self.current_scope.table, self.current_scope.number)
 
     def IDENT(self, iden):
         # pr(iden)

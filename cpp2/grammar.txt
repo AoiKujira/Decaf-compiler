@@ -40,7 +40,7 @@ interface_decl: "interface" IDENT "{" prototype* "}"
 prototype: type IDENT "(" formals ")" ";"
          | "void" IDENT "(" formals ")" ";"
 
-stmt_block: push_scope "{" variable_decl* stmt* "}" pop_scope
+stmt_block:  push_scope "{" variable_decl* stmt* "}" pop_scope
 push_scope: -> push_scope
 pop_scope: -> pop_scope
 
@@ -117,8 +117,9 @@ e_layer8: "-"e_layer8 -> exp_neg
         | "!"e_layer8 -> exp_not
         | e_layer9 -> exp_nine
 
-e_layer9:  e_layer10 "." e_layer9 -> exp_mem
+e_layer9:  e_layer10 "." after_dot e_layer9 -> exp_mem
         | e_layer10 -> exp_normal
+after_dot:
 
 e_layer10:  e_layer10 "[" e_layer1 "]" -> exp_arr
         | end_layer -> exp_normal
