@@ -139,7 +139,7 @@ def mipsGen(input_code):
             if instruction[2] == '=':
                 if instruction[3] == 'allocate':
                     if check_int(instruction[4]):#assign t1 = allocate 6
-                        if not instruction[1] in vals.keys():
+                        if not instruction[1] in vars.keys():
                             mipsDataCode += instruction[1] + ': ' + '.word\n'
                             vars[instruction[1]] = 0
                         allocLable = '___' + instruction[1] + '___'
@@ -150,7 +150,7 @@ def mipsGen(input_code):
                         mipsTextCode += 'syscall\n'
                         mipsTextCode += 'sw $v0, ' + instruction[1] + '\n'
                     else:#assign t1 = allocate b
-                        if not instruction[1] in vals.keys():
+                        if not instruction[1] in vars.keys():
                             mipsDataCode += instruction[1] + ': ' + '.word\n'
                             vars[instruction[1]] = 0
                         mipsTextCode += 'lw	$t9, ' + instruction[4] + '\n'
