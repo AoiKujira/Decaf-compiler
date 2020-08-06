@@ -504,6 +504,7 @@ class Test(Transformer):
                 add = args[0][1]
             else:
                 add = args[0][0]
+                # print(self.function_types.__contains__(self.classes))
                 if self.function_types.__contains__("init_" + add):
                     self.code += "push init_this\n"
             self.code += "Lcall init_" + add + "\n"
@@ -697,6 +698,15 @@ class Test(Transformer):
         new_code = ""
         while total_code.count("\n"):
             line = total_code[:total_code.find("\n") + len("\n")]
+
+            boolean = line.__contains__("Lcall")
+            cl = self.classes[args[1]].parents[1]
+            boolean = boolean and isinstance(cl, str)
+            boolean = boolean and line[len("Lcall "):].__contains__(cl + "_")
+            if boolean:
+                # todo make sure
+                new_code += "push " + args[1] + "_this\n"
+
             total_code = total_code[total_code.find("\n") + len("\n"):]
             if line.count(args[1] + "_this."):
                 code = line[line.find(args[1] + "_this.") + len(args[1] + "_this."):]
