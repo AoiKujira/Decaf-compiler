@@ -929,7 +929,7 @@ class Test(Transformer):
 
     def read_line(self, args):
         t = self.make_temp()
-        self.code += t + " = Readline()" + "\n"
+        self.code += t + " = ReadLine()" + "\n"
         return t
 
     def read_int(self, args):
