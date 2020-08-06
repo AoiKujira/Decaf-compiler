@@ -443,7 +443,7 @@ class Test(Transformer):
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
-        if self.func_call and isinstance(args[0], list) and isinstance(args[0][1], list)\
+        if self.func_call and isinstance(args[0], list) and isinstance(args[0][1], list) \
                 and isinstance(args[0][1][0], str):
             self.left = True
             new_lee = [args[0][0]]
@@ -678,11 +678,11 @@ class Test(Transformer):
                             obj = y
                     code = code.replace(x + ":\n", x + ":\npop " + obj + "\n")
             code = before + code + after
-        # print("class_decl", self.function_vars)
-        for x in self.function_vars:
+
+        for x in self.function_types:
             code = code.replace(x + ":\n", x + ":\npop " + args[1] + "_this\n")
         self.code = before_here + code + after_here
-
+        # print(self.code, "\n\nhehe\n\n")
         # print(args[1], self.classes[args[1]].var_offsets)
         for x in self.classes[args[1]].var_offsets:
             # print(x, self.code.count("\n" + x + " "), args[1] + "_this." + x)
@@ -713,6 +713,10 @@ class Test(Transformer):
                     add_code += "push " + t + "\n"
                 new_code += add_code
             else:
+                if isinstance(self.classes[args[1]].parents[1], str) and line.__contains__(":") and \
+                        line.__contains__(self.classes[args[1]].parents[1]):
+                    # print("class_decl", self.classes[args[1]].parents)
+                    line += line.replace(self.classes[args[1]].parents[1], self.classes[args[1]].parents[0])
                 new_code += line
 
         self.code = new_code
