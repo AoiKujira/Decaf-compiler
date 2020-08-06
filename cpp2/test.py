@@ -27,4 +27,5 @@ if __name__ == "__main__":
     trans.transform(tree)
     # print(trans.var_types)
     print(trans.code)
+    #print(mipsGen(trans.code))
     # print(sym.classes["A"].var_offsets)
