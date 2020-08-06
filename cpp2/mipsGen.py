@@ -150,10 +150,10 @@ def mipsGen(input_code):
             if instruction[4] == '&&':#
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__1__\n'
+                mipsTextCode += 'bnez $t1, __branch__here__if__arg1__is__1__\n'
                 mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
                 mipsTextCode += '__branch__here__if__arg1__is__1__:\n'
-                mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__1__\n'
+                mipsTextCode += 'bnez $t2, __branch__here__if__arg2__isAlso__1__\n'
                 mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
                 mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
                 mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
