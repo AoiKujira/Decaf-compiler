@@ -41,6 +41,7 @@ class Test(Transformer):
         self.function_class = {}
         self.func_call = False
         self.left = False
+        self.this_class_vars = {}
 
     def expr(self, args):
         # print("expr", args)
@@ -162,6 +163,7 @@ class Test(Transformer):
             first = lee[0]
             for i in range(1, len(lee)):
                 sec = lee[i]
+                print(self.this_class_vars)
                 t = self.var_types[first]
                 c: Class = self.classes[t]
                 # handle array members
@@ -430,7 +432,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args)
+        # print("exp_nine", args)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -573,8 +575,13 @@ class Test(Transformer):
             # print(self.code)
             for i in range(1, len(lee)):
                 sec = lee[i]
-                t = self.var_types[first]
-                c: Class = self.classes[t]
+                # print(self.this_class_vars)
+                try:
+                    t = self.var_types[first]
+                    c: Class = self.classes[t]
+                except:
+                    t = self.this_class_vars[first]
+                    c: Class = self.classes[t]
                 # handle array members
                 # print(lee)
                 if re.match(".*\[.*\]", sec):
@@ -621,6 +628,7 @@ class Test(Transformer):
     def init_class(self, args):
         self.code += "init_class\n"
         self.in_class = True
+        self.this_class_vars = {}
 
     def class_decl(self, args):
         # print("class_decl")
@@ -728,6 +736,11 @@ class Test(Transformer):
         self.code = before + add_to_code + ":\n" + after
         return args[0]
 
+    def var_field(self, args):
+        # print("variable", args[0].children[0])
+        self.this_class_vars[args[0].children[0][1]] = args[0].children[0][0]
+        return args
+
     def func_field(self, args):
         child = args[0].children
         # print("function", child)
@@ -803,6 +816,7 @@ class Test(Transformer):
         ident = args[1]
         if self.is_funcy:
             self.current_scope.table[ident] = args[0]
+        return args
         # print(self.current_scope.table, self.current_scope.number)
 
     def IDENT(self, iden):
