@@ -142,19 +142,23 @@ class Test(Transformer):
             if re.match(".*\[.*\]", args[0]):
                 name = re.sub("\[.*\]", "", args[0])
                 ty = self.var_types[name]
+                if re.match(".*(\[.*\])", ty):
+                    ty = ty.strip("[]")
                 if ["int", "bool", "double", "string"].__contains__(ty):
                     size = 4
                 else:
                     size = self.classes[ty].size
                 ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
                 tem = self.make_temp()
-                self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                self.code += tem + " = " + name + " + " + tem + "\n"
-                self.code += "*(" + tem + ")" + " = " + args[1] + "\n"
+                self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
+                self.code += "arith " + tem + " = " + name + " + " + tem + "\n"
+                self.code += "assign " + "*(" + tem + ")" + " = " + args[1] + "\n"
+                self.var_types[tem] = "int"
                 return args[1]
             # print("self.code", self.code, "\n\nhehe\n\n")
             # print("exp_nine", args)
-            self.code += args[0] + " = " + args[1] + "\n"
+            self.var_types[args[0]] = self.var_types[args[1]]
+            self.code += "assign " + args[0] + " = " + args[1] + "\n"
             return args[1]
         else:
             self.mem_checker = False
@@ -173,6 +177,7 @@ class Test(Transformer):
                 # handle array members
                 if re.match(".*\[.*\]", sec):
                     name = re.sub("\[.*\]", "", sec)
+                    # print(c.name)
                     ty = re.sub("\[.*\]", "", c.var_types[name])
                     # print(name, ty)
                     if ["int", "bool", "double", "string"].__contains__(ty):
@@ -184,21 +189,22 @@ class Test(Transformer):
                     ind = hold.group(1).strip("[").strip("]")
                     o = c.var_offsets[name]
                     tem = self.make_temp()
-                    self.code += tem + " = " + first + " + " + str(o) + "\n"
-                    self.code += temp + " = " + "*(" + tem + ")" + "\n"
-                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += temp + " = " + temp + " + " + tem + "\n"
+                    self.code += "arith " + tem + " = " + first + " + " + str(o) + "\n"
+                    self.code += "assign " + temp + " = " + "*(" + tem + ")" + "\n"
+                    self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += "arith " + temp + " = " + temp + " + " + tem + "\n"
+                    self.var_types[tem] = "int"
                     self.var_types[temp] = ty
                     first = temp
                     continue
 
                 o = c.var_offsets[sec]
-                self.code += temp + " = " + first + " + " + str(o) + "\n"
+                self.code += "arith " + temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1:
-                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
-            self.code += "*(" + temp + ")" + " = " + args[1] + "\n"
+            self.code += "assign " + "*(" + temp + ")" + " = " + args[1] + "\n"
             return args[1]
 
     def new_class(self, args):
@@ -206,7 +212,8 @@ class Test(Transformer):
         self.last_class = args[0]
         size = self.classes[args[0]].size
         t = self.make_temp()
-        self.code += t + " = Allocate " + str(size) + "\n"
+        self.code += "assign " + t + " = allocate " + str(size) + "\n"
+        self.var_types[t] = "int"
         self.new = True
         # print(self.code, "\n\nhehe\n\n")
         return [t, args[0]]
@@ -218,8 +225,9 @@ class Test(Transformer):
         else:
             size = self.classes[ty].size
         t = self.make_temp()
-        self.code += t + " = " + args[0] + " * " + str(size) + "\n"
-        self.code += t + " = Allocate " + t + "\n"
+        self.code += "arith " + t + " = " + args[0] + " * " + str(size) + "\n"
+        self.code += "assign " + t + " = allocate " + t + "\n"
+        self.var_types[t] = "int"
         return t
 
     def exp_ident(self, args):
@@ -316,66 +324,104 @@ class Test(Transformer):
     def exp_not(self, args):
         t = self.make_temp()
         # typecheck here
-        self.code += t + " = not(" + args[0] + ")\n"
+        self.var_types[t] = "bool"
+        self.code += "arith " + t + " = not(" + args[0] + ")\n"
         return t
 
     def exp_neg(self, args):
         t = self.make_temp()
         # typecheck here
-        self.code += t + " = (-1) * " + args[0] + "\n"
+        if self.var_types[args[0]] == "int":
+            self.code += "arith " + t + " = (-1) * " + args[0] + "\n"
+            self.var_types[t] = "int"
+        elif self.var_types[args[0]] == "double":
+            self.var_types[t] = "double"
+            self.code += "arith " + t + " = (-1) f* " + args[0] + "\n"
         return t
 
     def exp_mul(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " * " + args[1] + "\n"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f* " + args[1] + "\n"
+            self.var_types[t] = "double"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " * " + args[1] + "\n"
+            self.var_types[t] = "int"
         return t
 
     def exp_div(self, args):
         t = self.make_temp()
         # typecheck here
-        self.code += t + " = " + args[0] + " / " + args[1] + "\n"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f/ " + args[1] + "\n"
+            self.var_types[t] = "double"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " / " + args[1] + "\n"
+            self.var_types[t] = "int"
         return t
 
     def exp_rem(self, args):
         t = self.make_temp()
         # typecheck here
-        self.code += t + " = " + args[0] + " % " + args[1] + "\n"
+        self.code += "arith " + t + " = " + args[0] + " % " + args[1] + "\n"
+        self.var_types[t] = "int"
         return t
 
     def exp_sum(self, args):
         t = self.make_temp()
         # typecheck here
-        #
-        self.code += t + " = " + str(args[0]) + " + " + str(args[1]) + "\n"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f+ " + args[1] + "\n"
+            self.var_types[t] = "double"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " + " + args[1] + "\n"
+            self.var_types[t] = "int"
         return t
 
     def exp_sub(self, args):
         t = self.make_temp()
         # typecheck here
-        self.code += t + " = " + args[0] + " - " + args[1] + "\n"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f- " + args[1] + "\n"
+            self.var_types[t] = "double"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " - " + args[1] + "\n"
+            self.var_types[t] = "int"
         return t
 
     def exp_lt(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " < " + args[1] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f< " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " < " + args[1] + "\n"
         return t
 
     def exp_gt(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[1] + " < " + args[0] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f> " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " > " + args[1] + "\n"
         return t
 
     def exp_ge(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[1] + " <= " + args[0] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f<= " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " <= " + args[1] + "\n"
         return t
 
     def exp_equal(self, args):
@@ -383,28 +429,38 @@ class Test(Transformer):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " == " + args[1] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f== " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " == " + args[1] + "\n"
         return t
 
     def exp_unequal(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " != " + args[1] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f== " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " == " + args[1] + "\n"
         return t
 
     def exp_and(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " && " + args[1] + "\n"
+        self.code += "arith " + t + " = " + args[0] + " && " + args[1] + "\n"
+        self.var_types[t] = "bool"
         return t
 
     def exp_or(self, args):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " || " + args[1] + "\n"
+        self.code += "arith " + t + " = " + args[0] + " || " + args[1] + "\n"
+        self.var_types[t] = "bool"
         return t
 
     def expr_const(self, args):
@@ -438,7 +494,11 @@ class Test(Transformer):
         t = self.make_temp()
         #
         # typecheck here
-        self.code += t + " = " + args[0] + " <= " + args[1] + "\n"
+        self.var_types[t] = "bool"
+        if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
+            self.code += "arith " + t + " = " + args[0] + " f<= " + args[1] + "\n"
+        else:
+            self.code += "arith " + t + " = " + args[0] + " <= " + args[1] + "\n"
         return t
 
     def exp_nine(self, args):
@@ -558,16 +618,17 @@ class Test(Transformer):
             else:
                 if re.match(".*\[.*\]", args[0]):
                     name = re.sub("\[.*\]", "", args[0])
-                    ty = self.var_types[name]
+                    ty = self.var_types[name].strip("[]")
                     if ["int", "bool", "double", "string"].__contains__(ty):
                         size = 4
                     else:
                         size = self.classes[ty].size
                     ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
                     tem = self.make_temp()
-                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += tem + " = " + name + " + " + tem + "\n"
-                    self.code += tem + " = " + "*(" + tem + ")" + "\n"
+                    self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += "arith " + tem + " = " + name + " + " + tem + "\n"
+                    self.code += "assign " + tem + " = " + "*(" + tem + ")" + "\n"
+                    self.var_types[tem] = ty
                     return tem
                 self.tstack.append(args[0])
                 return args[0]
@@ -606,21 +667,22 @@ class Test(Transformer):
                     ind = hold.group(1).strip("[").strip("]")
                     o = c.var_offsets[name]
                     tem = self.make_temp()
-                    self.code += tem + " = " + first + " + " + str(o) + "\n"
-                    self.code += temp + " = " + "*(" + tem + ")" + "\n"
-                    self.code += tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += temp + " = " + temp + " + " + tem + "\n"
+                    self.code += "arith " + tem + " = " + first + " + " + str(o) + "\n"
+                    self.code += "arith " + temp + " = " + "*(" + tem + ")" + "\n"
+                    self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
+                    self.code += "arith " + temp + " = " + temp + " + " + tem + "\n"
                     self.var_types[temp] = ty
+                    self.var_types[tem] = "int"
                     first = temp
                     if i == len(lee) - 1:
-                        self.code += temp + " = " + "*(" + temp + ")\n"
+                        self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     continue
                 # print(c.var_offsets, sec)
                 o = c.var_offsets[sec]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
                         i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
-                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
             return temp

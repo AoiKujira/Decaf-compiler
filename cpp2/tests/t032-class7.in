@@ -1,4 +1,5 @@
 class Cow {
+    int[] sag;
    int Moo(int i, int j, int k, int l, int m, int n) {
 	     return i +j + k + l + m + n;
    }
@@ -15,4 +16,5 @@ void main()
       Cow c;
       c = new Cow;
       c.Method(6);
+      c.sag[6] = 87;
 }

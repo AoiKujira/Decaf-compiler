@@ -18,9 +18,14 @@ void main()
 {
 	Player p;
 	int score;
+	int[] gool;
 	Deck deck;
+	string goose;
 	p = new Player;
 	deck = p.d;
+	score = 5;
+	gool[6] = 76;
+	goose = "adfa";
 	p.Init(new Deck);
 	deck.Init();
 	//p.d.score;
