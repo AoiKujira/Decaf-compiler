@@ -11,6 +11,8 @@ assign a s= b
 assign a b= b
 //regular
 assign a = b
+assign a = allocate 6
+assign a = allocate t [panics]
 ----------arith-------------
 arith a = b f+ c
 arith a = b + c
@@ -32,17 +34,24 @@ Lcall lable
 Lable lable:
 return
 print lable
-readInt
+readInt()
+readLine()
 ---------------------
 
 '''
 def mipsGen(input_code):
     instructions = input_code.split('\n')
-    mipsCode = ''
+    mipsDataCode = '.data\n'
+    mipsTextCode = '.text\nglobl main\n'
+    mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
+    mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro print_int($reg)\nli	$v0, 1\nmove 	$a0, $reg\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
     for instruction in instructions:
         if instruction == '':
             continue
-        mipsCode += '#' + instruction + '\n'
+        mipsTextCode += '#' + instruction + '\n'
         instruction = instruction.split()
         if instruction[0] == 'arith':#arith a = b Xop c
             if instruction[4] == '+':#add
@@ -80,8 +89,22 @@ def mipsGen(input_code):
         #what options are there?
         if instruction[0] == 'Print':#Print a
             pass
-        if instruction[0] == 'assign':
-            pass
+        if instruction[0] == 'assign':#assign a f= b
+            if instruction[2] == 'f=':
+                mipsDataCode += instruction[1] + ': ' + '.double\n'
+            if instruction[2] == 'i=':
+                mipsDataCode += instruction[1] + ': ' + '.word\n'
+            if instruction[2] == 's=':
+                pass
+                # mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
+                # mipsTextCode += instruction[1] + ': ' + '.asciiz \"' + instruction[3] + '\"\n'
+            if instruction[2] == 'b=':
+                mipsDataCode += instruction[1] + ': ' + '.byte\n'
+            if instruction[2] == '=':
+                if instruction[1][0] == '*':
+                    pass
+                else:
+                    pass
         if instruction[0] == 'getAddress':
             pass
         if instruction[0] == 'return':
@@ -90,4 +113,4 @@ def mipsGen(input_code):
             pass
         if instruction[0] == '':
             pass
-    return '=============mipsGen under construction===============\n' + mipsCode
+    return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
