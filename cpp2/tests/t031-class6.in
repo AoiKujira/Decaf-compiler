@@ -1,6 +1,9 @@
 class Deck {
     int score;
+    //Deck d;
+    //Player p;
 	void Shuffle() {Print("Shuffle");}
+	Deck GetDeck() {return this;}
 }
 
 class Player {
@@ -17,5 +20,8 @@ void main()
 	p = new Player;
 	deck = p.d;
 	p.Init(new Deck);
-	score = p.GetDeck().GetDeck().score;
+	//p.d.score;
+	//deck = p.GetDeck().score[1];
+	deck = p.d.GetDeck().score[1];
+	//deck = p.d.d.GetDeck().p.d;
 }

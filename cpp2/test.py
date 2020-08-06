@@ -25,6 +25,6 @@ if __name__ == "__main__":
     #print(sym.classes["C"].functions["do_job"].vars)
     trans = Test(sym)
     trans.transform(tree)
-    print(trans.var_types)
+    # print(trans.var_types)
     print(trans.code)
     # print(sym.classes["A"].var_offsets)
