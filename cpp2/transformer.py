@@ -157,8 +157,11 @@ class Test(Transformer):
                 self.var_types[tem] = "int"
                 return args[1]
             # print("self.code", self.code, "\n\nhehe\n\n")
-            # print("exp_nine", args)
-            self.var_types[args[0]] = self.var_types[args[1]]
+            # print("exp_nine", args, self.var_types)
+            try:
+                self.var_types[args[0]] = self.var_types[args[1]]
+            except:
+                self.var_types[args[1]] = self.var_types[args[0]]
             self.code += "assign " + args[0] + " = " + args[1] + "\n"
             return args[1]
         else:
@@ -521,6 +524,8 @@ class Test(Transformer):
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
+        if isinstance(args[0], str):
+            return args[0]
         if self.func_call and isinstance(args[0], list) and isinstance(args[0][1], list) \
                 and isinstance(args[0][1][0], str):
             self.left = True
@@ -541,7 +546,7 @@ class Test(Transformer):
             # print(2)
             return "init_this"
         if isinstance(args[0], list) and isinstance(args[0][1], list) and self.func_call:
-            # print(3)
+            print(3, args)
             self.func_call = False
             args = args[0]
             args = [args[0], args[1][0], args[1][1]]
@@ -564,12 +569,15 @@ class Test(Transformer):
                         args = [args[0], args[2][0], args[2][1]]
                     else:
                         args = [args[1][3], args[2]]
+                print(args, add)
                 if self.function_types_specific.__contains__(add):
                     add = self.function_types_specific[add] + "_" + args[1][0]
             if isinstance(args[1], str):
                 self.var_types[args[0]] = type
                 args = [args]
+            # elif isinstance(args)
             else:
+                # print(args)
                 args = [args[1][3]]
             # print(args, self.var_types)
             # args = [[args[1][3], args[2]]]
@@ -703,8 +711,12 @@ class Test(Transformer):
             return temp
 
     def exp_arr(self, args):
-        # print(args)
-        return args[0] + "[" + args[1] + "]"
+        print("exp_arr", args)
+        # print("\n\nhehe\n\n", self.code)
+        try:
+            return args[0] + "[" + args[1] + "]"
+        except:
+            return args
 
     def init_func(self, args):
         self.is_funcy = True

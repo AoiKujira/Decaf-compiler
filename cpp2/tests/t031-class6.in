@@ -1,10 +1,16 @@
-class Deck {
+class Score {
     int score;
+    int GetScore() { return score; }
+}
+
+class Deck {
+    Score [] score;
     //Deck d;
     //Player p;
     void Init() {score = 0;}
 	void Shuffle() {Print("Shuffle");}
 	Deck GetDeck() {return this;}
+    Score GetScore() {return score;}
 }
 
 class Player {
@@ -30,6 +36,7 @@ void main()
 	deck.Init();
 	//p.d.score;
 	//deck = p.GetDeck().score[1];
-	deck = p.d.GetDeck().score[1];
+	//score = p.d.GetDeck().GetDeck().GetScore().GetScore(); //['tempo25', ['GetScore', 'correct_init_this', 1493, 'tempo26']]
+	score = p.d.GetDeck().GetScore()[1].score;
 	//deck = p.d.d.GetDeck().p.d;
 }
