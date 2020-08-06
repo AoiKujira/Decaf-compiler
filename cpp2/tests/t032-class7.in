@@ -14,6 +14,7 @@ class Cow {
 void main()
 {
       Cow c;
+      Print(goo);
       c = new Cow;
       c.Method(6);
       c.sag[6] = 87;

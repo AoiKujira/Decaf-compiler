@@ -17,6 +17,7 @@ class Test(Transformer):
     def __init__(self, sym):
         super().__init__()
         self.afterdot = False
+        self.is_printing = False
         self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
         self.scope_counter = 0
@@ -486,9 +487,23 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        # print(args)
-        for arg in args[0]:
-            self.code += "Print " + arg + "\n"
+        #print(args)
+        for arg in args[1]:
+            if self.var_types[arg] == "double":
+                self.code += "Printf " + arg + "\n"
+            elif self.var_types[arg] == "string":
+                self.code += "Prints " + arg + "\n"
+            elif self.var_types[arg] == "bool":
+                self.code += "Printb " + arg + "\n"
+            else:
+                self.code += "Printi " + arg + "\n"
+
+
+    def print_begin(self, args):
+        self.is_printing = True
+
+    def print_end(self, args):
+        self.is_printing = False
 
     def exp_le(self, args):
         t = self.make_temp()
@@ -879,11 +894,13 @@ class Test(Transformer):
         count = 0
         lee = []
         # print("pushshhhh", self.code)
+
         for x in args:
             if not isinstance(x, list):
-                count += 1
-                # if not str(x).__contains__("this"):
-                self.code += "push " + x + " \n"
+                if not self.is_printing:
+                    count += 1
+                    # if not str(x).__contains__("this"):
+                    self.code += "push " + x + " \n"
                 lee.append(x)
         # print(self.code, "\n\nhaha\n\n")
         return lee

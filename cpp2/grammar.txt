@@ -81,7 +81,9 @@ return_stmt: "return" expr? ";" -> return_func
 
 
 
-print_stmt: "Print" "(" exprs ")" ";" -> print
+print_stmt: "Print" print_begin "(" exprs ")" print_end ";"
+print_begin:
+print_end:
 
 expr: e_layer1
 
