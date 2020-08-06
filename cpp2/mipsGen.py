@@ -14,7 +14,7 @@ assign a = b
 assign *(a) = b
 assign a = *(b)
 assign a = allocate 6
-assign a = allocate t [panics]
+assign a = allocate t
 ----------arith-------------
 arith a = b f+ c
 arith a = b + c
@@ -35,7 +35,10 @@ pop lable
 Lcall lable
 Lable lable:
 return
-print lable
+Printf lable
+Printb lable
+Printi lable
+Prints lable
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
 ---------------------
@@ -96,8 +99,18 @@ def mipsGen(input_code):
         if instruction[0] == 'Lcall':#Lcall lable
             pass
         #what options are there?
-        if instruction[0] == 'Print':#Print a
-            pass
+        if instruction[0] == 'Printf':#Printf a
+            mipsTextCode += 'l.d $f9, ' + instruction[1] + '\n'
+            print_double($f9)
+        if instruction[0] == 'Prints':#Prints a
+            mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
+            print_string($t9)
+        if instruction[0] == 'Printi':#Printi a
+            mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
+            print_int($t9)
+        if instruction[0] == 'Printb':#Printb a
+            mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
+            print_int($t9)
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
                 mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
@@ -154,7 +167,7 @@ def mipsGen(input_code):
                         vars[instruction[1]] = 0
                     mipsTextCode += 'la $t9, ' + instruction[3][2:-1] + '\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
-                else:#assign t1 = *t2
+                else:#assign t1 = t2
                     if not instruction[1] in vars.keys():
                         mipsDataCode += instruction[1] + ': ' + '.word\n'
                         vars[instruction[1]] = 0
