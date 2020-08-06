@@ -5,12 +5,13 @@ there are also instructions for double and single
 ================================================================================
 -----------assign----------
 //constant
-assign a f= b
-assign a i= b
-assign a s= b
-assign a b= b
+assign a f= 1.2
+assign a i= 12
+assign a s= "fwrefwerf"
+assign a b= false
 //regular
 assign a = b
+assign *(a) = b
 assign a = allocate 6
 assign a = allocate t [panics]
 ----------arith-------------
@@ -34,20 +35,23 @@ Lcall lable
 Lable lable:
 return
 print lable
-readInt()
-readLine()
+ReadInt t = ReadInt()
+ReadLine t = ReadLine()
 ---------------------
 
 '''
 def mipsGen(input_code):
+    vars = {}
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsTextCode = '.text\nglobl main\n'
+    mipsTextCode += '################ MACROS ################\n'
     mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
-    mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro print_int($reg)\nli	$v0, 1\nmove 	$a0, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
+    mipsTextCode += '########################################\n'
     for instruction in instructions:
         if instruction == '':
             continue
@@ -89,18 +93,28 @@ def mipsGen(input_code):
         #what options are there?
         if instruction[0] == 'Print':#Print a
             pass
-        if instruction[0] == 'assign':#assign a f= b
+        if instruction[0] == 'assign':#assign a f= 1.2
             if instruction[2] == 'f=':
-                mipsDataCode += instruction[1] + ': ' + '.double\n'
-            if instruction[2] == 'i=':
+                if instruction[1] in vars.keys():
+                    vars[instruction[1]] += 1
+                    instruction[1] += '___' + vars[instruction[1]]
+                mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
+                vars[instruction[1]] = 0
+            if instruction[2] == 'i=':#assign a i= 12
+                if instruction[1] in vars.keys():
+                    vars[instruction[1]] += 1
+                    instruction[1] += '___' + vars[instruction[1]]
+                mipsDataCode += instruction[1] + ': ' + '.word ' + instruction[3] + '\n'
+                vars[instruction[1]] = 0
+            if instruction[2] == 's=':#assign a s= "fwrefwerf"
+                if instruction[1] in vars.keys():
+                    vars[instruction[1]] += 1
+                    instruction[1] += '___' + vars[instruction[1]]
+                mipsDataCode += instruction[1] + ': ' + '.asciiz ' + instruction[3] + '\n'
+                vars[instruction[1]] = 0
+            if instruction[2] == 'b=':#assign a b= false
                 mipsDataCode += instruction[1] + ': ' + '.word\n'
-            if instruction[2] == 's=':
-                pass
-                # mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
-                # mipsTextCode += instruction[1] + ': ' + '.asciiz \"' + instruction[3] + '\"\n'
-            if instruction[2] == 'b=':
-                mipsDataCode += instruction[1] + ': ' + '.byte\n'
-            if instruction[2] == '=':
+            if instruction[2] == '=':#assign t1 = t2
                 if instruction[1][0] == '*':
                     pass
                 else:
@@ -111,6 +125,17 @@ def mipsGen(input_code):
             pass
         if instruction[0] == 'Allocate':
             pass
+        if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
+            mipsDataCode += instruction[1] + ': ' + '.word\n'
+            mipsTextCode += 'read_int($t9)\n'
+            mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
+        if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
+            mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
+            mipsTextCode += 'la $t9, ' + instruction[1] + '\n'
+            mipsTextCode += 'read_string($t9)\n'
         if instruction[0] == '':
             pass
+        if instruction[0] == '':
+            pass
+
     return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
