@@ -9,8 +9,9 @@ class Deck {
 
 class Player {
 	Deck d;
-	void Init(Deck dj) { this.d = dj; dj = d;}
+	void Init(Deck dj) { d = dj; dj = d;}
 	Deck GetDeck() { return d;}
+	//int GetScore() {return d.score;} //should be corrected
 }
 
 void main()

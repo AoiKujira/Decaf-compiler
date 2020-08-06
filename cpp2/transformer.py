@@ -430,7 +430,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp_nine", self.func_call, args)
+        print("exp_nine", args)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -668,27 +668,30 @@ class Test(Transformer):
             code = code.replace(x + ":\n", x + ":\npop " + args[1] + "_this\n")
         self.code = before_here + code + after_here
 
-        # print(args[1])
+        # print(args[1], self.classes[args[1]].var_offsets)
+        for x in self.classes[args[1]].var_offsets:
+            # print(x, self.code.count("\n" + x + " "), args[1] + "_this." + x)
+            self.code = self.code.replace("\n" + x + " ", "\n" + args[1] + "_this." + x + " ")
+            self.code = self.code.replace(" " + x + "\n", " " + args[1] + "_this." + x + "\n")
+            self.code = self.code.replace(" " + x + " ", " " + args[1] + "_this." + x + " ")
+            self.code = self.code.replace("\n" + x + "\n", "\n" + args[1] + "_this." + x + "\n")
+
+        # print(self.code, "\n\nhehe\n\n\n")
+
         total_code = self.code
         new_code = ""
         while total_code.count("\n"):
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
             if line.count(args[1] + "_this."):
-                before = line[:line.find(args[1] + "_this.")]
                 code = line[line.find(args[1] + "_this.") + len(args[1] + "_this."):]
-                after = code[code.find("\n") + 1:]
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
-                # print("\n\ncodeeeeee\n", before, "\n\nheyy\n\n", after, "\n\ncooooooddd\n\n")
-                # print("\n\nthis code\n\n", code, "\n\nthis code\n\n")
                 offset = self.classes[args[1]].var_offsets[code]
                 t = self.make_temp()
                 add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
-                # print("\n\nhi\n\n", code, "\n\nhehe\n\n")
                 if line.count("="):
-
                     add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
                 else:
                     add_code += t + " = *(" + t + ")\n"
@@ -696,7 +699,9 @@ class Test(Transformer):
                 new_code += add_code
             else:
                 new_code += line
-            self.code = new_code
+
+        self.code = new_code
+        # print(self.)
 
         # print(self.code, "\n\nhehe\n\n")
         return args
