@@ -291,14 +291,14 @@ class Test(Transformer):
         t = self.make_temp()
         dec = args[0]
         self.var_types[t] = "int"
-        self.code += t + " = " + dec + "\n"
+        self.code += "assign " + t + " i= " + dec + "\n"
         return t
 
     def hex_const(self, args):
         t = self.make_temp()
         dec = int(args[0], 16)
         self.var_types[t] = "int"
-        self.code += t + " = " + str(dec) + "\n"
+        self.code += "assign " + t + " i= " + str(dec) + "\n"
         return t
 
     def exp_not(self, args):
@@ -405,13 +405,16 @@ class Test(Transformer):
         t = self.make_temp()
         if ty == "STRING_CONSTANT":
             self.var_types[t] = "string"
+            self.code += "assign " + t + " s= " + args[0].children[0] + "\n"
         elif ty == "BOOL_CONSTANT":
             self.var_types[t] = "bool"
+            self.code += "assign " + t + " b= " + args[0].children[0] + "\n"
         elif ty == "int_constant":
             self.var_types[t] = "int"
+            self.code += "assign " + t + " i= " + args[0].children[0] + "\n"
         elif ty == "DOUBLE_INT":
             self.var_types[t] = "double"
-        self.code += t + " = " + args[0].children[0] + "\n"
+            self.code += "assign " + t + " f= " + args[0].children[0] + "\n"
         return t
 
     def print_stmt(self, args):
