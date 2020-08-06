@@ -41,6 +41,8 @@ Printi lable
 Prints lable
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
+ifz...
+pushaddressof...
 ---------------------
 
 '''
@@ -98,19 +100,18 @@ def mipsGen(input_code):
             pass
         if instruction[0] == 'Lcall':#Lcall lable
             pass
-        #what options are there?
         if instruction[0] == 'Printf':#Printf a
             mipsTextCode += 'l.d $f9, ' + instruction[1] + '\n'
-            print_double($f9)
+            mipsTextCode += 'print_double($f9)\n'
         if instruction[0] == 'Prints':#Prints a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            print_string($t9)
+            mipsTextCode += 'print_string($t9)\n'
         if instruction[0] == 'Printi':#Printi a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            print_int($t9)
+            mipsTextCode += 'print_int($t9)\n'
         if instruction[0] == 'Printb':#Printb a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            print_int($t9)
+            mipsTextCode += 'print_int($t9)\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
                 mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
@@ -135,7 +136,7 @@ def mipsGen(input_code):
                     instruction[3] = '1'
                 mipsDataCode += instruction[1] + ': ' + '.word ' + instruction[3] + '\n'
                 vars[instruction[1]] = 0
-            if instruction[2] == '=':#assign t1 = t2
+            if instruction[2] == '=':
                 if instruction[3] == 'allocate':
                     if check_int(instruction[4]):#assign t1 = allocate 6
                         if not instruction[1] in vals.keys():
