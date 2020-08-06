@@ -113,7 +113,15 @@ def mipsGen(input_code):
                 mipsDataCode += instruction[1] + ': ' + '.asciiz ' + instruction[3] + '\n'
                 vars[instruction[1]] = 0
             if instruction[2] == 'b=':#assign a b= false
-                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                if instruction[1] in vars.keys():
+                    vars[instruction[1]] += 1
+                    instruction[1] += '___' + vars[instruction[1]]
+                if instruction[3] == 'false':
+                    instruction[3] = '0'
+                if instruction[3] == 'true':
+                    instruction[3] = '1'
+                mipsDataCode += instruction[1] + ': ' + '.word ' + instruction[3] + '\n'
+                vars[instruction[1]] = 0
             if instruction[2] == '=':#assign t1 = t2
                 if instruction[1][0] == '*':
                     pass
