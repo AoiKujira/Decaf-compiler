@@ -2,13 +2,14 @@ class Deck {
     int score;
     //Deck d;
     //Player p;
+    void Init() {score = 0;}
 	void Shuffle() {Print("Shuffle");}
 	Deck GetDeck() {return this;}
 }
 
 class Player {
 	Deck d;
-	void Init(Deck dj) { d = dj;}
+	void Init(Deck dj) { this.d = dj; dj = d;}
 	Deck GetDeck() { return d;}
 }
 
@@ -20,6 +21,7 @@ void main()
 	p = new Player;
 	deck = p.d;
 	p.Init(new Deck);
+	deck.Init();
 	//p.d.score;
 	//deck = p.GetDeck().score[1];
 	deck = p.d.GetDeck().score[1];

@@ -668,28 +668,35 @@ class Test(Transformer):
             code = code.replace(x + ":\n", x + ":\npop " + args[1] + "_this\n")
         self.code = before_here + code + after_here
 
-        while str(self.code).count(args[1] + "_this."):
-            before = self.code[:self.code.find(args[1] + "_this.")]
-            found = self.code[:self.code.find("push " + args[1] + "_this.")]
-            code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
-            after = code[code.find("\n") + 1:]
-            code = code[:code.find(" ")]
-            offset = self.classes[args[1]].var_offsets[code]
-            code = self.code[self.code.find(args[1] + "_this.") + len(args[1] + "_this."):]
-            code = code[:code.find("\n")]
-            t = self.make_temp()
-            add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
-            # print("\n\nhi\n\n", code, "\n\nhehe\n\n")
-            if code.count("= "):
-                code = code[code.find("= ") + 2:]
-                value = code
-                add_code += "*(" + t + ") = " + value + "\n"
-            else:
-                add_code += t + " = *(" + t + ")\n"
-                add_code += "push " + t + "\n"
-                before = found
+        # print(args[1])
+        total_code = self.code
+        new_code = ""
+        while total_code.count("\n"):
+            line = total_code[:total_code.find("\n") + len("\n")]
+            total_code = total_code[total_code.find("\n") + len("\n"):]
+            if line.count(args[1] + "_this."):
+                before = line[:line.find(args[1] + "_this.")]
+                code = line[line.find(args[1] + "_this.") + len(args[1] + "_this."):]
+                after = code[code.find("\n") + 1:]
+                code = code[:code.find(" ")]
+                if code.count("\n"):
+                    code = code[:code.find("\n")]
+                # print("\n\ncodeeeeee\n", before, "\n\nheyy\n\n", after, "\n\ncooooooddd\n\n")
+                # print("\n\nthis code\n\n", code, "\n\nthis code\n\n")
+                offset = self.classes[args[1]].var_offsets[code]
+                t = self.make_temp()
+                add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
+                # print("\n\nhi\n\n", code, "\n\nhehe\n\n")
+                if line.count("="):
 
-            self.code = before + add_code + after
+                    add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
+                else:
+                    add_code += t + " = *(" + t + ")\n"
+                    add_code += "push " + t + "\n"
+                new_code += add_code
+            else:
+                new_code += line
+            self.code = new_code
 
         # print(self.code, "\n\nhehe\n\n")
         return args
@@ -794,7 +801,6 @@ class Test(Transformer):
         # print(self.current_scope.table, self.current_scope.number)
 
     def IDENT(self, iden):
-        # pr(iden)
         return str(iden)
 
     def exp_normal(self, args):
