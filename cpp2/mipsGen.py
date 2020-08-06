@@ -68,24 +68,74 @@ def mipsGen(input_code):
         # mipsTextCode += '#' + instruction + '\n'
         instruction = instruction.split(' ')
         if instruction[0] == 'arith':#arith a = b Xop c
+            if not instruction[1] in vars.keys():
+                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                vars[instruction[1]] = 0
+            if instruction[4] == 'f+':#add
+                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'add.d $f3, $f1, $f2\n'
+                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f-':#sub
+                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'sub.d $f3, $f1, $f2\n'
+                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f*':#mul
+                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'mul.d $f3, $f1, $f2\n'
+                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f/':#div
+                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'div.d $f3, $f1, $f2\n'
+                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
             if instruction[4] == '+':#add
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'add $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '-':#sub
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'sub $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '*':#mul
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'mul $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '/':#div
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'div $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '%':#rem
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'rem $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '==':#seq
-                pass
-            if instruction[4] == '!=':#snq
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'seq $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+            if instruction[4] == '!=':#sne
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'sne $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '<':#slt
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'slt $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '<=':#sle
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'sle $t3, $t1, tf2\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '||':#
                 pass
             if instruction[4] == '&&':#
