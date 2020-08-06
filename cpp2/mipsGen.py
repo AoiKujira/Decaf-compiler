@@ -234,7 +234,8 @@ def mipsGen(input_code):
                     if not instruction[1] in vars.keys():
                         mipsDataCode += instruction[1] + ': ' + '.word\n'
                         vars[instruction[1]] = 0
-                    mipsTextCode += 'la $t9, ' + instruction[3][2:-1] + '\n'
+                    mipsTextCode += 'lw $t9, ' + instruction[3][2:-1] + '\n'
+                    mipsTextCode += 'lw $t9, ($t9)\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
                 else:#assign t1 = t2
                     if not instruction[1] in vars.keys():

@@ -2,7 +2,7 @@ import lark_test
 from lark import Lark
 
 from transformer import Test
-
+from mipsGen import mipsGen
 from Symbols import SymbolTable
 
 if __name__ == "__main__":
@@ -16,16 +16,17 @@ if __name__ == "__main__":
     grammar = open_file.read()
     parser = Lark(grammar, parser='lalr', debug=False)
     tree = parser.parse(text)
-    #print(tree.pretty())
+    # print(tree.pretty())
     sym = SymbolTable()
     while not (sym.has_finished):
         # print("doing the thing")
         sym.prep()
         sym.transform(tree)
-    #print(sym.classes["C"].functions["do_job"].vars)
+    # print(sym.classes["C"].functions["do_job"].vars)
     trans = Test(sym)
     trans.transform(tree)
     # print(trans.var_types)
     print(trans.code)
-    #print(mipsGen(trans.code))
+    print(mipsGen(trans.code))
+    # print(mipsGen(trans.code))
     # print(sym.classes["A"].var_offsets)
