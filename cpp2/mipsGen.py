@@ -1,16 +1,14 @@
 #gets a TAC like string input and outputs a MIPS code
 '''
+u better go to page 54 of SPIM_Manual.pdf
+there are instructions for double and single
 ================================================================================
 move       d, s1         d = s1;
 add        d, s1, s2     d = s1 + s2; two's complement
-addu       d, s1, s2     d = s1 + s2; unsigned
 sub        d, s1, s2     d = s1 - s2; two's complement
-subu       d, s1, s2     d = s1 - s2; unsigned
 mul        d, s1, s2     d = s1 * s2; two's complement
 div        d, s1, s2     d = s1 / s2;  gives quotient
-divu       d, s1, s2     d = s1 / s2;  gives quotient
 rem        d, s1, s2     d = s1 % s2;  gives remainder
-remu       d, s1, s2     d = s1 % s2;  gives remainder
 and        d, s1, s2     d = s1 & s2; bitwise AND
 or         d, s1, s2     d = s1 | s2; bitwise OR
 not        d, s1         d = ~s1;  bitwise complement
@@ -86,9 +84,17 @@ def mipsGen(input_code):
                 pass
             if instruction[4] == '%':#rem
                 pass
-            if instruction[4] == '||':#rem
+            if instruction[4] == '==':#seq
                 pass
-            if instruction[4] == '&&':#rem
+            if instruction[4] == '!=':#snq
+                pass
+            if instruction[4] == '<':#slt
+                pass
+            if instruction[4] == '<=':#sle
+                pass
+            if instruction[4] == '||':#
+                pass
+            if instruction[4] == '&&':#
                 pass
         if instruction[0] == 'Lable':#lable a:
             pass
