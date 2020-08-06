@@ -163,9 +163,13 @@ class Test(Transformer):
             first = lee[0]
             for i in range(1, len(lee)):
                 sec = lee[i]
-                print(self.this_class_vars)
-                t = self.var_types[first]
-                c: Class = self.classes[t]
+                # print(self.this_class_vars)
+                try:
+                    t = self.var_types[first]
+                    c: Class = self.classes[t]
+                except:
+                    t = self.this_class_vars[first]
+                    c: Class = self.classes[t]
                 # handle array members
                 if re.match(".*\[.*\]", sec):
                     name = re.sub("\[.*\]", "", sec)
@@ -245,7 +249,10 @@ class Test(Transformer):
         if self.func_call:
             if isinstance(lee[0], str) and len(lee[1]) == 4:
                 self.func_call = False
-                add = self.var_types[lee[0]] + "_" + lee[1][0]
+                try:
+                    add = self.var_types[lee[0]] + "_" + lee[1][0]
+                except:
+                    add = self.this_class_vars[lee[0]] + "_" + lee[1][0]
                 self.code += "push " + lee[0] + "\n"
                 self.code += "Lcall " + add + "\n"
                 # print("Lcall1", add)

@@ -11,7 +11,7 @@ class Player {
 	Deck d;
 	void Init(Deck dj) { d = dj; dj = d;}
 	Deck GetDeck() { return d;}
-	int GetScore() {return d.score;} //should be corrected
+	int GetScore() { d = d.shuffle(); return d.score;} //should be corrected
 }
 
 void main()
