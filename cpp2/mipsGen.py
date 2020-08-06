@@ -42,6 +42,10 @@ ReadLine t = ReadLine()
 
 '''
 def mipsGen(input_code):
+    def check_int(x):
+        if x[0] == '+':
+            return x[1:].isdigit()
+        return x.isdigit()
     vars = {}
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
@@ -120,10 +124,26 @@ def mipsGen(input_code):
                 vars[instruction[1]] = 0
             if instruction[2] == '=':#assign t1 = t2
                 if instruction[3] == 'allocate':
-                    allocSize = int(instruction[4])*4
-                    mipsDataCode += instruction[1] + ': ' + '.space ' + str(allocSize) + '\n'
-                    vars[instruction[1]] = 0
-                    pass
+                    if check_int(instruction[4]):#assign t1 = allocate 6
+                        if not instruction[1] in vals.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word\n'
+                            vars[instruction[1]] = 0
+                        allocLable = '___' + instruction[1] + '___'
+                        mipsDataCode += allocLable + ': .word ' + instruction[4] + '\n'
+                        mipsTextCode += 'lw	$t9, ' + allocLable + '\n'
+                        mipsTextCode += 'li	$v0, 9\n'
+                        mipsTextCode += 'move	$a0, $t9\n'
+                        mipsTextCode += 'syscall\n'
+                        mipsTextCode += 'sw $v0, ' + instruction[1] + '\n'
+                    else:#assign t1 = allocate b
+                        if not instruction[1] in vals.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word\n'
+                            vars[instruction[1]] = 0
+                        mipsTextCode += 'lw	$t9, ' + instruction[4] + '\n'
+                        mipsTextCode += 'li	$v0, 9\n'
+                        mipsTextCode += 'move	$a0, $t9\n'
+                        mipsTextCode += 'syscall\n'
+                        mipsTextCode += 'sw $v0, ' + instruction[1] + '\n'
                 elif instruction[1][0] == '*':#assign *(t1) = t2
                     mipsTextCode += 'lw $t9, ' + instruction[1][2:-1] + '\n'
                     mipsTextCode += 'lw $t8, ' + instruction[3] + '\n'
@@ -144,8 +164,6 @@ def mipsGen(input_code):
             pass
         if instruction[0] == 'return':
             pass
-        if instruction[0] == 'Allocate':
-            pass
         if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
             mipsDataCode += instruction[1] + ': ' + '.word\n'
             mipsTextCode += 'read_int($t9)\n'
@@ -158,5 +176,4 @@ def mipsGen(input_code):
             pass
         if instruction[0] == '':
             pass
-
     return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
