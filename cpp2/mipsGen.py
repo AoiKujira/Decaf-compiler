@@ -94,52 +94,70 @@ def mipsGen(input_code):
             if instruction[4] == '+':#add
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'add $t3, $t1, tf2\n'
+                mipsTextCode += 'add $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '-':#sub
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sub $t3, $t1, tf2\n'
+                mipsTextCode += 'sub $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '*':#mul
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'mul $t3, $t1, tf2\n'
+                mipsTextCode += 'mul $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '/':#div
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'div $t3, $t1, tf2\n'
+                mipsTextCode += 'div $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '%':#rem
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'rem $t3, $t1, tf2\n'
+                mipsTextCode += 'rem $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '==':#seq
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'seq $t3, $t1, tf2\n'
+                mipsTextCode += 'seq $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '!=':#sne
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sne $t3, $t1, tf2\n'
+                mipsTextCode += 'sne $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '<':#slt
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'slt $t3, $t1, tf2\n'
+                mipsTextCode += 'slt $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '<=':#sle
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sle $t3, $t1, tf2\n'
+                mipsTextCode += 'sle $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '||':#
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__0__\n'
+                mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
+                mipsTextCode += '__branch__here__if__arg1__is__0__:\n'
+                mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__0__\n'
+                mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
+                mipsTextCode += '__branch__here__if__arg2__isAlso__0__:\n'
+                mipsTextCode += 'li $t3, 0\n__branch__here__to__end__oror__:\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '&&':#
-                pass
+                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__1__\n'
+                mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
+                mipsTextCode += '__branch__here__if__arg1__is__1__:\n'
+                mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__1__\n'
+                mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
+                mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
+                mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
+                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
         if instruction[0] == 'Lable':#lable a:
             pass
         #what options are there?
