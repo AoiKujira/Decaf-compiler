@@ -278,6 +278,7 @@ class Test(Transformer):
                         or (self.function_types.__contains__("init_" + lee[1][0]) and
                             self.function_types["init_" + lee[1][0]] == 'return'):
                     self.code += "pop " + lee[1][3] + "\n"
+                    self.code += "popra\n"
                 return lee[1][3]
             elif self.new:
                 # print(3)
@@ -290,6 +291,7 @@ class Test(Transformer):
                 # print("Lcall2", add)
                 if self.function_types[add] == 'return':
                     self.code += "pop " + lee[1][3] + "\n"
+                    self.code += "popra\n"
                 return lee[1][3]
             return lee
         if isinstance(lee[0], list) and isinstance(lee[1], list):
@@ -586,12 +588,14 @@ class Test(Transformer):
                     self.var_types[args[0]] = type
                     return self.exp_nine([args])
                 if not (isinstance(args[1][3], str) and args[1][3].count("[")):
-                    print(add, self.function_types)
+                    # print(add, self.function_types)
                     if self.function_types[add] == 'return':
                         self.code += "pop " + args[1][3] + "\n"
+                        self.code += "popra\n"
                 else:
                     self.var_types[args[1][3][:args[1][3].find("[")]] = self.function_types_specific[add]
                     self.code += "pop " + args[1][3][:args[1][3].find("[")] + "\n"
+                    self.code += "popra\n"
                     args[1][3] = self.exp_nine([args[1][3]])
                     # print("here", args)
 
@@ -644,6 +648,7 @@ class Test(Transformer):
             if self.function_types_specific.__contains__(add):
                 temp = self.make_temp()
                 self.code += "pop " + temp + "\n"
+                self.code += "popra\n"
             return temp
         if not isinstance(args[0], str) and self.var_types.__contains__(args[0][0]) and \
                 not self.function_types.__contains__(args[0][1]) \
@@ -685,6 +690,7 @@ class Test(Transformer):
             if self.function_types[args[0][1]] == "return":
                 t = self.make_temp()
                 self.code += "pop " + t + "\n"
+                self.code += "popra\n"
             return t
         if str(args).__contains__('exp_this'):
             # print(7)
