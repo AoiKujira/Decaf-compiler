@@ -132,6 +132,8 @@ class Test(Transformer):
 
     def exp_assign(self, args):
         # print("exp assign", args)
+        # if str(args[1]).__contains__("["):
+        #     print(self.code, "\n\nheheh\n\n")
         if not isinstance(args[1][0], str):
             args[1] = args[1][0][0]
         # print("exp assign", args)
@@ -157,7 +159,7 @@ class Test(Transformer):
                 self.var_types[tem] = "int"
                 return args[1]
             # print("self.code", self.code, "\n\nhehe\n\n")
-            # print("exp_nine", args, self.var_types)
+            # print("var type", self.var_types)
             try:
                 self.var_types[args[0]] = self.var_types[args[1]]
             except:
@@ -376,6 +378,7 @@ class Test(Transformer):
     def exp_sum(self, args):
         t = self.make_temp()
         # typecheck here
+        # print(self.code, "\n\nhehe")
         if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
             self.code += "arith " + t + " = " + args[0] + " f+ " + args[1] + "\n"
             self.var_types[t] = "double"
@@ -520,11 +523,11 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp_nine", args)
+        # print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
-        if isinstance(args[0], str):
+        if isinstance(args[0], str) and not args[0].count("["):
             return args[0]
         if self.func_call and isinstance(args[0], list) and isinstance(args[0][1], list) \
                 and isinstance(args[0][1][0], str):
@@ -546,7 +549,7 @@ class Test(Transformer):
             # print(2)
             return "init_this"
         if isinstance(args[0], list) and isinstance(args[0][1], list) and self.func_call:
-            print(3, args)
+            # print(3)
             self.func_call = False
             args = args[0]
             args = [args[0], args[1][0], args[1][1]]
@@ -559,8 +562,14 @@ class Test(Transformer):
                 # print("Lcall3", add)
                 self.code += "push " + push + "\n"
                 self.code += "Lcall " + add + "\n"
-                if self.function_types[add] == 'return':
-                    self.code += "pop " + args[1][3] + "\n"
+                if not (isinstance(args[1][3], str) and args[1][3].count("[")):
+                    if self.function_types[add] == 'return':
+                        self.code += "pop " + args[1][3] + "\n"
+                else:
+                    self.var_types[args[1][3][:args[1][3].find("[")]] = self.function_types_specific[add]
+                    self.code += "pop " + args[1][3][:args[1][3].find("[")] + "\n"
+                    args[1][3] = self.exp_nine([args[1][3]])
+                    # print("here", args)
                 push = args[1][3]
                 if self.function_types_specific.__contains__(add):
                     type = self.function_types_specific[add]
@@ -568,8 +577,9 @@ class Test(Transformer):
                     if isinstance(args[2][0], list):
                         args = [args[0], args[2][0], args[2][1]]
                     else:
+                        self.mem_checker = True
                         args = [args[1][3], args[2]]
-                print(args, add)
+                # print(args, add)
                 if self.function_types_specific.__contains__(add):
                     add = self.function_types_specific[add] + "_" + args[1][0]
             if isinstance(args[1], str):
@@ -600,10 +610,13 @@ class Test(Transformer):
                 temp = self.make_temp()
                 self.code += "pop " + temp + "\n"
             return temp
-        if self.var_types.__contains__(args[0][0]) and not self.function_types.__contains__(args[0][1]) \
+        if not isinstance(args[0], str) and self.var_types.__contains__(args[0][0]) and \
+                not self.function_types.__contains__(args[0][1]) \
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             # print(5)
+            self.mem_checker = False
             t = self.make_temp()
+            # print(t)
             offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
             type = self.var_types[args[0][0]] + "." + args[0][1]
             type = self.classes[self.var_types[args[0][0]]].var_types[type]
@@ -678,8 +691,9 @@ class Test(Transformer):
                     t = self.this_class_vars[first]
                     c: Class = self.classes[t]
                 # handle array members
-                # print(lee)
+                # print("memmmm", lee)
                 if re.match(".*\[.*\]", sec):
+                    # print("matched", lee)
                     name = re.sub("\[.*\]", "", sec)
                     ty = re.sub("\[.*\]", "", c.var_types[name])
                     if ["int", "bool", "double", "string"].__contains__(ty):
@@ -711,12 +725,13 @@ class Test(Transformer):
             return temp
 
     def exp_arr(self, args):
-        print("exp_arr", args)
+        # print("exp_arr", args)
         # print("\n\nhehe\n\n", self.code)
         try:
             return args[0] + "[" + args[1] + "]"
         except:
-            return args
+            # print(args[0][:-2])
+            return [args[0][0], args[0][1], args[0][2], args[0][3] + "[" + args[1] + "]"]
 
     def init_func(self, args):
         self.is_funcy = True
