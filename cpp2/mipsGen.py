@@ -34,14 +34,15 @@ arith a = b != c
 arith a = b <= c
 arith a = b < c
 ----------------------
-push lable
-pop lable
+push a
+pop a
 Lcall lable
 Lable lable:
 return
-Ifz...
-pushaddressof...
-jumpto
+----------------------
+Ifz a goto lable
+#pushaddressof... gooya nadarim ino
+jumpto lable
 ---------print---------
 Printf lable
 Printb lable
@@ -59,6 +60,8 @@ def mipsGen(input_code):
             return x[1:].isdigit()
         return x.isdigit()
     vars = {}
+    functionIsBeingCalledFlag = 0
+    isLastInstructionLcall = 0
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsTextCode = '.text\n.globl main\n'
@@ -203,16 +206,30 @@ def mipsGen(input_code):
                 mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
                 mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-        if len(instruction) == 1:#a:
-            mipsTextCode += instruction[0] + '\n'
-        #what options are there?
+        if len(instruction) == 1:#pushra or #a:
+            if instruction[0] == 'pushra':
+                mipsTextCode += 'subi $sp, $sp, 4\n'
+                mipsTextCode += 'sw $ra, ($sp)\n'
+            else:
+                mipsTextCode += instruction[0] + '\n'
         if instruction[0] == 'push':#push a
-            pass
-        #what options are there?
+            mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
+            mipsTextCode += 'subi $sp, $sp, 4\n'
+            mipsTextCode += 'sw $t9, ($sp)\n'
         if instruction[0] == 'pop':#pop a
-            pass
+            if not instruction[1] in vars.keys():
+                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                vars[instruction[1]] = 0
+            mipsTextCode += 'lw $t9, ($sp)\n'
+            mipsTextCode += 'addi $sp, $sp, 4\n'
+            mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'Lcall':#Lcall lable
-            pass
+            mipsTextCode += 'jal ' + instruction[1] + '\n'
+            isLastInstructionLcall = 1
+        else:
+            isLastInstructionLcall = 0
+        if instruction[0] == 'return': #return from folan
+            mipsTextCode += 'jr $ra\n'
         if instruction[0] == 'Printf':#Printf a
             mipsTextCode += 'l.d $f9, ' + instruction[1] + '\n'
             mipsTextCode += 'print_double($f9)\n'
@@ -290,8 +307,6 @@ def mipsGen(input_code):
                     mipsTextCode += "sw $t9, " + instruction[1] + '\n'
         if instruction[0] == 'getAddress':
             pass
-        if instruction[0] == 'return':
-            pass
         if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
             mipsDataCode += instruction[1] + ': ' + '.word\n'
             mipsTextCode += 'read_int($t9)\n'
@@ -300,8 +315,9 @@ def mipsGen(input_code):
             mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
             mipsTextCode += 'la $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'read_string($t9)\n'
-        if instruction[0] == '':
-            pass
-        if instruction[0] == '':
-            pass
+        if instruction[0] == 'jumpto':# jumpto lable
+            mipsTextCode += 'j ' + instruction[1] + '\n'
+        if instruction[0] == 'Ifz':#Ifz a goto lable
+            mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
+            mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
     return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
