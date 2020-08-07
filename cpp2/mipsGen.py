@@ -87,7 +87,7 @@ def mipsGen(input_code):
         instruction = instruction.split(' ')
         if instruction[0] == 'arith':#arith a = b Xop c
             if not instruction[1] in vars.keys():
-                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                 vars[instruction[1]] = 0
             if instruction[4] == 'f+':#add
                 mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
@@ -231,7 +231,7 @@ def mipsGen(input_code):
             mipsTextCode += 'sw $t9, ($sp)\n'
         if instruction[0] == 'pop':#pop a
             if not instruction[1] in vars.keys():
-                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                 vars[instruction[1]] = 0
             mipsTextCode += 'lw $t9, ($sp)\n'
             mipsTextCode += 'addi $sp, $sp, 4\n'
@@ -264,7 +264,7 @@ def mipsGen(input_code):
                 for i in instruction[3:]:
                     s += ' ' + i
                 mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + s + '\n'
-                mipsDataCode += instruction[1] + ': ' + '.word\n'
+                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                 mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
                 mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
                 vars['___' + instruction[1] + '___'] = 0
@@ -280,7 +280,7 @@ def mipsGen(input_code):
                 if instruction[3] == 'allocate':
                     if check_int(instruction[4]):#assign t1 = allocate 6
                         if not instruction[1] in vars.keys():
-                            mipsDataCode += instruction[1] + ': ' + '.word\n'
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         allocLable = '___' + instruction[1] + '___'
                         mipsDataCode += allocLable + ': .word ' + instruction[4] + '\n'
@@ -291,7 +291,7 @@ def mipsGen(input_code):
                         mipsTextCode += 'sw $v0, ' + instruction[1] + '\n'
                     else:#assign t1 = allocate b
                         if not instruction[1] in vars.keys():
-                            mipsDataCode += instruction[1] + ': ' + '.word\n'
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         mipsTextCode += 'lw	$t9, ' + instruction[4] + '\n'
                         mipsTextCode += 'li	$v0, 9\n'
@@ -304,21 +304,21 @@ def mipsGen(input_code):
                     mipsTextCode += 'sw $t8, ($t9)\n'
                 elif instruction[3][0] == '*':#assign t1 = *(t2)
                     if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.word\n'
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                         vars[instruction[1]] = 0
                     mipsTextCode += 'lw $t9, ' + instruction[3][2:-1] + '\n'
                     mipsTextCode += 'lw $t9, ($t9)\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
                 else:#assign t1 = t2
                     if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.word\n'
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                         vars[instruction[1]] = 0
                     mipsTextCode += "lw $t9, " + instruction[3] + '\n'
                     mipsTextCode += "sw $t9, " + instruction[1] + '\n'
         if instruction[0] == 'getAddress':
             pass
         if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
-            mipsDataCode += instruction[1] + ': ' + '.word\n'
+            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
             mipsTextCode += 'read_int($t9)\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
