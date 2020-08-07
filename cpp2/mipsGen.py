@@ -18,8 +18,12 @@ assign a = allocate t
 ----------arith-------------
 arith a = b f+ c
 arith a = b + c
+arith a = b + 10
+arith a = 10 + b
 arith a = b f* c
 arith a = b * c
+arith a = 4 * b
+arith a = b * 4
 arith a = b f/ c
 arith a = b / c
 arith a = b f- c
@@ -92,20 +96,50 @@ def mipsGen(input_code):
                 mipsTextCode += 'div.d $f3, $f1, $f2\n'
                 mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
             if instruction[4] == '+':#add
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'add $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if check_int(instruction[3]):
+                    numberLable = '_____'+instruction[3]+'_____'
+                    mipsDataCode += numberLable + ': .word' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t1, ' + numberLable + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'add $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                elif check_int(instruction[5]):
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    numberLable = '_____'+instruction[5]+'_____'
+                    mipsDataCode += numberLable + ': .word' + instruction[5] + '\n'
+                    mipsTextCode += 'lw $t2, ' + numberLable + '\n'
+                    mipsTextCode += 'add $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                else:
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'add $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '-':#sub
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
                 mipsTextCode += 'sub $t3, $t1, $t2\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '*':#mul
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'mul $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if check_int(instruction[3]):
+                    numberLable = '_____'+instruction[3]+'_____'
+                    mipsDataCode += numberLable + ': .word' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t1, ' + numberLable + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'mul $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                elif check_int(instruction[5]):
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    numberLable = '_____'+instruction[5]+'_____'
+                    mipsDataCode += numberLable + ': .word' + instruction[5] + '\n'
+                    mipsTextCode += 'lw $t2, ' + numberLable + '\n'
+                    mipsTextCode += 'mul $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                else:
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'mul $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4] == '/':#div
                 mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                 mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
