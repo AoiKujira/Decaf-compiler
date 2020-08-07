@@ -78,6 +78,7 @@ def mipsGen(input_code):
     mipsTextCode += '.macro print_int($reg)\nli	$v0, 1\nmove 	$a0, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro	Exit()\nli	$v0, 10\nsyscall\n.end_macro\n'
     mipsTextCode += '########################################\n'
     for instruction in instructions:
         if instruction == '':
@@ -222,6 +223,8 @@ def mipsGen(input_code):
                 mipsTextCode += 'addi $sp, $sp, 4\n'
             else:#lable:
                 mipsTextCode += instruction[0] + '\n'
+                if instruction[0] == 'main:':
+                    mipsTextCode += 'la $ra, _______End_Of_The_World_______\n'
         if instruction[0] == 'push':#push a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'subi $sp, $sp, 4\n'
@@ -327,4 +330,5 @@ def mipsGen(input_code):
         if instruction[0] == 'Ifz':#Ifz a goto lable
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
+    mipsTextCode += '_______End_Of_The_World_______:\nExit()\n'
     return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
