@@ -518,7 +518,7 @@ class Test(Transformer):
 
     def print_end(self, args):
         self.is_printing = False
-        self.code += "Printe "
+        self.code += "Printe\n"
 
     def exp_le(self, args):
         t = self.make_temp()

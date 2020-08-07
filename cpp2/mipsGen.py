@@ -57,11 +57,15 @@ Printf lable
 Printb lable
 Printi lable
 Prints lable
+Printe
 --------read----------
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
----------------------
-
+----------one word instructs-----------
+pushra
+popra
+Printe
+lable:
 '''
 def mipsGen(input_code):
     def check_int(x):
@@ -79,6 +83,7 @@ def mipsGen(input_code):
     mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	Exit()\nli	$v0, 10\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro	print_enter()\nli	$v0, 11\nli	$a0, 10\nsyscall\n.end_macro\n'
     mipsTextCode += '########################################\n'
     for instruction in instructions:
         if instruction == '':
@@ -218,9 +223,11 @@ def mipsGen(input_code):
             if instruction[0] == 'pushra':#pushra
                 mipsTextCode += 'subi $sp, $sp, 4\n'
                 mipsTextCode += 'sw $ra, ($sp)\n'
-            if instruction[0] == 'popra':#popra
+            elif instruction[0] == 'popra':#popra
                 mipsTextCode += 'lw $ra, ($sp)\n'
                 mipsTextCode += 'addi $sp, $sp, 4\n'
+            elif instruction[0] == 'Printe':#Printe
+                mipsTextCode += 'print_enter()\n'
             else:#lable:
                 mipsTextCode += instruction[0] + '\n'
                 if instruction[0] == 'main:':
