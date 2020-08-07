@@ -518,7 +518,7 @@ class Test(Transformer):
 
     def print_end(self, args):
         self.is_printing = False
-        self.code += "Prints \"\n\"\n"
+        self.code += "Printe "
 
     def exp_le(self, args):
         t = self.make_temp()
@@ -931,7 +931,6 @@ class Test(Transformer):
             new_code += last_line
         new_code += line
         self.code = new_code
-
 
     def function(self, args):
         # print("function", args[0].children)
