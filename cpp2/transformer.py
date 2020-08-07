@@ -510,7 +510,7 @@ class Test(Transformer):
                     code += "Print " + arg + "\n"
                 else:
                     code += "Print init_this." + arg + "\n"
-        self.code += code
+        self.code += code + "Printe\n"
         return code
 
     def print_begin(self, args):
@@ -518,7 +518,7 @@ class Test(Transformer):
 
     def print_end(self, args):
         self.is_printing = False
-        self.code += "Printe\n"
+
 
     def exp_le(self, args):
         t = self.make_temp()
