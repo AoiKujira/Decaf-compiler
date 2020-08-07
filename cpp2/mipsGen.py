@@ -187,6 +187,48 @@ def mipsGen(input_code):
                     mipsTextCode += 'li $t3, 1\n'
                     mipsTextCode += ceqendLable + ':\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == 'f<=':#arith a = b f<= c
+                    if not instruction[1] in vars.keys():
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                        vars[instruction[1]] = 0
+                    ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                    myLableCount += 1
+                    ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                    myLableCount += 1
+                    ceqendLable = '____ceqsend' + myLableCount + '____'
+                    myLableCount += 1
+                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'c.le.s $t1, $t2\n'
+                    mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                    mipsTextCode += ceqtrueLable + ':\n'
+                    mipsTextCode += 'li $t3, 1\n'
+                    mipsTextCode += 'j ' + ceqendLable + '\n'
+                    mipsTextCode += ceqfalseLable + ':\n'
+                    mipsTextCode += 'li $t3, 0\n'
+                    mipsTextCode += ceqendLable + ':\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == 'f=':#arith a = b <= c
+                    if not instruction[1] in vars.keys():
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                        vars[instruction[1]] = 0
+                    ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                    myLableCount += 1
+                    ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                    myLableCount += 1
+                    ceqendLable = '____ceqsend' + myLableCount + '____'
+                    myLableCount += 1
+                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'c.lt.s $t1, $t2\n'
+                    mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                    mipsTextCode += ceqtrueLable + ':\n'
+                    mipsTextCode += 'li $t3, 1\n'
+                    mipsTextCode += 'j ' + ceqendLable + '\n'
+                    mipsTextCode += ceqfalseLable + ':\n'
+                    mipsTextCode += 'li $t3, 0\n'
+                    mipsTextCode += ceqendLable + ':\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4][0] == 's':
                 if instruction[4] == 's==':
                     pass
