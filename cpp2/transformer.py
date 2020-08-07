@@ -883,17 +883,21 @@ class Test(Transformer):
                 # print(line)
                 # print(args[1], self.classes[args[1]].var_offsets, code)
                 offset = self.classes[args[1]].var_offsets[code]
+                ty = self.classes[args[1]].var_types[code]
                 t = self.make_temp()
-                add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
+                add_code = "arith " + t + " = " + args[1] + "_this + " + str(offset) + "\n"
+                self.var_types[t] = "int"
                 if line.count("="):
                     add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
                 else:
-                    add_code += t + " = *(" + t + ")\n"
+                    add_code += "assign " + t + " = *(" + t + ")\n"
+                    self.var_types[t] = ty
                     add_code += "push " + t + "\n"
                     if line.count("Print"):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
                         add_code += self.print_stmt([None, [t], None])
                     # print(line.count("Print"))
+
                 new_code += add_code
             else:
                 if len(cl) and line.__contains__(":") and \

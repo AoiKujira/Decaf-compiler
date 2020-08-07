@@ -7,7 +7,7 @@ from Symbols import SymbolTable
 
 if __name__ == "__main__":
     # t031
-    input_file = open("tests/t052-inherit1.in", "r")
+    input_file = open("tests/t053-inherit2.in", "r")
     # input_file = open("tests/t014-stmt1.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
@@ -26,6 +26,8 @@ if __name__ == "__main__":
     trans = Test(sym)
     trans.transform(tree)
     # print(trans.var_types)
+    for k, v in trans.var_types.items():
+        print(k, v)
     print(trans.code)
     print(mipsGen(trans.code))
     # print(mipsGen(trans.code))
