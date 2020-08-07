@@ -33,12 +33,21 @@ arith a = b == c
 arith a = b != c
 arith a = b <= c
 arith a = b < c
-----------------------
-push a
-pop a
+-----------function call-----------
+pushra
+push input1 (optional)
+.
+.
+.
 Lcall lable
-Lable lable:
-return
+pop output (optional)
+popra
+
+lable:
+.
+.
+.
+return from lable
 ----------------------
 Ifz a goto lable
 #pushaddressof... gooya nadarim ino
@@ -60,8 +69,6 @@ def mipsGen(input_code):
             return x[1:].isdigit()
         return x.isdigit()
     vars = {}
-    functionIsBeingCalledFlag = 0
-    isLastInstructionLcall = 0
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsTextCode = '.text\n.globl main\n'
@@ -206,12 +213,14 @@ def mipsGen(input_code):
                 mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
                 mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-        #need work
-        if len(instruction) == 1:#pushra or #a:
-            if instruction[0] == 'pushra':
+        if len(instruction) == 1:#pushra or #popra or #a:
+            if instruction[0] == 'pushra':#pushra
                 mipsTextCode += 'subi $sp, $sp, 4\n'
                 mipsTextCode += 'sw $ra, ($sp)\n'
-            else:
+            if instruction[0] == 'popra':#popra
+                mipsTextCode += 'lw $ra, ($sp)\n'
+                mipsTextCode += 'addi $sp, $sp, 4\n'
+            else:#lable:
                 mipsTextCode += instruction[0] + '\n'
         if instruction[0] == 'push':#push a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
@@ -224,13 +233,8 @@ def mipsGen(input_code):
             mipsTextCode += 'lw $t9, ($sp)\n'
             mipsTextCode += 'addi $sp, $sp, 4\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
-        #need work
         if instruction[0] == 'Lcall':#Lcall lable
             mipsTextCode += 'jal ' + instruction[1] + '\n'
-            isLastInstructionLcall = 1
-        else:
-            isLastInstructionLcall = 0
-        #need work
         if instruction[0] == 'return': #return from folan
             mipsTextCode += 'jr $ra\n'
         if instruction[0] == 'Printf':#Printf a
