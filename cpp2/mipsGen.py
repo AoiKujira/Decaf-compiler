@@ -219,9 +219,11 @@ def mipsGen(input_code):
             if instruction[0] == 'pushra':#pushra
                 mipsTextCode += 'subi $sp, $sp, 4\n'
                 mipsTextCode += 'sw $ra, ($sp)\n'
-            if instruction[0] == 'popra':#popra
+            elif instruction[0] == 'popra':#popra
                 mipsTextCode += 'lw $ra, ($sp)\n'
                 mipsTextCode += 'addi $sp, $sp, 4\n'
+            elif instruction[0] == 'Printe':#Printe
+                mipsTextCode += 'print_enter()\n'
             else:#lable:
                 mipsTextCode += instruction[0] + '\n'
                 if instruction[0] == 'main:':
