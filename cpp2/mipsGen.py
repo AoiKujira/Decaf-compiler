@@ -75,6 +75,8 @@ def mipsGen(input_code):
     vars = {}
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
+    mipsDataCode += '____true____: .asciiz \"true\"\n'
+    mipsDataCode += '____false____: .asciiz \"false\"\n'
     mipsTextCode = '.text\n.globl main\n'
     mipsTextCode += '################ MACROS ################\n'
     mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
@@ -270,7 +272,17 @@ def mipsGen(input_code):
             mipsTextCode += 'print_int($t9)\n'
         if instruction[0] == 'Printb':#Printb a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'print_int($t9)\n'
+            mipsTextCode += 'beqz $t9, ____printFalse____\n'
+            mipsTextCode += '____printTrue____:\n'
+            mipsTextCode += 'la $a0, ____true____\n'
+            mipsTextCode += 'li $v0, 4\n'
+            mipsTextCode += 'syscall\n'
+            mipsTextCode += 'j ____printbEnd____\n'
+            mipsTextCode += '____printFalse____:\n'
+            mipsTextCode += 'la $a0, ____false____\n'
+            mipsTextCode += 'li $v0, 4\n'
+            mipsTextCode += 'syscall\n'
+            mipsTextCode += '____printbEnd____:\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
                 mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
