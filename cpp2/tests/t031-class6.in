@@ -37,7 +37,8 @@ void main()
 	//p.d.score;
 	//score = p.GetDeck().score[1];
 	//score = p.d.GetDeck().GetDeck().GetScore().GetScore();
-	score = score[1];
-	score = p.d.GetDeck().GetScore()[3].score;
-	//deck = p.d.d.GetDeck().p.d;
+	//score = score[1];
+	//score = p.d.GetDeck().GetScore()[3].score;
+	score = p.d.score;
+	score = p.d.GetDeck().score[1].score[1];
 }

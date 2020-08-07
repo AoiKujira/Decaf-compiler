@@ -587,8 +587,18 @@ class Test(Transformer):
                 args = [args]
             # elif isinstance(args)
             else:
-                # print(args)
-                args = [args[1][3]]
+                try:
+                    # print(args)
+                    args = [args[1][3]]
+                except:
+                    # print(args)
+                    self.var_types[args[0]] = type
+                    lee = [args[0]]
+                    for arg in args[1]:
+                        lee.append(arg)
+                    args = [lee]
+                    self.mem_checker = True
+                    print(args, type)
             # print(args, self.var_types)
             # args = [[args[1][3], args[2]]]
         if self.func_call and not self.left and not isinstance(args[0], str):
@@ -614,7 +624,6 @@ class Test(Transformer):
                 not self.function_types.__contains__(args[0][1]) \
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             # print(5)
-            self.mem_checker = False
             t = self.make_temp()
             # print(t)
             offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
@@ -623,7 +632,12 @@ class Test(Transformer):
             self.var_types[t] = type
             self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
             self.code += t + " = *(" + t + ")\n"
-            return t
+            if len(args[0]) == 2:
+                self.mem_checker = False
+                return t
+            else:
+                self.mem_checker = True
+                return self.exp_nine([[t, args[0][2]]])
         if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(
                 args[0][1]):
             # print(6)
@@ -670,7 +684,7 @@ class Test(Transformer):
                 return args[0]
         else:
             # print(10)
-            # print("memmmmm")
+            # print("memmmmm", args)
             # print(self.code)
             self.left = False
             self.mem_checker = False
@@ -716,6 +730,9 @@ class Test(Transformer):
                     continue
                 # print(c.var_offsets, sec)
                 o = c.var_offsets[sec]
+                # except:
+                #     print(c.var_offsets, self.classes[self.var_types[first]].var_offsets)
+                #     # o = c.var_offsets[self.var_types[first]]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
                         i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
