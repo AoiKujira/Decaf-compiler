@@ -57,7 +57,7 @@ class SymbolTable(Transformer):
             self.has_finished = False
         the_class: Class = self.classes[class_name]
         fields = []
-        print(args)
+        #print(args)
         for arg in args[2:-1]:
             if isinstance(arg, list):
                 fields.append(arg)
