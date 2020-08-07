@@ -414,9 +414,9 @@ class Test(Transformer):
         # typecheck here
         self.var_types[t] = "bool"
         if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
-            self.code += "arith " + t + " = " + args[0] + " f> " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[1] + " f< " + args[0] + "\n"
         else:
-            self.code += "arith " + t + " = " + args[0] + " > " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[1] + " < " + args[0] + "\n"
         return t
 
     def exp_ge(self, args):
@@ -425,9 +425,9 @@ class Test(Transformer):
         # typecheck here
         self.var_types[t] = "bool"
         if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
-            self.code += "arith " + t + " = " + args[0] + " f<= " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[1] + " f<= " + args[0] + "\n"
         else:
-            self.code += "arith " + t + " = " + args[0] + " <= " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[1] + " <= " + args[0] + "\n"
         return t
 
     def exp_equal(self, args):
