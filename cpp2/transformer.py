@@ -438,8 +438,13 @@ class Test(Transformer):
         self.var_types[t] = "bool"
         if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
             self.code += "arith " + t + " = " + args[0] + " f== " + args[1] + "\n"
+        elif self.var_types[args[0]] == "bool" or self.var_types[args[1]] == "bool":
+            self.code += "arith " + t + " = " + args[0] + " b== " + args[1] + "\n"
+        elif self.var_types[args[0]] == "string" or self.var_types[args[1]] == "string":
+            self.code += "arith " + t + " = " + args[0] + " s== " + args[1] + "\n"
         else:
             self.code += "arith " + t + " = " + args[0] + " == " + args[1] + "\n"
+
         return t
 
     def exp_unequal(self, args):
@@ -448,9 +453,13 @@ class Test(Transformer):
         # typecheck here
         self.var_types[t] = "bool"
         if self.var_types[args[0]] == "double" or self.var_types[args[1]] == "double":
-            self.code += "arith " + t + " = " + args[0] + " f== " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[0] + " f!= " + args[1] + "\n"
+        elif self.var_types[args[0]] == "bool" or self.var_types[args[1]] == "bool":
+            self.code += "arith " + t + " = " + args[0] + " b!= " + args[1] + "\n"
+        elif self.var_types[args[0]] == "string" or self.var_types[args[1]] == "string":
+            self.code += "arith " + t + " = " + args[0] + " s!= " + args[1] + "\n"
         else:
-            self.code += "arith " + t + " = " + args[0] + " == " + args[1] + "\n"
+            self.code += "arith " + t + " = " + args[0] + " != " + args[1] + "\n"
         return t
 
     def exp_and(self, args):
