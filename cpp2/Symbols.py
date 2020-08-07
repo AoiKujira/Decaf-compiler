@@ -14,8 +14,7 @@ class Func:
 class Class:
     def __init__(self, name):
         self.name = name
-        self.size = 4
-        self.vtable = "here be pointer to vtable"
+        self.size = 0
         self.var_offsets = {}
         self.var_types = {}
         self.functions = {}
@@ -58,13 +57,28 @@ class SymbolTable(Transformer):
             self.has_finished = False
         the_class: Class = self.classes[class_name]
         fields = []
-        for arg in args[1:]:
+        #print(args)
+        for arg in args[2:-1]:
             if isinstance(arg, list):
                 fields.append(arg)
             elif isinstance(arg, Func):
                 the_class.functions[arg.name] = arg
             else:
                 if not the_class.parents.__contains__(arg):
+                    if self.classes.keys().__contains__(arg):
+                        parent: Class = self.classes[arg]
+                    else:
+                        return
+                    if not parent.is_finished:
+                        return
+                    for v in parent.var_offsets.keys():
+                        the_class.var_offsets[v] = parent.var_offsets[v]
+                        the_class.var_types[v] = parent.var_types[v]
+                    the_class.size = parent.size
+                    for f in parent.functions.keys():
+                        the_class.functions[f] = parent.functions[f]
+                    for p in parent.parents:
+                        the_class.parents.append(p)
                     the_class.parents.append(arg)
         for field in fields:
             if not (the_class.var_offsets.keys().__contains__(field[1])):

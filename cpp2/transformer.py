@@ -298,7 +298,7 @@ class Test(Transformer):
                 dict(self.function_vars).__contains__(self.var_types[lee[0]] + "_" + str(lee[1])):
             self.code = self.last_code
             self.code = self.code[:self.code.find("Lcall " + lee[1])]
-            self.code += "\npushaddressof " + lee[0] + "\n"
+            self.code += "\npushAddressOf " + lee[0] + "\n"
             self.code += "Lcall " + self.var_types[lee[0]] + "_" + lee[1] + "\n"
             return lee
         self.mem_checker = True
