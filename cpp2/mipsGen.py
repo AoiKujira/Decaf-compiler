@@ -206,6 +206,7 @@ def mipsGen(input_code):
                 mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
                 mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+        #need work
         if len(instruction) == 1:#pushra or #a:
             if instruction[0] == 'pushra':
                 mipsTextCode += 'subi $sp, $sp, 4\n'
@@ -223,11 +224,13 @@ def mipsGen(input_code):
             mipsTextCode += 'lw $t9, ($sp)\n'
             mipsTextCode += 'addi $sp, $sp, 4\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
+        #need work
         if instruction[0] == 'Lcall':#Lcall lable
             mipsTextCode += 'jal ' + instruction[1] + '\n'
             isLastInstructionLcall = 1
         else:
             isLastInstructionLcall = 0
+        #need work
         if instruction[0] == 'return': #return from folan
             mipsTextCode += 'jr $ra\n'
         if instruction[0] == 'Printf':#Printf a
