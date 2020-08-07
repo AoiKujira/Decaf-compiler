@@ -404,4 +404,4 @@ def mipsGen(input_code):
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
     mipsTextCode += '_______End_Of_The_World_______:\nli	$v0, 10\nsyscall\n'
-    return '=============mipsGen under construction===============\n' + mipsDataCode + '\n' + mipsTextCode
+    return  mipsDataCode + '\n' + mipsTextCode

@@ -21,12 +21,12 @@ def main(argv):
         elif opt in ("-o", "--ofile"):
             outputfile = arg
 
-    with open("tests/" + inputfile, "r") as input_file:
-        text = input_file.read()
+    with open("tests2/" + inputfile, "r") as input_fil:
+        text = input_fil.read()
         pass
 
-    with open("out/" + outputfile, "w") as output_file:
-        check_errors(text, output_file)
+    with open("out/" + outputfile, "w") as output_fil:
+        check_errors(text, output_fil)
 
 
 if __name__ == "__main__":
