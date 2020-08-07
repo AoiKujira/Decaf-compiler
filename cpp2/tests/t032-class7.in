@@ -2,6 +2,13 @@ class Cow {
     int[] sag;
 
 }
+class Hag extends Sag {
+    Cow lag;
+}
+class Sag extends Cow {
+    bool bag;
+}
+
 
 void main()
 {
@@ -11,6 +18,7 @@ void main()
       //Print(goo);
       a = 5;
       b = a + 7;
+      a = 4 + 6;
       c = new Cow;
       //c.Method(6);
       c.sag[6] = 87;
