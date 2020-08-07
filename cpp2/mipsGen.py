@@ -25,8 +25,6 @@ arith a = b f== c
 arith a = b f!= c
 arith a = b f<= c
 arith a = b f< c
-arith a = b f>= c
-arith a = b f> c
 ......arith string.......
 arith a = b s== c
 arith a = b s!= c
@@ -43,8 +41,6 @@ arith a = b == c
 arith a = b != c
 arith a = b <= c
 arith a = b < c
-arith a = b >= c
-arith a = b > c
 
 arith a = b + 10
 arith a = 10 + b
@@ -95,6 +91,7 @@ def mipsGen(input_code):
             return x[1:].isdigit()
         return x.isdigit()
     vars = {}
+    myLableCount = 0
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
@@ -148,6 +145,14 @@ def mipsGen(input_code):
                     mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
                     mipsTextCode += 'div.s $f3, $f1, $f2\n'
                     mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+                if instruction[4] == 'f==':#arith a = b f== c
+                    if not instruction[1] in vars.keys():
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                        vars[instruction[1]] = 0
+                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'c.eq.s $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             if instruction[4][0] == 's':
                 if instruction[4] == 's==':
                     pass
@@ -314,17 +319,23 @@ def mipsGen(input_code):
             mipsTextCode += 'li	$v0, 1\nmove 	$a0, $t9\nsyscall\n'
         if instruction[0] == 'Printb':#Printb a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'beqz $t9, ____printFalse____\n'
-            mipsTextCode += '____printTrue____:\n'
+            printFalseLable = '____printFalse' + myLableCount + '____'
+            myLableCount += 1
+            printTrueLable = '____printTrue' + myLableCount + '____'
+            myLableCount += 1
+            printEndLable = '____printEnd' + myLableCount + '____'
+            myLableCount += 1
+            mipsTextCode += 'beqz $t9, ' + printFalseLable + '\n'
+            mipsTextCode += printTrueLable + ':\n'
             mipsTextCode += 'la $a0, ____true____\n'
             mipsTextCode += 'li $v0, 4\n'
             mipsTextCode += 'syscall\n'
-            mipsTextCode += 'j ____printbEnd____\n'
-            mipsTextCode += '____printFalse____:\n'
+            mipsTextCode += 'j ' + printEndLable + '\n'
+            mipsTextCode += printFalseLable +':\n'
             mipsTextCode += 'la $a0, ____false____\n'
             mipsTextCode += 'li $v0, 4\n'
             mipsTextCode += 'syscall\n'
-            mipsTextCode += '____printbEnd____:\n'
+            mipsTextCode += printEndLable + ':\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
                 mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
