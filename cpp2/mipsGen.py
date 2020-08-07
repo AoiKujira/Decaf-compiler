@@ -80,7 +80,7 @@ def mipsGen(input_code):
     mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
     mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro print_int($reg)\nli	$v0, 1\nmove 	$a0, $reg\nsyscall\n.end_macro\n'
-    mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro print_float($reg)\nli	$v0, 2\nmov.s 	$f12, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	Exit()\nli	$v0, 10\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_enter()\nli	$v0, 11\nli	$a0, 10\nsyscall\n.end_macro\n'
@@ -91,29 +91,41 @@ def mipsGen(input_code):
         # mipsTextCode += '#' + instruction + '\n'
         instruction = instruction.split(' ')
         if instruction[0] == 'arith':#arith a = b Xop c
+            if instruction[4] == 'f+':#add
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                    vars[instruction[1]] = 0
+                mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'add.s $f3, $f1, $f2\n'
+                mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f-':#sub
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                    vars[instruction[1]] = 0
+                mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'sub.s $f3, $f1, $f2\n'
+                mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f*':#mul
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                    vars[instruction[1]] = 0
+                mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'mul.s $f3, $f1, $f2\n'
+                mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+            if instruction[4] == 'f/':#div
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                    vars[instruction[1]] = 0
+                mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                mipsTextCode += 'div.s $f3, $f1, $f2\n'
+                mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
             if not instruction[1] in vars.keys():
                 mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                 vars[instruction[1]] = 0
-            if instruction[4] == 'f+':#add
-                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
-                mipsTextCode += 'add.d $f3, $f1, $f2\n'
-                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
-            if instruction[4] == 'f-':#sub
-                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sub.d $f3, $f1, $f2\n'
-                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
-            if instruction[4] == 'f*':#mul
-                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
-                mipsTextCode += 'mul.d $f3, $f1, $f2\n'
-                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
-            if instruction[4] == 'f/':#div
-                mipsTextCode += 'lw $f1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $f2, ' + instruction[5] + '\n'
-                mipsTextCode += 'div.d $f3, $f1, $f2\n'
-                mipsTextCode += 'sw $f3, ' + instruction[1] + '\n'
             if instruction[4] == '+':#add
                 if check_int(instruction[3]):
                     numberLable = '_____'+instruction[3]+'_____'
@@ -248,8 +260,8 @@ def mipsGen(input_code):
         if instruction[0] == 'return': #return from folan
             mipsTextCode += 'jr $ra\n'
         if instruction[0] == 'Printf':#Printf a
-            mipsTextCode += 'l.d $f9, ' + instruction[1] + '\n'
-            mipsTextCode += 'print_double($f9)\n'
+            mipsTextCode += 'l.s $f9, ' + instruction[1] + '\n'
+            mipsTextCode += 'print_flout($f9)\n'
         if instruction[0] == 'Prints':#Prints a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'print_string($t9)\n'
