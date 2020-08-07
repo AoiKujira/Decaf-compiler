@@ -131,7 +131,7 @@ class Test(Transformer):
         self.is_varring = False
 
     def exp_assign(self, args):
-        print("exp assign", args)
+        # print("exp assign", args)
         # if str(args[1]).__contains__("["):
         #     print(self.code, "\n\nheheh\n\n")
         if not isinstance(args[1][0], str):
@@ -579,7 +579,7 @@ class Test(Transformer):
                     else:
                         self.mem_checker = True
                         args = [args[1][3], args[2]]
-                print(args, add)
+                # print(args, add)
                 if self.function_types_specific.__contains__(add):
                     add = self.function_types_specific[add] + "_" + args[1][0]
             if isinstance(args[1], str):
