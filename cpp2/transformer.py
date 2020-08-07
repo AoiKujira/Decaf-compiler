@@ -263,10 +263,13 @@ class Test(Transformer):
         if self.func_call:
             if isinstance(lee[0], str) and len(lee[1]) == 4:
                 self.func_call = False
-                try:
+                if self.var_types.__contains__(lee[0]):
                     add = self.var_types[lee[0]] + "_" + lee[1][0]
-                except:
-                    add = self.this_class_vars[lee[0]] + "_" + lee[1][0]
+                else:
+                    try:
+                        add = self.this_class_vars[lee[0]] + "_" + lee[1][0]
+                    except:
+                        return lee
                 self.code += "push " + lee[0] + "\n"
                 self.code += "Lcall " + add + "\n"
                 # print("Lcall1", add)
@@ -295,7 +298,7 @@ class Test(Transformer):
                 dict(self.function_vars).__contains__(self.var_types[lee[0]] + "_" + str(lee[1])):
             self.code = self.last_code
             self.code = self.code[:self.code.find("Lcall " + lee[1])]
-            self.code += "\npushaddressof " + lee[0] + "\n"
+            self.code += "\npushAddressOf " + lee[0] + "\n"
             self.code += "Lcall " + self.var_types[lee[0]] + "_" + lee[1] + "\n"
             return lee
         self.mem_checker = True
@@ -493,16 +496,21 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        # print(args)
         for arg in args[1]:
-            if self.var_types[arg] == "double":
-                self.code += "Printf " + arg + "\n"
-            elif self.var_types[arg] == "string":
-                self.code += "Prints " + arg + "\n"
-            elif self.var_types[arg] == "bool":
-                self.code += "Printb " + arg + "\n"
-            else:
-                self.code += "Printi " + arg + "\n"
+            code = ""
+            try:
+                if self.var_types[arg] == "double":
+                    code += "Printf " + arg + "\n"
+                elif self.var_types[arg] == "string":
+                    code += "Prints " + arg + "\n"
+                elif self.var_types[arg] == "bool":
+                    code += "Printb " + arg + "\n"
+                else:
+                    code += "Printi " + arg + "\n"
+            except:
+                code += "Print init_this." + arg + "\n"
+            self.code += code
+            return code
 
     def print_begin(self, args):
         self.is_printing = True
@@ -522,7 +530,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp_nine", args, self.mem_checker)
+        print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -533,6 +541,9 @@ class Test(Transformer):
             self.left = True
             new_lee = [args[0][0]]
             while isinstance(args[0][1][0], str):
+                if args[0][1][1] == "correct_init_this":
+                    args[0][1] = [args[0][1]]
+                    break
                 new_lee.append(args[0][1][0])
                 args = [[args[0][0], args[0][1][1]]]
             args = [self.exp_mem(new_lee), args[0][1]]
@@ -540,6 +551,9 @@ class Test(Transformer):
             args = [[self.exp_nine([args[0]]), args[1]]]
             # print(2, args)
             # print(self.var_types)
+        # print(args)
+        if str(args).count("correct_init_this"):
+            self.func_call = True
         if self.new:
             # print(1)
             self.new = False
@@ -561,7 +575,12 @@ class Test(Transformer):
                 # print("Lcall3", add)
                 self.code += "push " + push + "\n"
                 self.code += "Lcall " + add + "\n"
+                if len(args[1]) < 3:
+                    # print(args[0], type)
+                    self.var_types[args[0]] = type
+                    return self.exp_nine([args])
                 if not (isinstance(args[1][3], str) and args[1][3].count("[")):
+                    # print(add, self.function_types)
                     if self.function_types[add] == 'return':
                         self.code += "pop " + args[1][3] + "\n"
                 else:
@@ -569,6 +588,7 @@ class Test(Transformer):
                     self.code += "pop " + args[1][3][:args[1][3].find("[")] + "\n"
                     args[1][3] = self.exp_nine([args[1][3]])
                     # print("here", args)
+
                 push = args[1][3]
                 if self.function_types_specific.__contains__(add):
                     type = self.function_types_specific[add]
@@ -586,8 +606,18 @@ class Test(Transformer):
                 args = [args]
             # elif isinstance(args)
             else:
-                # print(args)
-                args = [args[1][3]]
+                try:
+                    # print(args)
+                    args = [args[1][3]]
+                except:
+                    # print(args)
+                    self.var_types[args[0]] = type
+                    lee = [args[0]]
+                    for arg in args[1]:
+                        lee.append(arg)
+                    args = [lee]
+                    self.mem_checker = True
+                    # print(args, type)
             # print(args, self.var_types)
             # args = [[args[1][3], args[2]]]
         if self.func_call and not self.left and not isinstance(args[0], str):
@@ -613,7 +643,6 @@ class Test(Transformer):
                 not self.function_types.__contains__(args[0][1]) \
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
             # print(5)
-            self.mem_checker = False
             t = self.make_temp()
             # print(t)
             offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
@@ -622,7 +651,22 @@ class Test(Transformer):
             self.var_types[t] = type
             self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
             self.code += t + " = *(" + t + ")\n"
-            return t
+            if len(args[0]) == 2:
+                self.mem_checker = False
+                return t
+            else:
+                self.mem_checker = True
+                lee = [t]
+                count = 0
+                for arg in args[0]:
+                    if count > 1:
+                        lee.append(arg)
+                    count += 1
+                return self.exp_nine([lee])
+        if len(args[0]) == 3 and isinstance(args[0][2], list) and isinstance(args[0][2][1], list):
+            return self.exp_nine([[args[0][0], args[0][1], [args[0][2][0], args[0][2][1][0], args[0][2][1][1]]]])
+        if len(args[0]) == 3 and isinstance(args[0][2], list):
+            return self.exp_nine([[args[0][0], args[0][1], args[0][2][0], args[0][2][1]]])
         if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(
                 args[0][1]):
             # print(6)
@@ -669,7 +713,7 @@ class Test(Transformer):
                 return args[0]
         else:
             # print(10)
-            # print("memmmmm")
+            # print("memmmmm", args)
             # print(self.code)
             self.left = False
             self.mem_checker = False
@@ -682,7 +726,7 @@ class Test(Transformer):
             # print(self.code)
             for i in range(1, len(lee)):
                 sec = lee[i]
-                # print(self.this_class_vars)
+                # print(self.var_types)
                 try:
                     t = self.var_types[first]
                     c: Class = self.classes[t]
@@ -715,6 +759,9 @@ class Test(Transformer):
                     continue
                 # print(c.var_offsets, sec)
                 o = c.var_offsets[sec]
+                # except:
+                #     print(c.var_offsets, self.classes[self.var_types[first]].var_offsets)
+                #     # o = c.var_offsets[self.var_types[first]]
                 self.code += temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
                         i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
@@ -827,6 +874,10 @@ class Test(Transformer):
                 else:
                     add_code += t + " = *(" + t + ")\n"
                     add_code += "push " + t + "\n"
+                    if line.count("Print"):
+                        self.var_types[t] = self.classes[args[1]].var_types[code]
+                        add_code += self.print_stmt([None, [t], None])
+                    # print(line.count("Print"))
                 new_code += add_code
             else:
                 if isinstance(self.classes[args[1]].parents[1], str) and line.__contains__(":") and \
