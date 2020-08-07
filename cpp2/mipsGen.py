@@ -57,11 +57,15 @@ Printf lable
 Printb lable
 Printi lable
 Prints lable
+Printe
 --------read----------
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
----------------------
-
+----------one word instructs-----------
+pushra
+popra
+Printe
+lable:
 '''
 def mipsGen(input_code):
     def check_int(x):
