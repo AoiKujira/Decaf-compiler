@@ -911,6 +911,23 @@ class Test(Transformer):
         self.code += "end_class\n"
         self.in_class = False
 
+    def last_mission(self, args):
+        total_code = self.code
+        new_code = ""
+        line = total_code[:total_code.find("\n") + len("\n")]
+        total_code = total_code[total_code.find("\n") + len("\n"):]
+        push_flag = False
+        while total_code.count("\n"):
+            last_line = line
+            line = total_code[:total_code.find("\n") + len("\n")]
+            total_code = total_code[total_code.find("\n") + len("\n"):]
+            if not line.__contains__("Print") and not push_flag and last_line.__contains__("push"):
+                new_code += "pushra\n"
+            new_code += last_line
+        new_code += line
+        self.code = new_code
+
+
     def function(self, args):
         # print("function", args[0].children)
         self.function_class[args[0].children[0]] = "global"
@@ -986,8 +1003,6 @@ class Test(Transformer):
         count = 0
         lee = []
         # print("pushshhhh", self.code)
-        if not self.is_printing:
-            self.code += "pushra\n"
         for x in args:
             if not isinstance(x, list):
                 if not self.is_printing:

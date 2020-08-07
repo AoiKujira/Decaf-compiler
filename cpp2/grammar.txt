@@ -1,4 +1,5 @@
-start: program
+start: program last_mission
+last_mission:
 
 program: decl+
 
