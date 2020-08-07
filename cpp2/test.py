@@ -7,7 +7,7 @@ from Symbols import SymbolTable
 
 if __name__ == "__main__":
     # t031
-    input_file = open("tests/t053-inherit2.in", "r")
+    input_file = open("tests/teeest.in", "r")
     # input_file = open("tests/t014-stmt1.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()

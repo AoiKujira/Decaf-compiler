@@ -122,6 +122,8 @@ class SymbolTable(Transformer):
             else:
                 name = lee[0]
                 ls = lee[2]
+            for i in range(len(ls)):
+                ls[i] = ls[i].strip("[]")
             self.function_vars["init_" + name] = ls
         # print(self.function_vars)
         if len(lee) == 3:
