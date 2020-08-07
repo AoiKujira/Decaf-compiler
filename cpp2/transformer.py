@@ -496,8 +496,10 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
+        # print("printing", args, self.var_types)
+        # exception = False
+        code = ""
         for arg in args[1]:
-            code = ""
             try:
                 if self.var_types[arg] == "double":
                     code += "Printf " + arg + "\n"
@@ -508,9 +510,13 @@ class Test(Transformer):
                 else:
                     code += "Printi " + arg + "\n"
             except:
-                code += "Print init_this." + arg + "\n"
-            self.code += code
-            return code
+                exception = True
+                if arg.count("init_this"):
+                    code += "Print " + arg + "\n"
+                else:
+                    code += "Print init_this." + arg + "\n"
+        self.code += code
+        return code
 
     def print_begin(self, args):
         self.is_printing = True
@@ -530,7 +536,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args, self.mem_checker)
+        # print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -559,10 +565,10 @@ class Test(Transformer):
             self.new = False
             return args[0][0]
         if not isinstance(args[0], list) and str(args).__contains__("exp_this"):
-            # print(2)
+            print(2)
             return "init_this"
         if isinstance(args[0], list) and isinstance(args[0][1], list) and self.func_call:
-            # print(3)
+            # print(3, args)
             self.func_call = False
             args = args[0]
             args = [args[0], args[1][0], args[1][1]]
@@ -580,7 +586,7 @@ class Test(Transformer):
                     self.var_types[args[0]] = type
                     return self.exp_nine([args])
                 if not (isinstance(args[1][3], str) and args[1][3].count("[")):
-                    # print(add, self.function_types)
+                    print(add, self.function_types)
                     if self.function_types[add] == 'return':
                         self.code += "pop " + args[1][3] + "\n"
                 else:
@@ -853,11 +859,12 @@ class Test(Transformer):
             line = total_code[:total_code.find("\n") + len("\n")]
 
             boolean = line.__contains__("Lcall")
-            cl = self.classes[args[1]].parents[1]
-            boolean = boolean and isinstance(cl, str)
-            boolean = boolean and line[len("Lcall "):].__contains__(cl + "_")
+            cl = self.classes[args[1]].parents
+            boolean = boolean and len(cl)
+            boolean = boolean and line[len("Lcall "):].__contains__(cl[0] + "_")
             if boolean:
                 # todo make sure
+                # print(cl[0])
                 new_code += "push " + args[1] + "_this\n"
 
             total_code = total_code[total_code.find("\n") + len("\n"):]
@@ -866,6 +873,8 @@ class Test(Transformer):
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
+                # print(line)
+                # print(args[1], self.classes[args[1]].var_offsets, code)
                 offset = self.classes[args[1]].var_offsets[code]
                 t = self.make_temp()
                 add_code = t + " = " + args[1] + "_this + " + str(offset) + "\n"
@@ -880,10 +889,10 @@ class Test(Transformer):
                     # print(line.count("Print"))
                 new_code += add_code
             else:
-                if isinstance(self.classes[args[1]].parents[1], str) and line.__contains__(":") and \
-                        line.__contains__(self.classes[args[1]].parents[1]):
-                    # print("class_decl", self.classes[args[1]].parents)
-                    line += line.replace(self.classes[args[1]].parents[1], self.classes[args[1]].parents[0])
+                if len(cl) and line.__contains__(":") and \
+                        line.__contains__(self.classes[args[1]].parents[0]):
+                    # print("class_decl", self.classes[args[1]].parents, args[1])
+                    line += line.replace(self.classes[args[1]].parents[0], args[1])
                 new_code += line
 
         self.code = new_code

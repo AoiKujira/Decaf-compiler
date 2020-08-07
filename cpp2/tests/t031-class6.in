@@ -52,5 +52,6 @@ void main()
 	//score = score[1];
 	//score = p.d.GetDeck().GetScore()[3].score;
 	score = p.d.score;
-	score = p.d.GetDeck().score[1].num[1].num[1].num.print();
+	//score = p.d.GetDeck().score[1].num[1].num[1].num.print();
+	score = p.d.GetDeck().score[1].num[1].num[1].num;
 }
