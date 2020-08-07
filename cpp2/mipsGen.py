@@ -39,14 +39,17 @@ pop lable
 Lcall lable
 Lable lable:
 return
+Ifz...
+pushaddressof...
+jumpto
+---------print---------
 Printf lable
 Printb lable
 Printi lable
 Prints lable
+--------read----------
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
-ifz...
-pushaddressof...
 ---------------------
 
 '''
@@ -200,8 +203,8 @@ def mipsGen(input_code):
                 mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
                 mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
                 mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-        if instruction[0] == 'Lable':#lable a:
-            pass
+        if len(instruction) == 1:#a:
+            mipsTextCode += instruction[0] + '\n'
         #what options are there?
         if instruction[0] == 'push':#push a
             pass
