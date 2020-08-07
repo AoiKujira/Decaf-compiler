@@ -46,20 +46,13 @@ class Test(Transformer):
 
     def expr(self, args):
         # print("expr", args)
-        # print("normal", args)
         if self.new and not isinstance(args[0], str):
-            #     self.code += "Lcall " + self.last_class + "_" + args[0][0][1] + "\n"
             self.new = False
             self.last_class = ""
         return args[0]
 
     def after_dot(self, args):
         self.afterdot = True
-
-    #     self.code += "here be expression code \n"
-    #     name = self.make_temp()
-    #     self.code += name + " = " + "gotten\n"
-    #     self.tstack.append(name)
 
     def make_start_label(self, args):
         lab = self.make_label()
@@ -642,6 +635,8 @@ class Test(Transformer):
                 # print(self.function_types.__contains__(self.classes))
                 if self.function_types.__contains__("init_" + add):
                     self.code += "push init_this\n"
+                else:
+                    self.code += "push father_this\n"
             self.code += "Lcall init_" + add + "\n"
             # print("Lcall4", add)
             temp = args[0]
@@ -872,6 +867,11 @@ class Test(Transformer):
                 # todo make sure
                 # print(cl[0])
                 new_code += "push " + args[1] + "_this\n"
+
+            if len(cl) and line.__contains__("push father_this"):
+                line = line.replace("father", args[1])
+            elif line.__contains__("push father_this"):
+                line = ""
 
             total_code = total_code[total_code.find("\n") + len("\n"):]
             if line.count(args[1] + "_this."):
