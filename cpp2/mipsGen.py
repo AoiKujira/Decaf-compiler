@@ -78,6 +78,7 @@ def mipsGen(input_code):
     mipsTextCode += '.macro print_int($reg)\nli	$v0, 1\nmove 	$a0, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro print_double($reg)\nli	$v0, 3\nmove 	$f12, $reg\nsyscall\n.end_macro\n'
     mipsTextCode += '.macro	print_string($string_address)\nli	$v0, 4\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
+    mipsTextCode += '.macro	Exit()\nli	$v0, 10\nsyscall\n.end_macro\n'
     mipsTextCode += '########################################\n'
     for instruction in instructions:
         if instruction == '':
