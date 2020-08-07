@@ -17,6 +17,7 @@ class Test(Transformer):
     def __init__(self, sym):
         super().__init__()
         self.afterdot = False
+        self.is_converty = False
         self.is_printing = False
         self.root_scope = Scope(None, 0)
         self.current_scope = self.root_scope
@@ -977,6 +978,38 @@ class Test(Transformer):
         return args[0]
 
     def function_call(self, args):
+        name = args[0]
+        if name == "itod":
+            t = self.make_temp()
+            self.var_types[t] = "double"
+            arg = args[1].children[0][0]
+            #print(arg)
+            self.code = self.code[:-(7 + len(arg))]
+            self.code += "arith " + t + " c= itod " + arg + "\n"
+            return t
+        elif name == "dtoi":
+            t = self.make_temp()
+            self.var_types[t] = "int"
+            arg = args[1].children[0][0]
+            self.code = self.code[:-(7 + len(arg))]
+            #print(arg)
+            self.code += "arith " + t + " c= dtoi " + arg + "\n"
+            return t
+        elif name == "btoi":
+            t = self.make_temp()
+            self.var_types[t] = "int"
+            arg = args[1].children[0][0]
+            self.code = self.code[:-(7 + len(arg))]
+            self.code += "arith " + t + " c= btoi " + arg + "\n"
+            return t
+        elif name == "itob":
+            t = self.make_temp()
+            self.var_types[t] = "bool"
+            arg = args[1].children[0][0]
+            self.code = self.code[:-(7 + len(arg))]
+            #print(arg)
+            self.code += "arith " + t + " c= itob " + arg + "\n"
+            return t
         # print("function call", args, self.last_class)
         try:
             self.func_call = True

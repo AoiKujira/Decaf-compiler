@@ -37,7 +37,11 @@ class Jersey extends Cow {
 
 void main() {
   Jersey b;
-
+  double ka;
+  int t;
+  t = itod(ka * 5 + 4);
+  t = itod(6);
+  t = dtoi(78);
   b = new Jersey;
   b.Init();
   b.Method3();

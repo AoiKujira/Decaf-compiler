@@ -29,6 +29,6 @@ if __name__ == "__main__":
     for k, v in trans.var_types.items():
         print(k, v)
     print(trans.code)
-    print(mipsGen(trans.code))
+    #print(mipsGen(trans.code))
     # print(mipsGen(trans.code))
     # print(sym.classes["A"].var_offsets)
