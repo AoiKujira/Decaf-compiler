@@ -15,6 +15,7 @@ void main()
       Cow c;
       int a;
       int b;
+      c = new Cow;
       //Print(goo);
       a = 5;
       b = a + 7;

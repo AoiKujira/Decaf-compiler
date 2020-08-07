@@ -493,7 +493,7 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        #print(args)
+        # print(args)
         for arg in args[1]:
             if self.var_types[arg] == "double":
                 self.code += "Printf " + arg + "\n"
@@ -503,7 +503,6 @@ class Test(Transformer):
                 self.code += "Printb " + arg + "\n"
             else:
                 self.code += "Printi " + arg + "\n"
-
 
     def print_begin(self, args):
         self.is_printing = True
@@ -921,7 +920,8 @@ class Test(Transformer):
         count = 0
         lee = []
         # print("pushshhhh", self.code)
-
+        if not self.is_printing:
+            self.code += "pushra\n"
         for x in args:
             if not isinstance(x, list):
                 if not self.is_printing:
