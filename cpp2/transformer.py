@@ -892,7 +892,6 @@ class Test(Transformer):
                 else:
                     add_code += "assign " + t + " = *(" + t + ")\n"
                     self.var_types[t] = ty
-                    add_code += "push " + t + "\n"
                     if line.count("Print"):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
                         add_code += self.print_stmt([None, [t], None])
