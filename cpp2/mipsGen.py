@@ -98,7 +98,9 @@ def mipsGen(input_code):
             if instruction[4] == '+':#add
                 if check_int(instruction[3]):
                     numberLable = '_____'+instruction[3]+'_____'
-                    mipsDataCode += numberLable + ': .word' + instruction[3] + '\n'
+                    if not numberLable in vars.keys():
+                        mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
+                        vars[numberLable] = 0
                     mipsTextCode += 'lw $t1, ' + numberLable + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
                     mipsTextCode += 'add $t3, $t1, $t2\n'
@@ -106,7 +108,9 @@ def mipsGen(input_code):
                 elif check_int(instruction[5]):
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     numberLable = '_____'+instruction[5]+'_____'
-                    mipsDataCode += numberLable + ': .word' + instruction[5] + '\n'
+                    if not numberLable in vars.keys():
+                        mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
+                        vars[numberLable] = 0
                     mipsTextCode += 'lw $t2, ' + numberLable + '\n'
                     mipsTextCode += 'add $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
@@ -123,7 +127,9 @@ def mipsGen(input_code):
             if instruction[4] == '*':#mul
                 if check_int(instruction[3]):
                     numberLable = '_____'+instruction[3]+'_____'
-                    mipsDataCode += numberLable + ': .word' + instruction[3] + '\n'
+                    if not numberLable in vars.keys():
+                        mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
+                        vars[numberLable] = 0
                     mipsTextCode += 'lw $t1, ' + numberLable + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
                     mipsTextCode += 'mul $t3, $t1, $t2\n'
@@ -131,7 +137,9 @@ def mipsGen(input_code):
                 elif check_int(instruction[5]):
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     numberLable = '_____'+instruction[5]+'_____'
-                    mipsDataCode += numberLable + ': .word' + instruction[5] + '\n'
+                    if not numberLable in vars.keys():
+                        mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
+                        vars[numberLable] = 0
                     mipsTextCode += 'lw $t2, ' + numberLable + '\n'
                     mipsTextCode += 'mul $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
