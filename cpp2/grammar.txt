@@ -109,13 +109,13 @@ e_layer5: e_layer6 "<" e_layer5 -> exp_lt
         | e_layer6 ">=" e_layer5 -> exp_ge
         | e_layer6 -> exp_normal
 
-e_layer6: e_layer7 "+" e_layer6 -> exp_sum
-        | e_layer7 "-" e_layer6 -> exp_sub
+e_layer6: e_layer6 "+" e_layer7 -> exp_sum
+        | e_layer6 "-" e_layer7 -> exp_sub
         | e_layer7 -> exp_normal
 
-e_layer7: e_layer8 "*" e_layer7 -> exp_mul
-        | e_layer8 "/" e_layer7 -> exp_div
-        | e_layer8 "%" e_layer7 -> exp_rem
+e_layer7: e_layer7 "*" e_layer8 -> exp_mul
+        | e_layer7 "/" e_layer8 -> exp_div
+        | e_layer7 "%" e_layer8 -> exp_rem
         | e_layer8 -> exp_normal
 
 e_layer8: "-"e_layer8 -> exp_neg

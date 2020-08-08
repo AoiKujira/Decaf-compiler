@@ -46,17 +46,17 @@ lw $t1, b1
 lw $t2, c1
 mul $t3, $t1, $t2
 sw $t3, tempo4
+lw $t1, a1
+lw $t2, tempo4
+add $t3, $t1, $t2
+sw $t3, tempo5
 lw $t1, d1
 lw $t2, a1
 div $t3, $t1, $t2
-sw $t3, tempo5
-lw $t1, tempo4
-lw $t2, tempo5
-sub $t3, $t1, $t2
 sw $t3, tempo6
-lw $t1, a1
+lw $t1, tempo5
 lw $t2, tempo6
-add $t3, $t1, $t2
+sub $t3, $t1, $t2
 sw $t3, tempo7
 lw $t9, tempo7
 sw $t9, z1
