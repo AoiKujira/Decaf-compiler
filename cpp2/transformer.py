@@ -263,11 +263,17 @@ class Test(Transformer):
                 lee.append(a)
         if str(lee).__contains__("correct_init_this"):
             self.func_call = True
-        # print("exp_mem", lee)
         self.afterdot = False
         if self.func_call:
             if isinstance(lee[0], str) and len(lee[1]) == 4:
                 self.func_call = False
+                if str(lee).__contains__("length"):
+                    temp = lee[1][3]
+                    self.code += temp + " = " + "*(" + lee[0] + ")\n"
+                    self.code += temp + " = " + temp + " - 4\n"
+                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.var_types[temp] = "int"
+                    return temp
                 if self.var_types.__contains__(lee[0]):
                     add = self.var_types[lee[0]] + "_" + lee[1][0]
                 else:
@@ -277,7 +283,7 @@ class Test(Transformer):
                         return lee
                 self.code += "push " + lee[0] + "\n"
                 self.code += "Lcall " + add + "\n"
-                print("Lcall1", add)
+                print("Lcall1", add, lee)
                 # print(self.function_types)
                 if (self.function_types.__contains__(add) and self.function_types[add] == 'return') \
                         or (self.function_types.__contains__("init_" + lee[1][0]) and
@@ -601,6 +607,13 @@ class Test(Transformer):
             type = ""
             for i in range(1, str(args).count("correct_init_this") + 1):
                 print("Lcall3", add)
+                if str(add).__contains__("length"):
+                    temp = args[1][3]
+                    self.code += temp + " = " + "*(" + args[0] + ")\n"
+                    self.code += temp + " = " + temp + " - 4\n"
+                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.var_types[temp] = "int"
+                    return temp
                 self.code += "push " + push + "\n"
                 self.code += "Lcall " + add + "\n"
                 if len(args[1]) < 3:
@@ -950,7 +963,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
-        print(self.var_types)
+        # print(self.var_types)
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
@@ -996,7 +1009,7 @@ class Test(Transformer):
             add_to_code = args[0].children[0]
             self.function_types[add_to_code] = 'no_return'
         pop_args = ""
-        print(self.function_vars, self.scope_counter)
+        # print(self.function_vars, self.scope_counter)
         if child[3].children and child[3].children[0] is not None:
             vars = child[3].children[0].children
             self.function_vars[add_to_code] = vars
