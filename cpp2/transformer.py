@@ -164,6 +164,7 @@ class Test(Transformer):
                 return args[1]
             # print("self.code", self.code, "\n\nhehe\n\n")
             # print("var type", self.var_types)
+            print(args)
             try:
                 self.var_types[args[0]] = self.var_types[args[1]]
             except:
