@@ -791,6 +791,7 @@ class Test(Transformer):
             else:
                 if re.match(".*\[.*\]", args[0]):
                     name = re.sub("\[.*\]", "", args[0])
+                    print(args)
                     ty = self.var_types[name].strip("[]")
                     if ["int", "bool", "double", "string"].__contains__(ty):
                         size = 4
