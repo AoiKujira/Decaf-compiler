@@ -1108,13 +1108,13 @@ class Test(Transformer):
     def actuals(self, args):
         count = 0
         # self.code += "pushra\n"
-        # print(args)
+        print(args, self.var_types)
         if len(args):
             for x in args[0]:
                 if not isinstance(x, list):
                     count += 1
                     # if not str(x).__contains__("this"):
-                    self.code += "push " + x + str(self.current_scope.number) + " \n"
+                    self.code += "push " + x + " \n"
 
     def push_args(self, args):
         # print("push_args", args)
