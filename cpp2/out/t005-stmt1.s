@@ -9,8 +9,6 @@ a2: .word 0
 tempo2: .word 0
 b2: .word 0
 tempo4: .word 0
-___tempo5___: .asciiz  "hi"
-tempo5: .word 0
 
 .text
 main:
@@ -59,17 +57,10 @@ addi $sp, $sp, 4
 sw $t9, tempo4
 lw $ra, ($sp)
 addi $sp, $sp, 4
-la $t9, ___tempo5___
-sw $t9, tempo5
 lw $t9, tempo4
 li	$v0, 1
 move 	$a0, $t9
 syscall
-lw $t9, tempo5
-li	$v0, 4
-move	$a0, $t9
-syscall
-
 li	$v0, 11
 li	$a0, 10
 syscall

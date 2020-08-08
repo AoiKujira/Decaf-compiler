@@ -201,7 +201,7 @@ move	$a0, $t9
 syscall
 ____len_to_new_line0____:
 lb $t2, ($a0)
-li $t3, '\n'
+li $t3, 10
 beq $t2, $t3, ____endofreadline1____
 addi $a0, $a0, 1
 b ____len_to_new_line0____
@@ -250,7 +250,7 @@ move	$a0, $t9
 syscall
 ____len_to_new_line3____:
 lb $t2, ($a0)
-li $t3, '\n'
+li $t3, 10
 beq $t2, $t3, ____endofreadline4____
 addi $a0, $a0, 1
 b ____len_to_new_line3____
@@ -297,7 +297,7 @@ move	$a0, $t9
 syscall
 ____len_to_new_line6____:
 lb $t2, ($a0)
-li $t3, '\n'
+li $t3, 10
 beq $t2, $t3, ____endofreadline7____
 addi $a0, $a0, 1
 b ____len_to_new_line6____
@@ -361,7 +361,7 @@ move	$a0, $t9
 syscall
 ____len_to_new_line9____:
 lb $t2, ($a0)
-li $t3, '\n'
+li $t3, 10
 beq $t2, $t3, ____endofreadline10____
 addi $a0, $a0, 1
 b ____len_to_new_line9____

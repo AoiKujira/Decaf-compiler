@@ -111,7 +111,7 @@ move	$a0, $t9
 syscall
 ____len_to_new_line0____:
 lb $t2, ($a0)
-li $t3, '\n'
+li $t3, 10
 beq $t2, $t3, ____endofreadline1____
 addi $a0, $a0, 1
 b ____len_to_new_line0____

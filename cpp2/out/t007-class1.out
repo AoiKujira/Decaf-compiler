@@ -1,9 +1,1 @@
-SPIM Version 8.0 of January 8, 2010
-Copyright 1990-2010, James R. Larus.
-All Rights Reserved.
-See the file README for a full copyright notice.
-Loaded: /usr/lib/spim/exceptions.s
-The following symbols are undefined:
-EndOfWorld
-
-[0x004001c0]	0x3c010000  lui $1, 0 [EndOfWorld]          ; 105: la $ra,EndOfWorld
+Name: Bertrand Russel Age: 98
