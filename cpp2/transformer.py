@@ -948,8 +948,9 @@ class Test(Transformer):
                 push_flag = True
                 new_code += "pushra\n"
             if last_line.__contains__("push") and total_code.__contains__("Print") and \
-                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall"))\
-                    and not line.__contains__("return"):
+                    (not total_code.__contains__("Lcall") or total_code.find("Print") < total_code.find("Lcall"))\
+                    and not line.__contains__("return") and not line.__contains__("Lcall"):
+                # print("ganddddddddd", last_line)
                 last_line = ""
             if line.__contains__("Lcall"):
                 push_flag = False
