@@ -967,7 +967,8 @@ class Test(Transformer):
             add_to_code = args[0].children[0]
             self.function_types[add_to_code] = 'no_return'
         pop_args = ""
-        if child[3].children:
+        # print(child[3].children)
+        if child[3].children and child[3].children[0] is not None:
             vars = child[3].children[0].children
             self.function_vars[add_to_code] = vars
             self.this_function_vars = vars
@@ -1003,9 +1004,12 @@ class Test(Transformer):
 
     def return_func(self, args):
         # print("return_func", args)
-        self.code += "push " + args[0] + " \n"
+        if len(args):
+            self.code += "push " + args[0] + " \n"
         # print("return...\n\n", self.code, "\n\nre\n\n")
-        return args[0]
+            return args[0]
+        self.code += "return \n"
+        return args
 
     def function_call(self, args):
         name = args[0]
