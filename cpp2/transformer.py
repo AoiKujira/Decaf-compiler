@@ -281,6 +281,8 @@ class Test(Transformer):
                             self.function_types["init_" + lee[1][0]] == 'return'):
                     self.code += "pop " + lee[1][3] + "\n"
                     self.code += "popra\n"
+                if self.function_types_specific.__contains__(add):
+                    self.var_types[lee[1][3]] = self.function_types_specific[add]
                 return lee[1][3]
             elif self.new:
                 # print(3)
@@ -292,6 +294,7 @@ class Test(Transformer):
                 self.code += "Lcall " + add + "\n"
                 print("Lcall2", add)
                 if self.function_types[add] == 'return':
+                    self.var_types[lee[1][3]] = self.function_types_specific[add]
                     self.code += "pop " + lee[1][3] + "\n"
                     self.code += "popra\n"
                 return lee[1][3]
@@ -509,7 +512,7 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        print("printing", args, self.var_types)
+        # print("printing", args, self.var_types)
         # exception = False
         code = ""
         for arg in args[1]:
@@ -605,6 +608,7 @@ class Test(Transformer):
                     if self.function_types[add] == 'return':
                         self.code += "pop " + args[1][3] + "\n"
                         self.code += "popra\n"
+                        self.var_types[args[1][3]] = self.function_types_specific[add]
                 else:
                     self.var_types[args[1][3][:args[1][3].find("[")]] = self.function_types_specific[add]
                     self.code += "pop " + args[1][3][:args[1][3].find("[")] + "\n"
@@ -615,6 +619,7 @@ class Test(Transformer):
                 push = args[1][3]
                 if self.function_types_specific.__contains__(add):
                     type = self.function_types_specific[add]
+                    print("type", args, type)
                 if len(args) > 2:
                     if isinstance(args[2][0], list):
                         args = [args[0], args[2][0], args[2][1]]
@@ -848,6 +853,7 @@ class Test(Transformer):
         after_here = code[code.find("end_class") + len("end_class") + 1:]
         code = code[:code.find("end_class")]
         code = code.replace("init_", args[1] + "_")
+        self.var_types[args[1] + "_this"] = args[1]
         for x in self.function_vars:
             before = code[:str(code).find(x)]
             after = code[str(code).find("return from " + x):]
@@ -941,7 +947,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
-        # print(self.code, "hehe\n\n")
+        print(self.var_types)
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
