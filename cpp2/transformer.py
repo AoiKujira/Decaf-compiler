@@ -518,7 +518,7 @@ class Test(Transformer):
         return t
 
     def print_stmt(self, args):
-        # print("printing", args, self.var_types)
+        print("printing", args, self.var_types)
         # exception = False
         code = ""
         for arg in args[1]:
@@ -673,6 +673,7 @@ class Test(Transformer):
             temp = args[0]
             if self.function_types_specific.__contains__(add):
                 temp = self.make_temp()
+                self.var_types[temp] = self.function_types_specific[add]
                 self.code += "pop " + temp + "\n"
                 self.code += "popra\n"
             return temp
@@ -715,6 +716,7 @@ class Test(Transformer):
             t = ""
             if self.function_types[args[0][1]] == "return":
                 t = self.make_temp()
+                self.var_types[t] = self.function_types_specific[args[0][1]]
                 self.code += "pop " + t + "\n"
                 self.code += "popra\n"
             return t
@@ -931,6 +933,7 @@ class Test(Transformer):
                     self.var_types[t] = ty
                     if line.count("Print"):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
+                        # print("printtttt", self.var_types[t], t)
                         add_code += self.print_stmt([None, [t], None])
                     # print(line.count("Print"))
 
@@ -963,6 +966,12 @@ class Test(Transformer):
             last_line = line
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
+            if last_line.count("Print "):
+                t = last_line[len("Print "):]
+                t = t[:t.find("\n")]
+                last_line = self.print_stmt([None, [t], None])
+                # self.var_types[t] = self.classes[args[1]].var_types[code]
+                # print("printtttt", last_line, self.var_types)
             if (not total_code.__contains__("Print") or
                 (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))) \
                     and not line.__contains__("return") and \
@@ -976,8 +985,6 @@ class Test(Transformer):
                 last_line = ""
             if line.__contains__("Lcall"):
                 push_flag = False
-            # if line.count("init_"):
-            #     line = line.replace("init_", "")
             new_code += last_line
         new_code += line
         self.code = new_code
@@ -1099,7 +1106,7 @@ class Test(Transformer):
 
     def actuals(self, args):
         count = 0
-        self.code += "pushra\n"
+        # self.code += "pushra\n"
         for x in args[0]:
             if not isinstance(x, list):
                 count += 1
@@ -1159,11 +1166,13 @@ class Test(Transformer):
 
     def read_line(self, args):
         t = self.make_temp()
+        self.var_types[t] = "string"
         self.code += "ReadLine " + t + " = ReadLine()" + "\n"
         return t
 
     def read_int(self, args):
         t = self.make_temp()
+        self.var_types[t] = "int"
         self.code += "ReadInt " + t + " = ReadInt()" + "\n"
         return t
 
