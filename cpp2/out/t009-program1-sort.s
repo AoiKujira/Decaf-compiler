@@ -219,7 +219,7 @@ j l3
 l2:
 jr $ra
 ___main___:
-la $ra, _______End_Of_The_World_______
+la $ra, _______EndOfTheWorld_______
 la $t9, ___tempo27___
 sw $t9, tempo27
 lw $t9, tempo27
@@ -409,6 +409,6 @@ syscall
 j l21
 l20:
 jr $ra
-_______End_Of_The_World_______:
+_______EndOfTheWorld_______:
 li	$v0, 10
 syscall

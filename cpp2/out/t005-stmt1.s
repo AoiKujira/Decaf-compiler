@@ -32,7 +32,7 @@ sw $t9, ($sp)
 jr $ra
 jr $ra
 ___main___:
-la $ra, _______End_Of_The_World_______
+la $ra, _______EndOfTheWorld_______
 li	$v0, 5
 syscall
 move	$t9, $v0
@@ -74,6 +74,6 @@ li	$v0, 11
 li	$a0, 10
 syscall
 jr $ra
-_______End_Of_The_World_______:
+_______EndOfTheWorld_______:
 li	$v0, 10
 syscall

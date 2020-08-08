@@ -185,7 +185,7 @@ li	$a0, 10
 syscall
 jr $ra
 ___main___:
-la $ra, _______End_Of_The_World_______
+la $ra, _______EndOfTheWorld_______
 lw	$t9, ___tempo5___
 li	$v0, 9
 move	$a0, $t9
@@ -509,6 +509,6 @@ li	$v0, 11
 li	$a0, 10
 syscall
 jr $ra
-_______End_Of_The_World_______:
+_______EndOfTheWorld_______:
 li	$v0, 10
 syscall
