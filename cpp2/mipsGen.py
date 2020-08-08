@@ -95,10 +95,10 @@ def mipsGen(input_code):
     vars = {}
     myLableCount = 0
     MAX_SIZE = 1010
-    maxSizedString = ''
+    maxSizedString = '\"'
     for i in range(MAX_SIZE-1):
         maxSizedString += ' '
-    maxSizedString += '\0'
+    maxSizedString += '\"'
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
