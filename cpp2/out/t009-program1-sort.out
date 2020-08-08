@@ -4,8 +4,8 @@ All Rights Reserved.
 See the file README for a full copyright notice.
 Loaded: /usr/lib/spim/exceptions.s
 The following symbols are undefined:
-____End____
 tempo0
+____EndOfWorld
 l11
 
-[0x004003d4]	0x3c010000  lui $1, 0 [____End____]         ; 222: la $ra, ____End____
+[0x004003d4]	0x3c010000  lui $1, 0 [____EndOfWorld]      ; 222: la $ra,____EndOfWorld
