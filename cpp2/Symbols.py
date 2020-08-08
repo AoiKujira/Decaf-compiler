@@ -133,14 +133,23 @@ class SymbolTable(Transformer):
 
     def function(self, args):
         child = args[0].children
-        if child[1] is not None:
+        # print(child)
+        if child[1] is not None and isinstance(child[1], str):
             self.function_types_specific[child[1]] = child[0]
-        if isinstance(args[0].children[1], str):
-            add_to_code = args[0].children[1]
+        if isinstance(child[1], str):
+            add_to_code = child[1]
             self.function_types[add_to_code] = 'return'
+            if child[3] is not None:
+                self.function_vars[add_to_code] = child[3]
+            else:
+                self.function_vars[add_to_code] = []
         else:
-            add_to_code = args[0].children[0]
+            add_to_code = child[0]
             self.function_types[add_to_code] = 'no_return'
+            if child[2] is not None:
+                self.function_vars[add_to_code] = child[2]
+            else:
+                self.function_vars[add_to_code] = []
         return args
 
     def func_field(self, args):

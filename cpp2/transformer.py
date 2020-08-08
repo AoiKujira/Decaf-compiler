@@ -997,25 +997,19 @@ class Test(Transformer):
         self.code = new_code
 
     def function(self, args):
-        # print("function", args, self.push_args_later)
+        # print("function", self.function_vars)
         self.function_class[args[0].children[0]] = "global"
         child = args[0].children
-        if child[1] is not None:
-            self.function_types_specific[child[1]] = child[0]
-        if isinstance(args[0].children[1], str):
-            add_to_code = args[0].children[1]
-            self.function_types[add_to_code] = 'return'
-        else:
-            add_to_code = args[0].children[0]
-            self.function_types[add_to_code] = 'no_return'
         pop_args = ""
-        # print(self.function_vars, self.scope_counter)
-        if child[3].children and child[3].children[0] is not None:
-            vars = child[3].children[0].children
-            self.function_vars[add_to_code] = vars
-            self.this_function_vars = vars
-            for var in vars[::-1]:
-                pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
+        # print(child[3].children)
+        if isinstance(child[1], str):
+            add_to_code = child[1]
+        else:
+            add_to_code = child[0]
+        # print(add_to_code)
+        self.this_function_vars = self.function_vars[add_to_code]
+        for var in self.function_vars[add_to_code]:
+            pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
