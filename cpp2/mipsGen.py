@@ -413,7 +413,7 @@ def mipsGen(input_code):
                 mipsTextCode += 'jr $ra\n'
             else:#lable:
                 if instruction[0] == 'main:':
-                    mipsTextCode += '___main___:\nla $ra, ____End____\n'
+                    mipsTextCode += '___main___:\nla $ra,____EndOfWorld\n'
                 else:
                     mipsTextCode += instruction[0] + '\n'
         if instruction[0] == 'push':#push a
@@ -538,5 +538,5 @@ def mipsGen(input_code):
         if instruction[0] == 'Ifz':#Ifz a goto lable
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
-    mipsTextCode += '____End____:\nli	$v0, 10\nsyscall\n'
+    mipsTextCode += '____EndOfWorld:\nli	$v0, 10\nsyscall\n'
     return  mipsDataCode + '\n' + mipsTextCode
