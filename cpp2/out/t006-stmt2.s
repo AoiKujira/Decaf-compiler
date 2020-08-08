@@ -32,10 +32,10 @@ lw $t9, tempo1
 sw $t9, b1
 subi $sp, $sp, 4
 sw $ra, ($sp)
-lw $t9, a1
+lw $t9, a11
 subi $sp, $sp, 4
 sw $t9, ($sp)
-lw $t9, b1
+lw $t9, b11
 subi $sp, $sp, 4
 sw $t9, ($sp)
 jal abs_mult

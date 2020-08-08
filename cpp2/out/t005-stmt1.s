@@ -45,10 +45,10 @@ lw $t9, tempo2
 sw $t9, b2
 subi $sp, $sp, 4
 sw $ra, ($sp)
-lw $t9, a2
+lw $t9, a22
 subi $sp, $sp, 4
 sw $t9, ($sp)
-lw $t9, b2
+lw $t9, b22
 subi $sp, $sp, 4
 sw $t9, ($sp)
 jal test
