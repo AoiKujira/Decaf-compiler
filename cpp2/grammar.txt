@@ -54,7 +54,9 @@ non_if_stmt:  while_stmt
     | return_stmt
     | print_stmt
     | stmt_block
-    | expr? ";"
+    | expr? ";" end_of_after_dot_correction
+
+end_of_after_dot_correction:
 
 if_stmt: ms
        | us

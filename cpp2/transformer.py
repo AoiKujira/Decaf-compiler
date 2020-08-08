@@ -1120,6 +1120,8 @@ class Test(Transformer):
                         self.code += "push " + x + " \n"
                     else:
                         self.code += "push " + x + str(self.current_scope.number) + " \n"
+
+    def end_of_after_dot_correction(self, args):
         self.correct_after_dot = False
 
     def push_args(self, args):
