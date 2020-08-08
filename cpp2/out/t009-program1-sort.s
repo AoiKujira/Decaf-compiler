@@ -2,6 +2,8 @@
 ____true____: .asciiz "true"
 ____false____: .asciiz "false"
 items0: .word 0
+tempo0: .word 0
+______4_____: .word -4
 n1: .word 0
 tempo1: .word 0
 i1: .word 0
@@ -48,7 +50,7 @@ tempo35: .word 0
 x4: .word 0
 tempo36: .word 1
 tempo37: .word 0
-_____-1_____: .word -1
+______1_____: .word -1
 tempo38: .word 0
 tempo39: .word 0
 tempo40: .word 0
@@ -63,6 +65,7 @@ tempo46: .word 0
 ___tempo48___: .asciiz  "After sort: "
 tempo48: .word 0
 tempo49: .word 0
+tempo50: .word 0
 tempo51: .word 0
 tempo52: .word 1
 tempo53: .word 0
@@ -75,6 +78,16 @@ sort:
 lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, items0
+lw $t9, items0
+lw $t9, ($t9)
+sw $t9, tempo0
+lw $t1, tempo0
+lw $t2, ______4_____
+add $t3, $t1, $t2
+sw $t3, tempo0
+lw $t9, tempo0
+lw $t9, ($t9)
+sw $t9, tempo0
 lw $t9, tempo0
 sw $t9, n1
 lw $t9, tempo1
@@ -271,7 +284,7 @@ move	$t9, $v0
 sw $t9, tempo35
 lw $t9, tempo35
 sw $t9, x4
-lw $t1, _____-1_____
+lw $t1, ______1_____
 lw $t2, tempo36
 mul $t3, $t1, $t2
 sw $t3, tempo37
@@ -373,6 +386,16 @@ syscall
 lw $t9, tempo49
 sw $t9, i3
 l18:
+lw $t9, items3
+lw $t9, ($t9)
+sw $t9, tempo50
+lw $t1, tempo50
+lw $t2, ______4_____
+add $t3, $t1, $t2
+sw $t3, tempo50
+lw $t9, tempo50
+lw $t9, ($t9)
+sw $t9, tempo50
 lw $t1, i3
 lw $t2, tempo50
 slt $t3, $t1, $t2
