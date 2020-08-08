@@ -529,7 +529,6 @@ class Test(Transformer):
     def print_end(self, args):
         self.is_printing = False
 
-
     def exp_le(self, args):
         t = self.make_temp()
         #
@@ -992,7 +991,7 @@ class Test(Transformer):
             t = self.make_temp()
             self.var_types[t] = "double"
             arg = args[1].children[0][0]
-            #print(arg)
+            # print(arg)
             self.code = self.code[:-(7 + len(arg))]
             self.code += "arith " + t + " c= itod " + arg + "\n"
             return t
@@ -1001,7 +1000,7 @@ class Test(Transformer):
             self.var_types[t] = "int"
             arg = args[1].children[0][0]
             self.code = self.code[:-(7 + len(arg))]
-            #print(arg)
+            # print(arg)
             self.code += "arith " + t + " c= dtoi " + arg + "\n"
             return t
         elif name == "btoi":
@@ -1016,7 +1015,7 @@ class Test(Transformer):
             self.var_types[t] = "bool"
             arg = args[1].children[0][0]
             self.code = self.code[:-(7 + len(arg))]
-            #print(arg)
+            # print(arg)
             self.code += "arith " + t + " c= itob " + arg + "\n"
             return t
         # print("function call", args, self.last_class)
@@ -1043,6 +1042,15 @@ class Test(Transformer):
         self.code += "Lcall Print " + str(count) + "\n"
         # print(self.code, "\n\nhehe\n\n")
 
+    def actuals(self, args):
+        count = 0
+        self.code += "pushra\n"
+        for x in args[0]:
+            if not isinstance(x, list):
+                count += 1
+                # if not str(x).__contains__("this"):
+                self.code += "push " + x + " \n"
+
     def push_args(self, args):
         # print("push_args", args)
         count = 0
@@ -1050,10 +1058,6 @@ class Test(Transformer):
         # print("pushshhhh", self.code)
         for x in args:
             if not isinstance(x, list):
-                if not self.is_printing:
-                    count += 1
-                    # if not str(x).__contains__("this"):
-                    self.code += "push " + x + " \n"
                 lee.append(x)
         # print(self.code, "\n\nhaha\n\n")
         return lee
