@@ -10,7 +10,7 @@ b1: .word 0
 main:
 b ___main___
 ___main___:
-la $ra,EndOfWorld
+la $ra, _____EndOfWorld_____
 li	$v0, 5
 syscall
 move	$t9, $v0
@@ -38,7 +38,7 @@ li	$v0, 11
 li	$a0, 10
 syscall
 jr $ra
-EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
 li	$v0, 8

@@ -102,7 +102,7 @@ li	$a0, 10
 syscall
 jr $ra
 ___main___:
-la $ra,EndOfWorld
+la $ra, _____EndOfWorld_____
 la $t9, ___tempo6___
 sw $t9, tempo6
 li	$v0, 8
@@ -163,7 +163,7 @@ jal Person_print
 lw $ra, ($sp)
 addi $sp, $sp, 4
 jr $ra
-EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
 li	$v0, 8

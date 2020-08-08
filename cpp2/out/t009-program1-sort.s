@@ -48,6 +48,7 @@ tempo35: .word 0
 x4: .word 0
 tempo36: .word 1
 tempo37: .word 0
+_____-1_____: .word -1
 tempo38: .word 0
 tempo39: .word 0
 tempo40: .word 0
@@ -219,7 +220,7 @@ j l3
 l2:
 jr $ra
 ___main___:
-la $ra,EndOfWorld
+la $ra, _____EndOfWorld_____
 la $t9, ___tempo27___
 sw $t9, tempo27
 lw $t9, tempo27
@@ -270,7 +271,7 @@ move	$t9, $v0
 sw $t9, tempo35
 lw $t9, tempo35
 sw $t9, x4
-lw $t1, -1
+lw $t1, _____-1_____
 lw $t2, tempo36
 mul $t3, $t1, $t2
 sw $t3, tempo37
@@ -409,7 +410,7 @@ syscall
 j l21
 l20:
 jr $ra
-EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
 li	$v0, 8

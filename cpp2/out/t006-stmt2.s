@@ -19,7 +19,7 @@ tempo8: .word 0
 main:
 b ___main___
 ___main___:
-la $ra,EndOfWorld
+la $ra, _____EndOfWorld_____
 li	$v0, 5
 syscall
 move	$t9, $v0
@@ -95,7 +95,7 @@ addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
-EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
 li	$v0, 8
