@@ -281,6 +281,7 @@ class Test(Transformer):
                             self.function_types["init_" + lee[1][0]] == 'return'):
                     self.code += "pop " + lee[1][3] + "\n"
                     self.code += "popra\n"
+                print(self.function_types_specific, add)
                 if self.function_types_specific.__contains__(add):
                     self.var_types[lee[1][3]] = self.function_types_specific[add]
                 return lee[1][3]
@@ -638,7 +639,7 @@ class Test(Transformer):
                     # print(args)
                     args = [args[1][3]]
                 except:
-                    # print(args)
+                    # print(type, args)
                     self.var_types[args[0]] = type
                     lee = [args[0]]
                     for arg in args[1]:
@@ -1096,12 +1097,14 @@ class Test(Transformer):
 
     def actuals(self, args):
         count = 0
-        self.code += "pushra\n"
-        for x in args[0]:
-            if not isinstance(x, list):
-                count += 1
-                # if not str(x).__contains__("this"):
-                self.code += "push " + x + " \n"
+        # self.code += "pushra\n"
+        # print(args)
+        if len(args):
+            for x in args[0]:
+                if not isinstance(x, list):
+                    count += 1
+                    # if not str(x).__contains__("this"):
+                    self.code += "push " + x + " \n"
 
     def push_args(self, args):
         # print("push_args", args)
