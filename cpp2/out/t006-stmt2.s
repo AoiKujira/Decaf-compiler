@@ -32,6 +32,8 @@ lw $t9, tempo1
 sw $t9, b1
 subi $sp, $sp, 4
 sw $ra, ($sp)
+subi $sp, $sp, 4
+sw $ra, ($sp)
 lw $t9, a1
 subi $sp, $sp, 4
 sw $t9, ($sp)
@@ -44,6 +46,10 @@ addi $sp, $sp, 4
 sw $t9, tempo3
 lw $ra, ($sp)
 addi $sp, $sp, 4
+lw $t9, tempo3
+li	$v0, 1
+move 	$a0, $t9
+syscall
 li	$v0, 11
 li	$a0, 10
 syscall
