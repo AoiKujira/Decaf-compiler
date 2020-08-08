@@ -1,8 +1,8 @@
 .data
 ____true____: .asciiz "true"
 ____false____: .asciiz "false"
-a0: .word 0
 b0: .word 0
+a0: .word 0
 tempo0: .word 0
 tempo1: .word 0
 a2: .word 0
@@ -13,13 +13,14 @@ ___tempo5___: .asciiz  "hi"
 tempo5: .word 0
 
 .text
+j main
 test:
 lw $t9, ($sp)
 addi $sp, $sp, 4
-sw $t9, a0
+sw $t9, b0
 lw $t9, ($sp)
 addi $sp, $sp, 4
-sw $t9, b0
+sw $t9, a0
 lw $t1, a0
 lw $t2, b0
 mul $t3, $t1, $t2
@@ -45,10 +46,10 @@ lw $t9, tempo2
 sw $t9, b2
 subi $sp, $sp, 4
 sw $ra, ($sp)
-lw $t9, a22
+lw $t9, a2
 subi $sp, $sp, 4
 sw $t9, ($sp)
-lw $t9, b22
+lw $t9, b2
 subi $sp, $sp, 4
 sw $t9, ($sp)
 jal test

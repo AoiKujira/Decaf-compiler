@@ -23,6 +23,7 @@ ___tempo12___: .asciiz  " items is: "
 tempo12: .word 0
 
 .text
+j main
 main:
 la $ra, _______End_Of_The_World_______
 lw $t9, tempo0
