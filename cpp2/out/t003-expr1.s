@@ -109,20 +109,20 @@ add $t3, $t1, $t2
 sw $t3, tempo16
 lw $t9, tempo16
 sw $t9, c1
-lw $t1, d1
-lw $t2, z1
-sub $t3, $t1, $t2
+lw $t1, a1
+lw $t2, b1
+add $t3, $t1, $t2
 sw $t3, tempo17
-lw $t1, c1
-lw $t2, tempo17
+lw $t1, tempo17
+lw $t2, c1
 sub $t3, $t1, $t2
 sw $t3, tempo18
-lw $t1, b1
-lw $t2, tempo18
-sub $t3, $t1, $t2
+lw $t1, tempo18
+lw $t2, d1
+add $t3, $t1, $t2
 sw $t3, tempo19
-lw $t1, a1
-lw $t2, tempo19
+lw $t1, tempo19
+lw $t2, z1
 sub $t3, $t1, $t2
 sw $t3, tempo20
 lw $t9, tempo20

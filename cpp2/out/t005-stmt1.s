@@ -45,8 +45,6 @@ lw $t9, tempo2
 sw $t9, b2
 subi $sp, $sp, 4
 sw $ra, ($sp)
-subi $sp, $sp, 4
-sw $ra, ($sp)
 lw $t9, a2
 subi $sp, $sp, 4
 sw $t9, ($sp)

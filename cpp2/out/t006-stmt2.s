@@ -32,8 +32,6 @@ lw $t9, tempo1
 sw $t9, b1
 subi $sp, $sp, 4
 sw $ra, ($sp)
-subi $sp, $sp, 4
-sw $ra, ($sp)
 lw $t9, a1
 subi $sp, $sp, 4
 sw $t9, ($sp)
@@ -82,12 +80,12 @@ sw $t3, tempo6
 lw $t9, tempo6
 sw $t9, c2
 l1:
-lw $t1, a0
-lw $t2, b0
+lw $t1, c2
+lw $t2, a0
 mul $t3, $t1, $t2
 sw $t3, tempo7
-lw $t1, c2
-lw $t2, tempo7
+lw $t1, tempo7
+lw $t2, b0
 mul $t3, $t1, $t2
 sw $t3, tempo8
 lw $t9, tempo8
