@@ -943,8 +943,8 @@ class Test(Transformer):
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
             if (not total_code.__contains__("Print") or
-                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall")))\
-                and not line.__contains__("return") and \
+                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))) \
+                    and not line.__contains__("return") and \
                     not push_flag and last_line.__contains__("push"):
                 push_flag = True
                 new_code += "pushra\n"
@@ -972,13 +972,13 @@ class Test(Transformer):
             add_to_code = args[0].children[0]
             self.function_types[add_to_code] = 'no_return'
         pop_args = ""
-        # print(child[3].children)
+        print(self.function_vars, self.scope_counter)
         if child[3].children and child[3].children[0] is not None:
             vars = child[3].children[0].children
             self.function_vars[add_to_code] = vars
             self.this_function_vars = vars
             for var in vars[::-1]:
-                pop_args += "pop " + var[1] + "\n"
+                pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
@@ -1011,7 +1011,7 @@ class Test(Transformer):
         # print("return_func", args)
         if len(args):
             self.code += "push " + args[0] + " \n"
-        # print("return...\n\n", self.code, "\n\nre\n\n")
+            # print("return...\n\n", self.code, "\n\nre\n\n")
             return args[0]
         self.code += "return \n"
         return args
@@ -1102,8 +1102,8 @@ class Test(Transformer):
         ident = args[1]
         if self.is_funcy:
             self.current_scope.table[ident] = args[0]
-        return args
         # print(self.current_scope.table, self.current_scope.number)
+        return args
 
     def IDENT(self, iden):
         return str(iden)
