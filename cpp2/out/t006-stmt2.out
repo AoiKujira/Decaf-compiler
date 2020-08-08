@@ -6,4 +6,4 @@ Loaded: /usr/lib/spim/exceptions.s
 The following symbols are undefined:
 _______End_Of_The_World_______
 
-[0x00400024]	0x3c010000  lui $1, 0 [_______End_Of_The_World_______]; 17: la $ra, _______End_Of_The_World_______
+[0x00400024]	0x3c010000  lui $1, 0 [_______End_Of_The_World_______]; 20: la $ra, _______End_Of_The_World_______
