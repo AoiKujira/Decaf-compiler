@@ -49,8 +49,8 @@ arith a = b * 4
 --------arith convert-----------
 *arith a c= itod b
 *arith a c= btoi b
-*arith a c= itod b
-*arith a c= dtoi b
+arith a c= itod b
+arith a c= dtoi b
 -----------function call-----------
 pushra
 push input1 (optional)
@@ -235,11 +235,33 @@ def mipsGen(input_code):
                         mipsTextCode += 'li $t3, 0\n'
                         mipsTextCode += ceqendLable + ':\n'
                         mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                if instruction[4][0] == 's':
+                if instruction[4][0] == 's':#arith a = s1 s== s2
+                    mipsTextCode += 'la $t0, ' + instruction[1] + '\n'
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'loop:\n'
+                    mipsTextCode += 'lb $t3($t1)  #load a byte from each string\n'
+                    mipsTextCode += 'lb $t4($t2)\n'
+                    mipsTextCode += 'beqz $t3,checkt2 #str1 end\n'
+                    mipsTextCode += 'beqz $t4,missmatch\n'
+                    mipsTextCode += 'seq $t5,$t3,$t4  #compare two bytes\n'
+                    mipsTextCode += 'beqz $t5,missmatch\n'
+                    mipsTextCode += 'addi $t1,$t1,1  #t1 points to the next byte of str1\n'
+                    mipsTextCode += 'addi $t2,$t2,1\n'
+                    mipsTextCode += 'j loop\n'
+                    mipsTextCode += 'missmatch:\n'
+                    mipsTextCode += 'add $v0, $zero, $zero\n'
+                    mipsTextCode += 'addi $v1, $zero, 1\n'
+                    mipsTextCode += 'j endfunction\n'
+                    mipsTextCode += 'checkt2:\n'
+                    mipsTextCode += 'bnez $t4, missmatch\n'
+                    mipsTextCode += 'addi $v0, $zero, 1\n'
+                    mipsTextCode += 'add $v1, $zero, $zero\n'
+                    mipsTextCode += 'endfunction:\n'
                     if instruction[4] == 's==':
-                        pass
+                        mipsTextCode += 'sw $t0, $v0\n'
                     if instruction[4] == 's!=':
-                        pass
+                        mipsTextCode += 'sw $t0, $v1\n'
                 if instruction[4][0] == 'b':
                     if instruction[4] == 'b==':
                         pass
@@ -488,8 +510,6 @@ def mipsGen(input_code):
                         vars[instruction[1]] = 0
                     mipsTextCode += "lw $t9, " + instruction[3] + '\n'
                     mipsTextCode += "sw $t9, " + instruction[1] + '\n'
-        if instruction[0] == 'getAddress':
-            pass
         if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
             mipsDataCode += instruction[1] + ': ' + '.word 0\n'
             mipsTextCode += 'li	$v0, 5\nsyscall\nmove	$t9, $v0\n'
