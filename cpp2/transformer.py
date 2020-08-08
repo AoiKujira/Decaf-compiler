@@ -741,8 +741,8 @@ class Test(Transformer):
             type = self.var_types[args[0][0]] + "." + args[0][1]
             type = self.classes[self.var_types[args[0][0]]].var_types[type]
             self.var_types[t] = type
-            self.code += t + " = " + args[0][0] + " + " + str(offset) + "\n"
-            self.code += t + " = *(" + t + ")\n"
+            self.code += "arith " + t + " = " + args[0][0] + " + " + str(offset) + "\n"
+            self.code += "assign " + t + " = *(" + t + ")\n"
             if len(args[0]) == 2:
                 self.mem_checker = False
                 return t
@@ -842,7 +842,7 @@ class Test(Transformer):
                     o = c.var_offsets[name]
                     tem = self.make_temp()
                     self.code += "arith " + tem + " = " + first + " + " + str(o) + "\n"
-                    self.code += "arith " + temp + " = " + "*(" + tem + ")" + "\n"
+                    self.code += "assign " + temp + " = " + "*(" + tem + ")" + "\n"
                     self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
                     self.code += "arith " + temp + " = " + temp + " + " + tem + "\n"
                     self.var_types[temp] = ty
