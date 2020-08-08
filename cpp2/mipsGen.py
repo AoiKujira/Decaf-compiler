@@ -92,6 +92,11 @@ def mipsGen(input_code):
         return x.isdigit()
     vars = {}
     myLableCount = 0
+    MAX_SIZE = 1010
+    maxSizedString = ''
+    for i in range(MAX_SIZE-1):
+        maxSizedString += ' '
+    maxSizedString += '\0'
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
@@ -360,9 +365,9 @@ def mipsGen(input_code):
                     mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
                     mipsTextCode += 'cvt.w.s $t9, $f9\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1]  +'\n'
-                if instruction[3] == 'xtoy':#arith a c= btoi b
+                if instruction[3] == 'itob':#arith a c= btoi b
                     pass
-                if instruction[3] == 'xtoy':#arith a c= itob b
+                if instruction[3] == 'btoi':#arith a c= itob b
                     pass
         if len(instruction) == 1:#pushra or #popra or #a:
             if instruction[0] == 'pushra':#pushra
@@ -490,9 +495,12 @@ def mipsGen(input_code):
             mipsTextCode += 'li	$v0, 5\nsyscall\nmove	$t9, $v0\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
-            mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
-            mipsTextCode += 'la $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'li	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $t9\nsyscall\n\n'
+            mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + maxSizedString + '\n'
+            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+            mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
+            mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
+            vars['___' + instruction[1] + '___'] = 0
+            mipsTextCode += 'li	$v0, 8\nli	$a1, ' + str(MAX_SIZE) + '  #MAX_String_Read_SIZE==1000\nmove	$a0, $t9\nsyscall\n\n'
         if instruction[0] == 'jumpto':# jumpto lable
             mipsTextCode += 'j ' + instruction[1] + '\n'
         if instruction[0] == 'Ifz':#Ifz a goto lable
