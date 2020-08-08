@@ -150,7 +150,10 @@ class Test(Transformer):
                 if re.match(".*(\[.*\])", ty):
                     ty = ty.strip("[]")
                 if ["int", "bool", "double", "string"].__contains__(ty):
-                    size = 4
+                    if ty == "string":
+                        size = 1
+                    else:
+                        size = 4
                 else:
                     size = self.classes[ty].size
                 ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
@@ -189,7 +192,10 @@ class Test(Transformer):
                     ty = re.sub("\[.*\]", "", c.var_types[name])
                     # print(name, ty)
                     if ["int", "bool", "double", "string"].__contains__(ty):
-                        size = 4
+                        if ty == "string":
+                            size = 1
+                        else:
+                            size = 4
                     else:
                         size = self.classes[ty].size
                     hold = re.match(".*(\[.*\])", sec)
@@ -229,7 +235,10 @@ class Test(Transformer):
     def make_array(self, args):
         ty = args[1]
         if ["int", "bool", "double", "string"].__contains__(ty):
-            size = 4
+            if ty == "string":
+                size = 1
+            else:
+                size = 4
         else:
             size = self.classes[ty].size
         t = self.make_temp()
@@ -728,7 +737,10 @@ class Test(Transformer):
                     name = re.sub("\[.*\]", "", args[0])
                     ty = self.var_types[name].strip("[]")
                     if ["int", "bool", "double", "string"].__contains__(ty):
-                        size = 4
+                        if ty == "string":
+                            size = 1
+                        else:
+                            size = 4
                     else:
                         size = self.classes[ty].size
                     ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
@@ -769,7 +781,10 @@ class Test(Transformer):
                     name = re.sub("\[.*\]", "", sec)
                     ty = re.sub("\[.*\]", "", c.var_types[name])
                     if ["int", "bool", "double", "string"].__contains__(ty):
-                        size = 4
+                        if ty == "string":
+                            size = 1
+                        else:
+                            size = 4
                     else:
                         size = self.classes[ty].size
                     hold = re.match(".*(\[.*\])", sec)
