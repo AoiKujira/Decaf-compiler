@@ -6,8 +6,8 @@ a1: .word 0
 tempo1: .word 0
 b1: .word 0
 tempo3: .word 0
-a0: .word 0
 b0: .word 0
+a0: .word 0
 tempo4: .word 0
 tempo5: .word 0
 c2: .word 0
@@ -16,6 +16,7 @@ tempo7: .word 0
 tempo8: .word 0
 
 .text
+j main
 main:
 la $ra, _______End_Of_The_World_______
 li	$v0, 5
@@ -55,10 +56,10 @@ jr $ra
 abs_mult:
 lw $t9, ($sp)
 addi $sp, $sp, 4
-sw $t9, a0
+sw $t9, b0
 lw $t9, ($sp)
 addi $sp, $sp, 4
-sw $t9, b0
+sw $t9, a0
 lw $t1, b0
 lw $t2, a0
 slt $t3, $t1, $t2

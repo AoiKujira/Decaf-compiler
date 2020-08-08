@@ -68,6 +68,7 @@ tempo53: .word 0
 tempo54: .word 0
 
 .text
+j main
 sort:
 lw $t9, ($sp)
 addi $sp, $sp, 4

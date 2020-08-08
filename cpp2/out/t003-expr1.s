@@ -29,6 +29,7 @@ tempo19: .word 0
 tempo20: .word 0
 
 .text
+j main
 main:
 la $ra, _______End_Of_The_World_______
 li	$v0, 5
