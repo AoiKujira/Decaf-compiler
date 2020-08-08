@@ -253,6 +253,9 @@ li	$v0, 9
 move	$a0, $t9
 syscall
 sw $v0, tempo29
+lw $t9, tempo29
+lw $t8, tempo28
+sw $t8, ($t9)
 lw $t1, tempo29
 lw $t2, _____4_____
 add $t3, $t1, $t2
@@ -318,6 +321,9 @@ li	$v0, 9
 move	$a0, $t9
 syscall
 sw $v0, tempo40
+lw $t9, tempo40
+lw $t8, i3
+sw $t8, ($t9)
 lw $t1, tempo40
 lw $t2, _____4_____
 add $t3, $t1, $t2

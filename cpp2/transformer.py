@@ -237,7 +237,7 @@ class Test(Transformer):
         self.code += "arith " + t + " = " + args[0] + " * " + str(size) + "\n"
         self.code += "arith" + t + " = " + t + " + 4\n"
         self.code += "assign " + t + " = allocate " + t + "\n"
-        self.code += "assign " + "*(" + t + ") =" + args[0] + "\n"
+        self.code += "assign " + "*(" + t + ") = " + args[0] + "\n"
         self.code += "arith " + t + " = " + t + " + 4\n"
         self.var_types[t] = "int"
         return t
