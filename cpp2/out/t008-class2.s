@@ -444,6 +444,8 @@ lw $ra, ($sp)
 addi $sp, $sp, 4
 lw $t9, p19
 sw $t9, n9
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, n9
 addi $sp, $sp, -4
 sw $t9, ($sp)
@@ -455,6 +457,8 @@ li	$a0, 10
 syscall
 lw $t9, s29
 sw $t9, n9
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, n9
 addi $sp, $sp, -4
 sw $t9, ($sp)
@@ -466,6 +470,8 @@ li	$a0, 10
 syscall
 lw $t9, p29
 sw $t9, p9
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, p9
 addi $sp, $sp, -4
 sw $t9, ($sp)
@@ -483,6 +489,8 @@ syscall
 li	$v0, 11
 li	$a0, 10
 syscall
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, p9
 addi $sp, $sp, -4
 sw $t9, ($sp)
@@ -501,6 +509,8 @@ li	$a0, 10
 syscall
 lw $t9, s19
 sw $t9, p9
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, p9
 addi $sp, $sp, -4
 sw $t9, ($sp)
@@ -527,6 +537,8 @@ lw $ra, ($sp)
 addi $sp, $sp, 4
 lw $t9, s29
 sw $t9, n9
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, n9
 addi $sp, $sp, -4
 sw $t9, ($sp)

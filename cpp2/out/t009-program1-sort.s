@@ -373,6 +373,8 @@ lw $t8, tempo45
 sw $t8, ($t9)
 j l17
 l16:
+addi $sp, $sp, -4
+sw $ra, ($sp)
 lw $t9, items3
 addi $sp, $sp, -4
 sw $t9, ($sp)
