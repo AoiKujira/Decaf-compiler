@@ -7,8 +7,8 @@ from Symbols import SymbolTable
 
 if __name__ == "__main__":
     # t031
-    input_file = open("tests2/t007-class1.d", "r")
-    # input_file = open("tests/t092while4.in", "r")
+    # input_file = open("tests2/t006-stmt2.d", "r")
+    input_file = open("tests/t031-class6.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
     # lark_test.check_errors(text, output_file)
@@ -30,5 +30,5 @@ if __name__ == "__main__":
     #     print(k, v)
     print(trans.code)
     #print(mipsGen(trans.code))
-    # print(mipsGen(trans.code))
+    print(mipsGen(trans.code))
     # print(sym.classes["A"].var_offsets)

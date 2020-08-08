@@ -1,7 +1,8 @@
 class OtherNum {
     int num;
-    void print() {
+    int print() {
     Print(num);
+    return num;
     }
 }
 
@@ -42,16 +43,16 @@ void main()
 	p = new Player;
 	deck = p.d;
 	score = 5;
-	gool[6] = 76;
-	goose = "adfa";
-	p.Init(new Deck);
-	deck.Init();
-	//p.d.score;
+	gool[6] = gool[76];
+	//goose = "adfa";
+	//p.Init(new Deck);
+	//deck.Init();
+    //p.d.score[1].num[1].num[1].num;
 	//score = p.GetDeck().score[1];
-	//score = p.d.GetDeck().GetDeck().GetScore().GetScore();
+	score = p.d.GetDeck().GetDeck().GetScore().GetScore();
 	//score = score[1];
 	//score = p.d.GetDeck().GetScore()[3].score;
-	score = p.d.score;
-	//score = p.d.GetDeck().score[1].num[1].num[1].num.print();
-	score = p.d.GetDeck().score[1].num[1].num[1].num;
+	//score = p.d.score;
+	//p.d.GetDeck().score[1].num[1].num[1].print()[1].print()[1];
+	//score = p.d.GetDeck().score[1].num[1].num[1].num;
 }
