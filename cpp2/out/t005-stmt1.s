@@ -13,7 +13,8 @@ ___tempo5___: .asciiz  "hi"
 tempo5: .word 0
 
 .text
-j main
+main:
+j ___main___
 test:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -30,7 +31,7 @@ subi $sp, $sp, 4
 sw $t9, ($sp)
 jr $ra
 jr $ra
-main:
+___main___:
 la $ra, _______End_Of_The_World_______
 li	$v0, 5
 syscall

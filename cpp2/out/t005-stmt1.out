@@ -4,6 +4,6 @@ All Rights Reserved.
 See the file README for a full copyright notice.
 Loaded: /usr/lib/spim/exceptions.s
 The following symbols are undefined:
-main
+___main___
 
-[0x00400014]	0x0c000000  jal 0x00000000 [main]           ; 188: jal main
+[0x00400024]	0x08000000  j 0x00000000 [___main___]       ; 17: j ___main___

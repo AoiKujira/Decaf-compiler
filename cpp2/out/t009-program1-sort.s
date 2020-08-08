@@ -68,7 +68,8 @@ tempo53: .word 0
 tempo54: .word 0
 
 .text
-j main
+main:
+j ___main___
 sort:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -217,7 +218,7 @@ l6:
 j l3
 l2:
 jr $ra
-main:
+___main___:
 la $ra, _______End_Of_The_World_______
 la $t9, ___tempo27___
 sw $t9, tempo27
