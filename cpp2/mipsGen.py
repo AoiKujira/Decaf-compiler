@@ -25,14 +25,12 @@ arith a = b f== c
 arith a = b f!= c
 arith a = b f<= c
 arith a = b f< c
-arith a = b f>= c
-arith a = b f> c
 ......arith string.......
-arith a = b s== c
-arith a = b s!= c
+*arith a = b s== c
+*arith a = b s!= c
 ......arith bool........
-arith a = b b== c
-arith a = b b!= c
+*arith a = b b== c
+*arith a = b b!= c
 ......arith int........
 arith a = b + c
 arith a = b * c
@@ -43,18 +41,16 @@ arith a = b == c
 arith a = b != c
 arith a = b <= c
 arith a = b < c
-arith a = b >= c
-arith a = b > c
 
 arith a = b + 10
 arith a = 10 + b
 arith a = 4 * b
 arith a = b * 4
 --------arith convert-----------
-arith a c= itod b
-arith a c= btoi b
-arith a c= itod b
-arith a c= dtoi b
+*arith a c= itod b
+*arith a c= btoi b
+*arith a c= itod b
+*arith a c= dtoi b
 -----------function call-----------
 pushra
 push input1 (optional)
@@ -83,7 +79,7 @@ Printe
 --------read----------
 ReadInt t = ReadInt()
 ReadLine t = ReadLine()
-----------one word instructs-----------
+----------one word instructions-----------
 pushra
 popra
 Printe
@@ -95,6 +91,12 @@ def mipsGen(input_code):
             return x[1:].isdigit()
         return x.isdigit()
     vars = {}
+    myLableCount = 0
+    MAX_SIZE = 1010
+    maxSizedString = ''
+    for i in range(MAX_SIZE-1):
+        maxSizedString += ' '
+    maxSizedString += '\0'
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
@@ -114,167 +116,259 @@ def mipsGen(input_code):
             continue
         # mipsTextCode += '#' + instruction + '\n'
         instruction = instruction.split(' ')
-        if instruction[0] == 'arith':#arith a = b Xop c
-            if instruction[4][0] == 'f':
-                if instruction[4] == 'f+':#add
-                    if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
-                        vars[instruction[1]] = 0
-                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
-                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'add.s $f3, $f1, $f2\n'
-                    mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
-                if instruction[4] == 'f-':#sub
-                    if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
-                        vars[instruction[1]] = 0
-                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
-                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'sub.s $f3, $f1, $f2\n'
-                    mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
-                if instruction[4] == 'f*':#mul
-                    if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
-                        vars[instruction[1]] = 0
-                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
-                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'mul.s $f3, $f1, $f2\n'
-                    mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
-                if instruction[4] == 'f/':#div
-                    if not instruction[1] in vars.keys():
-                        mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
-                        vars[instruction[1]] = 0
-                    mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
-                    mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'div.s $f3, $f1, $f2\n'
-                    mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
-            if instruction[4][0] == 's':
-                if instruction[4] == 's==':
-                    pass
-                if instruction[4] == 's!=':
-                    pass
-            if instruction[4][0] == 'b':
-                if instruction[4] == 'b==':
-                    pass
-                if instruction[4] == 'b!=':
-                    pass
-            if instruction[2] == 'c=':#arith a c= xtoy b
-                if instruction[3] == 'xtoy':#arith a c= itod b
-                    pass
-                if instruction[3] == 'xtoy':#arith a c= dtoi b
-                    pass
-                if instruction[3] == 'xtoy':#arith a c= btoi b
-                    pass
-                if instruction[3] == 'xtoy':#arith a c= itob b
-                    pass
-            if not instruction[1] in vars.keys():
-                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
-                vars[instruction[1]] = 0
-            if instruction[4] == '+':#add
-                if check_int(instruction[3]):
-                    numberLable = '_____'+instruction[3]+'_____'
-                    if not numberLable in vars.keys():
-                        mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
-                        vars[numberLable] = 0
-                    mipsTextCode += 'lw $t1, ' + numberLable + '\n'
-                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'add $t3, $t1, $t2\n'
-                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                elif check_int(instruction[5]):
+        if instruction[0] == 'arith':#arith
+            if instruction[2] == '=':#arith a = b Xop c
+                if instruction[4][0] == 'f':
+                    if instruction[4] == 'f+':#add
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                            vars[instruction[1]] = 0
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'add.s $f3, $f1, $f2\n'
+                        mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f-':#sub
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                            vars[instruction[1]] = 0
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'sub.s $f3, $f1, $f2\n'
+                        mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f*':#mul
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                            vars[instruction[1]] = 0
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'mul.s $f3, $f1, $f2\n'
+                        mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f/':#div
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.float 0.0\n'
+                            vars[instruction[1]] = 0
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'div.s $f3, $f1, $f2\n'
+                        mipsTextCode += 's.s $f3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f==':#arith a = b f== c
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                            vars[instruction[1]] = 0
+                        ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqendLable = '____ceqsend' + myLableCount + '____'
+                        myLableCount += 1
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'c.eq.s $t1, $t2\n'
+                        mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                        mipsTextCode += ceqtrueLable + ':\n'
+                        mipsTextCode += 'li $t3, 1\n'
+                        mipsTextCode += 'j ' + ceqendLable + '\n'
+                        mipsTextCode += ceqfalseLable + ':\n'
+                        mipsTextCode += 'li $t3, 0\n'
+                        mipsTextCode += ceqendLable + ':\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f!=':#arith a = b f!= c
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                            vars[instruction[1]] = 0
+                        ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqendLable = '____ceqsend' + myLableCount + '____'
+                        myLableCount += 1
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'c.eq.s $t1, $t2\n'
+                        mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                        mipsTextCode += ceqtrueLable + ':\n'
+                        mipsTextCode += 'li $t3, 0\n'
+                        mipsTextCode += 'j ' + ceqendLable + '\n'
+                        mipsTextCode += ceqfalseLable + ':\n'
+                        mipsTextCode += 'li $t3, 1\n'
+                        mipsTextCode += ceqendLable + ':\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f<=':#arith a = b f<= c
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                            vars[instruction[1]] = 0
+                        ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqendLable = '____ceqsend' + myLableCount + '____'
+                        myLableCount += 1
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'c.le.s $t1, $t2\n'
+                        mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                        mipsTextCode += ceqtrueLable + ':\n'
+                        mipsTextCode += 'li $t3, 1\n'
+                        mipsTextCode += 'j ' + ceqendLable + '\n'
+                        mipsTextCode += ceqfalseLable + ':\n'
+                        mipsTextCode += 'li $t3, 0\n'
+                        mipsTextCode += ceqendLable + ':\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'f<':#arith a = b f< c
+                        if not instruction[1] in vars.keys():
+                            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                            vars[instruction[1]] = 0
+                        ceqtrueLable = '____ceqstrue' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqfalseLable = '____ceqsfalse' + myLableCount + '____'
+                        myLableCount += 1
+                        ceqendLable = '____ceqsend' + myLableCount + '____'
+                        myLableCount += 1
+                        mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'c.lt.s $t1, $t2\n'
+                        mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
+                        mipsTextCode += ceqtrueLable + ':\n'
+                        mipsTextCode += 'li $t3, 1\n'
+                        mipsTextCode += 'j ' + ceqendLable + '\n'
+                        mipsTextCode += ceqfalseLable + ':\n'
+                        mipsTextCode += 'li $t3, 0\n'
+                        mipsTextCode += ceqendLable + ':\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4][0] == 's':
+                    if instruction[4] == 's==':
+                        pass
+                    if instruction[4] == 's!=':
+                        pass
+                if instruction[4][0] == 'b':
+                    if instruction[4] == 'b==':
+                        pass
+                    if instruction[4] == 'b!=':
+                        pass
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                    vars[instruction[1]] = 0
+                if instruction[4] == '+':#add
+                    if check_int(instruction[3]):
+                        numberLable = '_____'+instruction[3]+'_____'
+                        if not numberLable in vars.keys():
+                            mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
+                            vars[numberLable] = 0
+                        mipsTextCode += 'lw $t1, ' + numberLable + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'add $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    elif check_int(instruction[5]):
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        numberLable = '_____'+instruction[5]+'_____'
+                        if not numberLable in vars.keys():
+                            mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
+                            vars[numberLable] = 0
+                        mipsTextCode += 'lw $t2, ' + numberLable + '\n'
+                        mipsTextCode += 'add $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    else:
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'add $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '-':#sub
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                    numberLable = '_____'+instruction[5]+'_____'
-                    if not numberLable in vars.keys():
-                        mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
-                        vars[numberLable] = 0
-                    mipsTextCode += 'lw $t2, ' + numberLable + '\n'
-                    mipsTextCode += 'add $t3, $t1, $t2\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'sub $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                else:
+                if instruction[4] == '*':#mul
+                    if check_int(instruction[3]):
+                        numberLable = '_____'+instruction[3]+'_____'
+                        if not numberLable in vars.keys():
+                            mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
+                            vars[numberLable] = 0
+                        mipsTextCode += 'lw $t1, ' + numberLable + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'mul $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    elif check_int(instruction[5]):
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        numberLable = '_____'+instruction[5]+'_____'
+                        if not numberLable in vars.keys():
+                            mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
+                            vars[numberLable] = 0
+                        mipsTextCode += 'lw $t2, ' + numberLable + '\n'
+                        mipsTextCode += 'mul $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    else:
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'mul $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '/':#div
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'add $t3, $t1, $t2\n'
+                    mipsTextCode += 'div $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '-':#sub
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sub $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '*':#mul
-                if check_int(instruction[3]):
-                    numberLable = '_____'+instruction[3]+'_____'
-                    if not numberLable in vars.keys():
-                        mipsDataCode += numberLable + ': .word ' + instruction[3] + '\n'
-                        vars[numberLable] = 0
-                    mipsTextCode += 'lw $t1, ' + numberLable + '\n'
-                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'mul $t3, $t1, $t2\n'
-                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                elif check_int(instruction[5]):
-                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                    numberLable = '_____'+instruction[5]+'_____'
-                    if not numberLable in vars.keys():
-                        mipsDataCode += numberLable + ': .word ' + instruction[5] + '\n'
-                        vars[numberLable] = 0
-                    mipsTextCode += 'lw $t2, ' + numberLable + '\n'
-                    mipsTextCode += 'mul $t3, $t1, $t2\n'
-                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                else:
+                if instruction[4] == '%':#rem
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'mul $t3, $t1, $t2\n'
+                    mipsTextCode += 'rem $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '/':#div
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'div $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '%':#rem
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'rem $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '==':#seq
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'seq $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '!=':#sne
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sne $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '<':#slt
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'slt $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '<=':#sle
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'sle $t3, $t1, $t2\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '||':#
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__0__\n'
-                mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
-                mipsTextCode += '__branch__here__if__arg1__is__0__:\n'
-                mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__0__\n'
-                mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
-                mipsTextCode += '__branch__here__if__arg2__isAlso__0__:\n'
-                mipsTextCode += 'li $t3, 0\n__branch__here__to__end__oror__:\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-            if instruction[4] == '&&':#
-                mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
-                mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                mipsTextCode += 'bnez $t1, __branch__here__if__arg1__is__1__\n'
-                mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
-                mipsTextCode += '__branch__here__if__arg1__is__1__:\n'
-                mipsTextCode += 'bnez $t2, __branch__here__if__arg2__isAlso__1__\n'
-                mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
-                mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
-                mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
-                mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '==':#seq
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'seq $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '!=':#sne
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'sne $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '<':#slt
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'slt $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '<=':#sle
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'sle $t3, $t1, $t2\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '||':#
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__0__\n'
+                    mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
+                    mipsTextCode += '__branch__here__if__arg1__is__0__:\n'
+                    mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__0__\n'
+                    mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
+                    mipsTextCode += '__branch__here__if__arg2__isAlso__0__:\n'
+                    mipsTextCode += 'li $t3, 0\n__branch__here__to__end__oror__:\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                if instruction[4] == '&&':#
+                    mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                    mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                    mipsTextCode += 'bnez $t1, __branch__here__if__arg1__is__1__\n'
+                    mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
+                    mipsTextCode += '__branch__here__if__arg1__is__1__:\n'
+                    mipsTextCode += 'bnez $t2, __branch__here__if__arg2__isAlso__1__\n'
+                    mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
+                    mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
+                    mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
+                    mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+            elif instruction[2] == 'c=':#arith a c= xtoy b
+                if not instruction[1] in vars.keys():
+                    mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                    vars[instruction[1]] = 0
+                if instruction[3] == 'itod':#arith ad c= itod bi
+                    mipsTextCode += 'lw $t9, ' + instruction[4]  +'\n'
+                    mipsTextCode += 'cvt.s.w $f9, $t9\n'
+                    mipsTextCode += 's.s $f9, ' + instruction[1]  +'\n'
+                if instruction[3] == 'dtoi':#arith a c= dtoi b
+                    mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
+                    mipsTextCode += 'cvt.w.s $t9, $f9\n'
+                    mipsTextCode += 'sw $t9, ' + instruction[1]  +'\n'
+                if instruction[3] == 'itob':#arith a c= btoi b
+                    pass
+                if instruction[3] == 'btoi':#arith a c= itob b
+                    pass
         if len(instruction) == 1:#pushra or #popra or #a:
             if instruction[0] == 'pushra':#pushra
                 mipsTextCode += 'subi $sp, $sp, 4\n'
@@ -314,17 +408,23 @@ def mipsGen(input_code):
             mipsTextCode += 'li	$v0, 1\nmove 	$a0, $t9\nsyscall\n'
         if instruction[0] == 'Printb':#Printb a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'beqz $t9, ____printFalse____\n'
-            mipsTextCode += '____printTrue____:\n'
+            printFalseLable = '____printFalse' + myLableCount + '____'
+            myLableCount += 1
+            printTrueLable = '____printTrue' + myLableCount + '____'
+            myLableCount += 1
+            printEndLable = '____printEnd' + myLableCount + '____'
+            myLableCount += 1
+            mipsTextCode += 'beqz $t9, ' + printFalseLable + '\n'
+            mipsTextCode += printTrueLable + ':\n'
             mipsTextCode += 'la $a0, ____true____\n'
             mipsTextCode += 'li $v0, 4\n'
             mipsTextCode += 'syscall\n'
-            mipsTextCode += 'j ____printbEnd____\n'
-            mipsTextCode += '____printFalse____:\n'
+            mipsTextCode += 'j ' + printEndLable + '\n'
+            mipsTextCode += printFalseLable +':\n'
             mipsTextCode += 'la $a0, ____false____\n'
             mipsTextCode += 'li $v0, 4\n'
             mipsTextCode += 'syscall\n'
-            mipsTextCode += '____printbEnd____:\n'
+            mipsTextCode += printEndLable + ':\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
                 mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
@@ -395,9 +495,12 @@ def mipsGen(input_code):
             mipsTextCode += 'li	$v0, 5\nsyscall\nmove	$t9, $v0\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
-            mipsDataCode += instruction[1] + ': ' + '.asciiz\n'
-            mipsTextCode += 'la $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'li	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $t9\nsyscall\n\n'
+            mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + maxSizedString + '\n'
+            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+            mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
+            mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
+            vars['___' + instruction[1] + '___'] = 0
+            mipsTextCode += 'li	$v0, 8\nli	$a1, ' + str(MAX_SIZE) + '  #MAX_String_Read_SIZE==1000\nmove	$a0, $t9\nsyscall\n\n'
         if instruction[0] == 'jumpto':# jumpto lable
             mipsTextCode += 'j ' + instruction[1] + '\n'
         if instruction[0] == 'Ifz':#Ifz a goto lable

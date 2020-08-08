@@ -33,8 +33,8 @@ class Test(Transformer):
         self.sym = sym
         self.var_types = {}
         self.mem_checker = False
-        self.function_types = {}
-        self.function_types_specific = {}
+        self.function_types = sym.function_types
+        self.function_types_specific = sym.function_types_specific
         self.function_vars = sym.function_vars
         self.in_class = False
         self.last_code = ''''''
@@ -44,6 +44,7 @@ class Test(Transformer):
         self.func_call = False
         self.left = False
         self.this_class_vars = {}
+        self.this_function_vars = []
 
     def expr(self, args):
         # print("expr", args)
@@ -266,7 +267,7 @@ class Test(Transformer):
                         return lee
                 self.code += "push " + lee[0] + "\n"
                 self.code += "Lcall " + add + "\n"
-                # print("Lcall1", add)
+                print("Lcall1", add)
                 # print(self.function_types)
                 if (self.function_types.__contains__(add) and self.function_types[add] == 'return') \
                         or (self.function_types.__contains__("init_" + lee[1][0]) and
@@ -282,7 +283,7 @@ class Test(Transformer):
                 self.code += "push " + lee[0][0] + "\n"
                 add = lee[0][1] + "_" + lee[1][0]
                 self.code += "Lcall " + add + "\n"
-                # print("Lcall2", add)
+                print("Lcall2", add)
                 if self.function_types[add] == 'return':
                     self.code += "pop " + lee[1][3] + "\n"
                     self.code += "popra\n"
@@ -518,8 +519,10 @@ class Test(Transformer):
                 exception = True
                 if arg.count("init_this"):
                     code += "Print " + arg + "\n"
-                else:
+                elif self.in_class:
                     code += "Print init_this." + arg + "\n"
+                else:
+                    code += "Print " + arg + "\n"
         self.code += code + "Printe\n"
         return code
 
@@ -583,7 +586,7 @@ class Test(Transformer):
             # print(self.code, "\n\nhihhi\n\n")
             type = ""
             for i in range(1, str(args).count("correct_init_this") + 1):
-                # print("Lcall3", add)
+                print("Lcall3", add)
                 self.code += "push " + push + "\n"
                 self.code += "Lcall " + add + "\n"
                 if len(args[1]) < 3:
@@ -642,13 +645,15 @@ class Test(Transformer):
                 add = args[0][1]
             else:
                 add = args[0][0]
-                # print(self.function_types.__contains__(self.classes))
                 if self.function_types.__contains__("init_" + add):
                     self.code += "push init_this\n"
-                else:
+                elif self.in_class:
                     self.code += "push father_this\n"
-            self.code += "Lcall init_" + add + "\n"
-            # print("Lcall4", add)
+            if self.in_class:
+                self.code += "Lcall init_" + add + "\n"
+            else:
+                self.code += "Lcall " + add + "\n"
+            print("Lcall4", add)
             temp = args[0]
             if self.function_types_specific.__contains__(add):
                 temp = self.make_temp()
@@ -690,7 +695,7 @@ class Test(Transformer):
             self.code = self.last_code
             self.code += "push " + args[0][2] + "\n"
             self.code += "Lcall " + args[0][1] + "\n"
-            # print("Lcall5", args[0][1])
+            print("Lcall5", args[0][1])
             t = ""
             if self.function_types[args[0][1]] == "return":
                 t = self.make_temp()
@@ -889,7 +894,6 @@ class Test(Transformer):
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
-                # print(line)
                 # print(args[1], self.classes[args[1]].var_offsets, code)
                 offset = self.classes[args[1]].var_offsets[code]
                 ty = self.classes[args[1]].var_types[code]
@@ -900,6 +904,8 @@ class Test(Transformer):
                     add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
                 else:
                     add_code += "assign " + t + " = *(" + t + ")\n"
+                    if line.count("push"):
+                        add_code += "push " + t + "\n"
                     self.var_types[t] = ty
                     if line.count("Print"):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
@@ -925,6 +931,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
+        # print(self.code, "hehe\n\n")
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
@@ -934,14 +941,26 @@ class Test(Transformer):
             last_line = line
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
-            if not line.__contains__("Print") and not push_flag and last_line.__contains__("push"):
+            if (not total_code.__contains__("Print") or
+                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))) \
+                    and not line.__contains__("return") and \
+                    not push_flag and last_line.__contains__("push"):
+                push_flag = True
                 new_code += "pushra\n"
+            if last_line.__contains__("push") and total_code.__contains__("Print") and \
+                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall"))\
+                    and not line.__contains__("return"):
+                last_line = ""
+            if line.__contains__("Lcall"):
+                push_flag = False
+            # if line.count("init_"):
+            #     line = line.replace("init_", "")
             new_code += last_line
         new_code += line
         self.code = new_code
 
     def function(self, args):
-        # print("function", args[0].children)
+        # print("function", args, self.push_args_later)
         self.function_class[args[0].children[0]] = "global"
         child = args[0].children
         if child[1] is not None:
@@ -952,10 +971,18 @@ class Test(Transformer):
         else:
             add_to_code = args[0].children[0]
             self.function_types[add_to_code] = 'no_return'
+        pop_args = ""
+        print(self.function_vars, self.scope_counter)
+        if child[3].children and child[3].children[0] is not None:
+            vars = child[3].children[0].children
+            self.function_vars[add_to_code] = vars
+            self.this_function_vars = vars
+            for var in vars[::-1]:
+                pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
-        self.code = before + add_to_code + ":\n" + after
+        self.code = before + add_to_code + ":\n" + pop_args + after
         return args[0]
 
     def var_field(self, args):
@@ -982,8 +1009,13 @@ class Test(Transformer):
 
     def return_func(self, args):
         # print("return_func", args)
-        self.code += "push " + args[0] + " \n"
-        return args[0]
+        if len(args):
+            self.code += "push " + args[0] + " \n"
+            self.code += "return \n"
+            # print("return...\n\n", self.code, "\n\nre\n\n")
+            return args[0]
+        self.code += "return \n"
+        return args
 
     def function_call(self, args):
         name = args[0]
@@ -1055,6 +1087,7 @@ class Test(Transformer):
         # print("push_args", args)
         count = 0
         lee = []
+        # self.push_args_later = ""
         # print("pushshhhh", self.code)
         for x in args:
             if not isinstance(x, list):
@@ -1076,8 +1109,8 @@ class Test(Transformer):
         ident = args[1]
         if self.is_funcy:
             self.current_scope.table[ident] = args[0]
-        return args
         # print(self.current_scope.table, self.current_scope.number)
+        return args
 
     def IDENT(self, iden):
         return str(iden)
