@@ -8,9 +8,9 @@ b1: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 ___main___:
-la $ra,____EndOfWorld
+la $ra, _____EndOfWorld_____
 li	$v0, 5
 syscall
 move	$t9, $v0
@@ -38,6 +38,9 @@ li	$v0, 11
 li	$a0, 10
 syscall
 jr $ra
-____EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
+li	$v0, 8
+li	$v0, 8
+li	$v0, 8

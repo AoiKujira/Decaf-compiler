@@ -25,7 +25,7 @@ p4: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 Person_setName:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -102,14 +102,21 @@ li	$a0, 10
 syscall
 jr $ra
 ___main___:
-la $ra,____EndOfWorld
+la $ra, _____EndOfWorld_____
 la $t9, ___tempo6___
 sw $t9, tempo6
 li	$v0, 8
 li	$a1, 1010  #MAX_String_Read_SIZE==1000
 move	$a0, $t9
 syscall
-
+____len_to_new_line0____:
+lb $t2, ($a0)
+li $t3, 10
+beq $t2, $t3, ____endofreadline1____
+addi $a0, $a0, 1
+b ____len_to_new_line0____
+____endofreadline1____:
+sb $zero, ($a0)
 lw $t9, tempo6
 sw $t9, name4
 li	$v0, 5
@@ -125,37 +132,40 @@ syscall
 sw $v0, tempo8
 lw $t9, tempo8
 sw $t9, p4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, name4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_setName
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, age4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_setAge
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, p4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_print
 lw $ra, ($sp)
 addi $sp, $sp, 4
 jr $ra
-____EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
+li	$v0, 8
+li	$v0, 8
+li	$v0, 8

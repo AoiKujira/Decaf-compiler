@@ -10,5 +10,5 @@ int main() {
     a = ReadInteger();
     b = ReadInteger();
 
-    Print(test(a, b), "hi");
+    Print(test(a, b));
 }

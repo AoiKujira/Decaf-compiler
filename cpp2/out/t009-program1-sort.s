@@ -2,6 +2,8 @@
 ____true____: .asciiz "true"
 ____false____: .asciiz "false"
 items0: .word 0
+tempo0: .word 0
+______4_____: .word -4
 n1: .word 0
 tempo1: .word 0
 i1: .word 0
@@ -48,6 +50,7 @@ tempo35: .word 0
 x4: .word 0
 tempo36: .word 1
 tempo37: .word 0
+______1_____: .word -1
 tempo38: .word 0
 tempo39: .word 0
 tempo40: .word 0
@@ -62,6 +65,7 @@ tempo46: .word 0
 ___tempo48___: .asciiz  "After sort: "
 tempo48: .word 0
 tempo49: .word 0
+tempo50: .word 0
 tempo51: .word 0
 tempo52: .word 1
 tempo53: .word 0
@@ -69,11 +73,21 @@ tempo54: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 sort:
 lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, items0
+lw $t9, items0
+lw $t9, ($t9)
+sw $t9, tempo0
+lw $t1, tempo0
+lw $t2, ______4_____
+add $t3, $t1, $t2
+sw $t3, tempo0
+lw $t9, tempo0
+lw $t9, ($t9)
+sw $t9, tempo0
 lw $t9, tempo0
 sw $t9, n1
 lw $t9, tempo1
@@ -219,7 +233,7 @@ j l3
 l2:
 jr $ra
 ___main___:
-la $ra,____EndOfWorld
+la $ra, _____EndOfWorld_____
 la $t9, ___tempo27___
 sw $t9, tempo27
 lw $t9, tempo27
@@ -239,6 +253,9 @@ li	$v0, 9
 move	$a0, $t9
 syscall
 sw $v0, tempo29
+lw $t9, tempo29
+lw $t8, tempo28
+sw $t8, ($t9)
 lw $t1, tempo29
 lw $t2, _____4_____
 add $t3, $t1, $t2
@@ -270,7 +287,7 @@ move	$t9, $v0
 sw $t9, tempo35
 lw $t9, tempo35
 sw $t9, x4
-lw $t1, (-1)
+lw $t1, ______1_____
 lw $t2, tempo36
 mul $t3, $t1, $t2
 sw $t3, tempo37
@@ -304,6 +321,9 @@ li	$v0, 9
 move	$a0, $t9
 syscall
 sw $v0, tempo40
+lw $t9, tempo40
+lw $t8, i3
+sw $t8, ($t9)
 lw $t1, tempo40
 lw $t2, _____4_____
 add $t3, $t1, $t2
@@ -354,7 +374,7 @@ sw $t8, ($t9)
 j l17
 l16:
 lw $t9, items3
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal sort
 lw $ra, ($sp)
@@ -372,6 +392,16 @@ syscall
 lw $t9, tempo49
 sw $t9, i3
 l18:
+lw $t9, items3
+lw $t9, ($t9)
+sw $t9, tempo50
+lw $t1, tempo50
+lw $t2, ______4_____
+add $t3, $t1, $t2
+sw $t3, tempo50
+lw $t9, tempo50
+lw $t9, ($t9)
+sw $t9, tempo50
 lw $t1, i3
 lw $t2, tempo50
 slt $t3, $t1, $t2
@@ -409,6 +439,9 @@ syscall
 j l21
 l20:
 jr $ra
-____EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
+li	$v0, 8
+li	$v0, 8
+li	$v0, 8

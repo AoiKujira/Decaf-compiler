@@ -17,9 +17,9 @@ tempo8: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 ___main___:
-la $ra,____EndOfWorld
+la $ra, _____EndOfWorld_____
 li	$v0, 5
 syscall
 move	$t9, $v0
@@ -32,13 +32,13 @@ move	$t9, $v0
 sw $t9, tempo1
 lw $t9, tempo1
 sw $t9, b1
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, a1
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, b1
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal abs_mult
 lw $t9, ($sp)
@@ -91,10 +91,13 @@ lw $t2, b0
 mul $t3, $t1, $t2
 sw $t3, tempo8
 lw $t9, tempo8
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
-____EndOfWorld:
+_____EndOfWorld_____:
 li	$v0, 10
 syscall
+li	$v0, 8
+li	$v0, 8
+li	$v0, 8

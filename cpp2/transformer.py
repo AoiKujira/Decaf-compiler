@@ -238,7 +238,7 @@ class Test(Transformer):
         self.code += "arith " + t + " = " + args[0] + " * " + str(size) + "\n"
         self.code += "arith" + t + " = " + t + " + 4\n"
         self.code += "assign " + t + " = allocate " + t + "\n"
-        self.code += "assign " + "*(" + t + ") =" + args[0] + "\n"
+        self.code += "assign " + "*(" + t + ") = " + args[0] + "\n"
         self.code += "arith " + t + " = " + t + " + 4\n"
         self.var_types[t] = "int"
         return t
@@ -273,9 +273,9 @@ class Test(Transformer):
                 self.func_call = False
                 if str(lee).__contains__("length"):
                     temp = lee[1][3]
-                    self.code += temp + " = " + "*(" + lee[0] + ")\n"
-                    self.code += temp + " = " + temp + " - 4\n"
-                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.code += "assign " + temp + " = " + "*(" + lee[0] + ")\n"
+                    self.code += "arith " + temp + " = " + temp + " + -4\n"
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     self.var_types[temp] = "int"
                     return temp
                 if self.var_types.__contains__(lee[0]):
@@ -368,11 +368,11 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         if self.var_types[args[0]] == "int":
-            self.code += "arith " + t + " = (-1) * " + args[0] + "\n"
+            self.code += "arith " + t + " = -1 * " + args[0] + "\n"
             self.var_types[t] = "int"
         elif self.var_types[args[0]] == "double":
             self.var_types[t] = "double"
-            self.code += "arith " + t + " = (-1) f* " + args[0] + "\n"
+            self.code += "arith " + t + " = -1 f* " + args[0] + "\n"
         return t
 
     def exp_mul(self, args):
@@ -633,9 +633,9 @@ class Test(Transformer):
                 print("Lcall3", add)
                 if str(add).__contains__("length"):
                     temp = args[1][3]
-                    self.code += temp + " = " + "*(" + args[0] + ")\n"
-                    self.code += temp + " = " + temp + " - 4\n"
-                    self.code += temp + " = " + "*(" + temp + ")\n"
+                    self.code += "assign " + temp + " = " + "*(" + args[0] + ")\n"
+                    self.code += "arith " + temp + " = " + temp + " + -4\n"
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     self.var_types[temp] = "int"
                     return temp
                 if add.count("["):
