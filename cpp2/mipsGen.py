@@ -26,8 +26,8 @@ arith a = b f!= c
 arith a = b f<= c
 arith a = b f< c
 ......arith string.......
-*arith a = b s== c
-*arith a = b s!= c
+arith a = b s== c
+arith a = b s!= c
 ......arith bool........
 *arith a = b b== c
 *arith a = b b!= c
@@ -66,6 +66,7 @@ lable:
 .
 .
 return from lable
+return
 ----------------------
 Ifz a goto lable
 #pushaddressof... gooya nadarim ino
@@ -84,6 +85,7 @@ pushra
 popra
 Printe
 lable:
+return
 '''
 def mipsGen(input_code):
     def check_int(x):
@@ -101,7 +103,7 @@ def mipsGen(input_code):
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
     mipsDataCode += '____false____: .asciiz \"false\"\n'
-    mipsTextCode = '.text\n'
+    mipsTextCode = '.text\nj main\n'
     # mipsTextCode += '################ MACROS ################\n'
     # mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
     # mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
@@ -407,6 +409,8 @@ def mipsGen(input_code):
                 mipsTextCode += 'addi $sp, $sp, 4\n'
             elif instruction[0] == 'Printe':#Printe
                 mipsTextCode += 'li	$v0, 11\nli	$a0, 10\nsyscall\n'
+            elif instruction[0] == 'return':
+                mipsTextCode += 'jr $ra\n'
             else:#lable:
                 mipsTextCode += instruction[0] + '\n'
                 if instruction[0] == 'main:':
