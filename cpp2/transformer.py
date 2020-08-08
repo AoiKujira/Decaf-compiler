@@ -119,6 +119,13 @@ class Test(Transformer):
         out = self.lstack.pop()
         self.code += out + ":\n"
 
+    def if_middle(self, args):
+        mid = self.lstack.pop()
+        out = self.make_label()
+        self.lstack.append(out)
+        self.code += "jumpto " + out + "\n"
+        self.code += mid + ":\n"
+
     def start_vars(self, args):
         self.is_varring = True
 

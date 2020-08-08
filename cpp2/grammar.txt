@@ -59,13 +59,14 @@ non_if_stmt:  while_stmt
 if_stmt: ms
        | us
 
-ms: "if" be if_cond ms "else" if_out_label ms
+ms: "if" be if_cond ms "else" if_middle ms if_out_label
   | non_if_stmt
 
 us: "if" be if_cond stmt if_out_label
-  | "if" be if_cond ms "else" if_out_label us
+  | "if" be if_cond ms "else" if_middle us if_out_label
 if_cond:
 if_out_label:
+if_middle:
 
 be: "(" expr ")"
 
