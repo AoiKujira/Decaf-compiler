@@ -26,8 +26,8 @@ if __name__ == "__main__":
     trans = Test(sym)
     trans.transform(tree)
     # print(trans.var_types)
-    for k, v in trans.var_types.items():
-        print(k, v)
+    # for k, v in trans.var_types.items():
+    #     print(k, v)
     print(trans.code)
     #print(mipsGen(trans.code))
     # print(mipsGen(trans.code))
