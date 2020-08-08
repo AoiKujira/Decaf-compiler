@@ -27,7 +27,7 @@ int main() {
     age = ReadInteger();
 
     p = new Person;
-    p.setName(p.name);
+    p.setName(name);
     p.setAge(age);
 
     p.print();
