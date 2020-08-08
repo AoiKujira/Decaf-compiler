@@ -1114,7 +1114,7 @@ class Test(Transformer):
                 if not isinstance(x, list):
                     count += 1
                     # if not str(x).__contains__("this"):
-                    self.code += "push " + x + " \n"
+                    self.code += "push " + x + str(self.current_scope.number) + " \n"
 
     def push_args(self, args):
         # print("push_args", args)
