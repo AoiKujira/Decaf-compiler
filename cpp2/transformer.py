@@ -264,7 +264,7 @@ class Test(Transformer):
         for a in args:
             if a is not None:
                 lee.append(a)
-        print("exp_mem", lee)
+        # print("exp_mem", lee)
         if str(lee).__contains__("correct_init_this"):
             self.func_call = True
         self.afterdot = False
@@ -574,7 +574,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args, self.mem_checker)
+        # print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -593,7 +593,7 @@ class Test(Transformer):
                 new_lee.append(args[0][1][0])
                 args = [[args[0][0], args[0][1][1]]]
             self.func_call = False
-            print("1")
+            # print("1")
             self.mem_checker = True
             args = [self.exp_nine([new_lee]), args[0][1]]
             # print(1, args)
@@ -602,9 +602,9 @@ class Test(Transformer):
                 args = [self.exp_nine([args[0]]), args[1]]
             else:
                 args = [self.exp_nine([args[0]]), args[1][0]]
-            print(2)
+            # print(2)
             args = [self.exp_mem(args)]
-            print("after_mem", args)
+            # print("after_mem", args)
             if self.should_return:
                 # print("should", args)
                 return args
@@ -1018,8 +1018,11 @@ class Test(Transformer):
                 t = last_line[len("Print "):]
                 t = t[:t.find("\n")]
                 last_line = self.print_stmt([None, [t], None])
+            if last_line.__contains__("push"):
+                print(push_flag)
             if (not total_code.__contains__("Print") or
-                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))) \
+                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))
+                or line.__contains__("Lcall")) \
                     and not line.__contains__("return") and \
                     not push_flag and last_line.__contains__("push"):
                 push_flag = True
