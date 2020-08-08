@@ -1,6 +1,25 @@
 int main(){
-  int a;
+  bool a;
+  bool b;
+  bool c;
   string t;
-  t = "sal"amslam";
-  return 0;
+  string s;
+  string p;
+
+  s = "salamslam";
+  t = "salamslam";
+  p = "ergqe";
+
+  a = s == t;
+  Print(a);
+  b = s == p;
+  Print(b);
+  c = p == t;
+  Print(c);
+  a = s != t;
+  Print(a);
+  b = s != p;
+  Print(b);
+  c = p != t;
+  Print(c);
 }
