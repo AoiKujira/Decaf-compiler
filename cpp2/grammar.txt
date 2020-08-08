@@ -145,7 +145,8 @@ BREAK_STMT: "break" ";"
 
 call: IDENT "(" actuals ")" -> function_call
 
-actuals: exprs?
+actuals: tof exprs?
+tof:
 
 exprs: expr ("," expr)* -> push_args
 

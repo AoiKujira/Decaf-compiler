@@ -1111,15 +1111,15 @@ class Test(Transformer):
         count = 0
         # self.code += "pushra\n"
         print(args, self.correct_after_dot)
-        if len(args):
-            for x in args[0]:
+        if len(args) > 1:
+            for x in args[1]:
                 if not isinstance(x, list):
                     count += 1
                     # if not str(x).__contains__("this"):
-                    if not self.correct_after_dot:
-                        self.code += "push " + x + " \n"
-                    else:
-                        self.code += "push " + x + str(self.current_scope.number) + " \n"
+                    self.code += "push " + x + " \n"
+
+    def tof(self, args):
+        self.afterdot = False
 
     def end_of_after_dot_correction(self, args):
         self.correct_after_dot = False
