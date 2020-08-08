@@ -932,7 +932,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
-        # print(self.code, "hehe\n\n")
+        print(self.code, "hehe\n\n")
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
@@ -949,7 +949,8 @@ class Test(Transformer):
                 push_flag = True
                 new_code += "pushra\n"
             if last_line.__contains__("push") and total_code.__contains__("Print") and \
-                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall")):
+                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall"))\
+                    and not line.__contains__("return"):
                 last_line = ""
             if line.__contains__("Lcall"):
                 push_flag = False
@@ -1011,6 +1012,7 @@ class Test(Transformer):
         # print("return_func", args)
         if len(args):
             self.code += "push " + args[0] + " \n"
+            self.code += "return \n"
             # print("return...\n\n", self.code, "\n\nre\n\n")
             return args[0]
         self.code += "return \n"
