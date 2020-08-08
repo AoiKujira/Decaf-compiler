@@ -119,6 +119,13 @@ class Test(Transformer):
         out = self.lstack.pop()
         self.code += out + ":\n"
 
+    def if_middle(self, args):
+        mid = self.lstack.pop()
+        out = self.make_label()
+        self.lstack.append(out)
+        self.code += "jumpto " + out + "\n"
+        self.code += mid + ":\n"
+
     def start_vars(self, args):
         self.is_varring = True
 
@@ -948,7 +955,7 @@ class Test(Transformer):
                 push_flag = True
                 new_code += "pushra\n"
             if last_line.__contains__("push") and total_code.__contains__("Print") and \
-                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall"))\
+                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall")) \
                     and not line.__contains__("return"):
                 last_line = ""
             if line.__contains__("Lcall"):
