@@ -1091,7 +1091,7 @@ class Test(Transformer):
 
     def actuals(self, args):
         count = 0
-        self.code += "pushra\n"
+        # self.code += "pushra\n"
         for x in args[0]:
             if not isinstance(x, list):
                 count += 1
