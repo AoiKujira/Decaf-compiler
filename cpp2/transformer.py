@@ -360,11 +360,11 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         if self.var_types[args[0]] == "int":
-            self.code += "arith " + t + " = (-1) * " + args[0] + "\n"
+            self.code += "arith " + t + " = -1 * " + args[0] + "\n"
             self.var_types[t] = "int"
         elif self.var_types[args[0]] == "double":
             self.var_types[t] = "double"
-            self.code += "arith " + t + " = (-1) f* " + args[0] + "\n"
+            self.code += "arith " + t + " = -1 f* " + args[0] + "\n"
         return t
 
     def exp_mul(self, args):

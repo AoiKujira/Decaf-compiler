@@ -270,7 +270,7 @@ move	$t9, $v0
 sw $t9, tempo35
 lw $t9, tempo35
 sw $t9, x4
-lw $t1, (-1)
+lw $t1, -1
 lw $t2, tempo36
 mul $t3, $t1, $t2
 sw $t3, tempo37
