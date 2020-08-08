@@ -103,7 +103,7 @@ def mipsGen(input_code):
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
     mipsDataCode += '____false____: .asciiz \"false\"\n'
-    mipsTextCode = '.text\nmain:\nj ___main___\n'
+    mipsTextCode = '.text\nmain:\nb ___main___\n'
     # mipsTextCode += '################ MACROS ################\n'
     # mipsTextCode += '.macro read_int($dReg)\nli	$v0, 5\nsyscall\nmove	$dReg, $v0\n.end_macro\n'
     # mipsTextCode += '.macro read_string($string_address)\nli	$v0, 8\nli	$a1, 1000  #MAX_SIZE==999\nmove	$a0, $string_address\nsyscall\n.end_macro\n'
@@ -402,7 +402,7 @@ def mipsGen(input_code):
                     pass
         if len(instruction) == 1:#pushra or #popra or #a:
             if instruction[0] == 'pushra':#pushra
-                mipsTextCode += 'subi $sp, $sp, 4\n'
+                mipsTextCode += 'addi $sp, $sp, -4\n'
                 mipsTextCode += 'sw $ra, ($sp)\n'
             elif instruction[0] == 'popra':#popra
                 mipsTextCode += 'lw $ra, ($sp)\n'
@@ -418,7 +418,7 @@ def mipsGen(input_code):
                     mipsTextCode += instruction[0] + '\n'
         if instruction[0] == 'push':#push a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
-            mipsTextCode += 'subi $sp, $sp, 4\n'
+            mipsTextCode += 'addi $sp, $sp, -4\n'
             mipsTextCode += 'sw $t9, ($sp)\n'
         if instruction[0] == 'pop':#pop a
             if not instruction[1] in vars.keys():
@@ -523,16 +523,35 @@ def mipsGen(input_code):
                     mipsTextCode += "lw $t9, " + instruction[3] + '\n'
                     mipsTextCode += "sw $t9, " + instruction[1] + '\n'
         if instruction[0] == 'ReadInt':#ReadInt t = ReadInt()
-            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+            if not instruction[1] in vars.keys():
+                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                vars[instruction[1]] = 0
             mipsTextCode += 'li	$v0, 5\nsyscall\nmove	$t9, $v0\n'
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
-            mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + maxSizedString + '\n'
-            mipsDataCode += instruction[1] + ': ' + '.word 0\n'
-            mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
-            mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
-            vars['___' + instruction[1] + '___'] = 0
-            mipsTextCode += 'li	$v0, 8\nli	$a1, ' + str(MAX_SIZE) + '  #MAX_String_Read_SIZE==1000\nmove	$a0, $t9\nsyscall\n\n'
+            if not instruction[1] in vars.keys():
+                mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + maxSizedString + '\n'
+                mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                vars['___' + instruction[1] + '___'] = 0
+                vars[instruction[1]] = 0
+                mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
+                mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
+            len_to_new_lineLable = '____len_to_new_line' + str(myLableCount) + '____'
+            myLableCount += 1
+            endofreadlineLable = '____endofreadline' + str(myLableCount) + '____'
+            myLableCount += 1
+            endfunctionLable = '____endfunction' + str(myLableCount) + '____'
+            myLableCount += 1
+
+            mipsTextCode += 'li	$v0, 8\nli	$a1, ' + str(MAX_SIZE) + '  #MAX_String_Read_SIZE==1000\nmove	$a0, $t9\nsyscall\n'
+            mipsTextCode += len_to_new_lineLable + ':\n'
+            mipsTextCode += 'lb $t2, ($a0)\n'
+            mipsTextCode += 'li $t3, \'\\n\'\n'
+            mipsTextCode += 'beq $t2, $t3, ' + endofreadlineLable + '\n'
+            mipsTextCode += 'addi $a0, $a0, 1\n'
+            mipsTextCode += 'b ' + len_to_new_lineLable + '\n'
+            mipsTextCode += endofreadlineLable + ':\n'
+            mipsTextCode += 'sb $zero, ($a0)\n'
         if instruction[0] == 'jumpto':# jumpto lable
             mipsTextCode += 'j ' + instruction[1] + '\n'
         if instruction[0] == 'Ifz':#Ifz a goto lable
