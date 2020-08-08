@@ -546,7 +546,7 @@ def mipsGen(input_code):
             mipsTextCode += 'li	$v0, 8\nli	$a1, ' + str(MAX_SIZE) + '  #MAX_String_Read_SIZE==1000\nmove	$a0, $t9\nsyscall\n'
             mipsTextCode += len_to_new_lineLable + ':\n'
             mipsTextCode += 'lb $t2, ($a0)\n'
-            mipsTextCode += 'li $t3, \'\\n\'\n'
+            mipsTextCode += 'li $t3, 10\n'
             mipsTextCode += 'beq $t2, $t3, ' + endofreadlineLable + '\n'
             mipsTextCode += 'addi $a0, $a0, 1\n'
             mipsTextCode += 'b ' + len_to_new_lineLable + '\n'
