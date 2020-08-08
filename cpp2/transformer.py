@@ -942,10 +942,15 @@ class Test(Transformer):
             last_line = line
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
-            if not line.__contains__("Print") and not line.__contains__("return") and \
+            if (not total_code.__contains__("Print") or
+                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall")))\
+                and not line.__contains__("return") and \
                     not push_flag and last_line.__contains__("push"):
                 push_flag = True
                 new_code += "pushra\n"
+            if last_line.__contains__("push") and total_code.__contains__("Print") and \
+                    (not total_code.__contains__("Lcall") or total_code.find("print") < total_code.find("Lcall")):
+                last_line = ""
             if line.__contains__("Lcall"):
                 push_flag = False
             # if line.count("init_"):
