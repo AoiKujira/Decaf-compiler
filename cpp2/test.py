@@ -7,7 +7,7 @@ from Symbols import SymbolTable
 
 if __name__ == "__main__":
     # t031
-    input_file = open("tests2/t009-program1-sort.d", "r")
+    input_file = open("tests2/t010-sag.d", "r")
     # input_file = open("tests/t092while4.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
@@ -29,6 +29,7 @@ if __name__ == "__main__":
     # for k, v in trans.var_types.items():
     #     print(k, v)
     print(trans.code)
+    print(mipsGen(trans.code))
     #print(mipsGen(trans.code))
     # print(mipsGen(trans.code))
     # print(sym.classes["A"].var_offsets)

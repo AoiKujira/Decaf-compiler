@@ -525,7 +525,7 @@ class Test(Transformer):
             self.code += "assign " + t + " b= " + args[0].children[0] + "\n"
         elif ty == "int_constant":
             self.var_types[t] = "int"
-            self.code += "assign " + t + " i= " + args[0].children[0] + "\n"
+            self.code += "assign " + t + " i= " + str(int(args[0].children[0])) + "\n"
         elif ty == "DOUBLE_INT":
             self.var_types[t] = "double"
             self.code += "assign " + t + " f= " + args[0].children[0] + "\n"
@@ -633,7 +633,7 @@ class Test(Transformer):
                 print("Lcall3", add)
                 if str(add).__contains__("length"):
                     temp = args[1][3]
-                    self.code += "assign " + temp + " = "  + args[0] + "\n"
+                    self.code += "assign " + temp + " = " + args[0] + "\n"
                     self.code += "arith " + temp + " = " + temp + " + -4\n"
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     self.var_types[temp] = "int"
@@ -1028,7 +1028,7 @@ class Test(Transformer):
                 push_flag = True
                 new_code += "pushra\n"
             if last_line.__contains__("push") and total_code.__contains__("Print") and \
-                    (not total_code.__contains__("Lcall") or total_code.find("Print") < total_code.find("Lcall"))\
+                    (not total_code.__contains__("Lcall") or total_code.find("Print") < total_code.find("Lcall")) \
                     and not line.__contains__("return") and not line.__contains__("Lcall"):
                 # print("ganddddddddd", last_line)
                 last_line = ""
