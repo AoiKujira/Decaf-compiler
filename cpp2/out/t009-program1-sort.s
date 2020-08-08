@@ -357,6 +357,8 @@ lw $t9, items3
 subi $sp, $sp, 4
 sw $t9, ($sp)
 jal sort
+lw $ra, ($sp)
+addi $sp, $sp, 4
 la $t9, ___tempo48___
 sw $t9, tempo48
 lw $t9, tempo48
