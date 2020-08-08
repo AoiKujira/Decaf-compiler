@@ -4,6 +4,8 @@ All Rights Reserved.
 See the file README for a full copyright notice.
 Loaded: /usr/lib/spim/exceptions.s
 The following symbols are undefined:
-main
+_______End_Of_The_World_______
+tempo0
+l11
 
-[0x00400014]	0x0c000000  jal 0x00000000 [main]           ; 188: jal main
+[0x004003d0]	0x3c010000  lui $1, 0 [_______End_Of_The_World_______]; 220: la $ra, _______End_Of_The_World_______

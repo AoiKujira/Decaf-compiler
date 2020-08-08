@@ -111,7 +111,7 @@ lw $t9, tempo16
 sw $t9, c1
 lw $t1, a1
 lw $t2, b1
-add $t3, $t1, $t2
+sub $t3, $t1, $t2
 sw $t3, tempo17
 lw $t1, tempo17
 lw $t2, c1
@@ -119,7 +119,7 @@ sub $t3, $t1, $t2
 sw $t3, tempo18
 lw $t1, tempo18
 lw $t2, d1
-add $t3, $t1, $t2
+sub $t3, $t1, $t2
 sw $t3, tempo19
 lw $t1, tempo19
 lw $t2, z1
