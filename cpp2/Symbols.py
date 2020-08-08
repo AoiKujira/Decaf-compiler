@@ -28,6 +28,8 @@ class SymbolTable(Transformer):
         self.primitives = ["int", "bool", "double", "string"]
         self.classes = {}
         self.function_vars = {}
+        self.function_types = {}
+        self.function_types_specific = {}
         self.has_finished = False
 
     def prep(self):
@@ -44,6 +46,22 @@ class SymbolTable(Transformer):
 
     def class_decl(self, args):
         # print(args[1])
+        new_function_types = {}
+        for x in self.function_types:
+            if str(x).__contains__("init_"):
+                # print(args[1], x, x[(x.find["_"] + 1):])
+                new_function_types[args[1] + x[x.find("_"):]] = self.function_types[x]
+            else:
+                new_function_types[x] = self.function_types[x]
+        self.function_types = new_function_types
+        new_function_types = {}
+        for x in self.function_types_specific:
+            if str(x).__contains__("init_"):
+                # print(args[1], x, x[(x.find["_"] + 1):])
+                new_function_types[args[1] + x[x.find("_"):]] = self.function_types_specific[x]
+            else:
+                new_function_types[x] = self.function_types_specific[x]
+        self.function_types_specific = new_function_types
         new_function_vars = {}
         for x in self.function_vars:
             if str(x).count("init_"):
@@ -113,8 +131,31 @@ class SymbolTable(Transformer):
         if len(args) > 0:
             return args[0].children
 
+    def function(self, args):
+        child = args[0].children
+        if child[1] is not None:
+            self.function_types_specific[child[1]] = child[0]
+        if isinstance(args[0].children[1], str):
+            add_to_code = args[0].children[1]
+            self.function_types[add_to_code] = 'return'
+        else:
+            add_to_code = args[0].children[0]
+            self.function_types[add_to_code] = 'no_return'
+        return args
+
     def func_field(self, args):
         lee = args[0].children
+        child = lee
+        # print("function", child)
+        if child[1] is not None:
+            self.function_types_specific["init_" + child[1]] = child[0]
+        if isinstance(child[1], str):
+            add_to_code = child[1]
+            self.function_types["init_" + add_to_code] = 'return'
+        else:
+            add_to_code = child[0]
+            self.function_types["init_" + add_to_code] = 'no_return'
+
         if lee[2] is not None:
             if isinstance(lee[1], str):
                 name = lee[1]

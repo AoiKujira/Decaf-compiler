@@ -33,8 +33,8 @@ class Test(Transformer):
         self.sym = sym
         self.var_types = {}
         self.mem_checker = False
-        self.function_types = {}
-        self.function_types_specific = {}
+        self.function_types = sym.function_types
+        self.function_types_specific = sym.function_types_specific
         self.function_vars = sym.function_vars
         self.in_class = False
         self.last_code = ''''''
@@ -45,7 +45,6 @@ class Test(Transformer):
         self.left = False
         self.this_class_vars = {}
         self.this_function_vars = []
-        self.push_args_later = ""
 
     def expr(self, args):
         # print("expr", args)
@@ -932,7 +931,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
-        print(self.code, "hehe\n\n")
+        # print(self.code, "hehe\n\n")
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
