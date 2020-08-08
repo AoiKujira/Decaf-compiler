@@ -236,7 +236,7 @@ class Test(Transformer):
             size = self.classes[ty].size
         t = self.make_temp()
         self.code += "arith " + t + " = " + args[0] + " * " + str(size) + "\n"
-        self.code += "arith" + t + " = " + t + " + 4\n"
+        self.code += "arith " + t + " = " + t + " + 4\n"
         self.code += "assign " + t + " = allocate " + t + "\n"
         self.code += "assign " + "*(" + t + ") = " + args[0] + "\n"
         self.code += "arith " + t + " = " + t + " + 4\n"
@@ -273,7 +273,7 @@ class Test(Transformer):
                 self.func_call = False
                 if str(lee).__contains__("length"):
                     temp = lee[1][3]
-                    self.code += "assign " + temp + " = " + "*(" + lee[0] + ")\n"
+                    self.code += "assign " + temp + " = " + lee[0] + "\n"
                     self.code += "arith " + temp + " = " + temp + " + -4\n"
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     self.var_types[temp] = "int"
@@ -633,7 +633,7 @@ class Test(Transformer):
                 print("Lcall3", add)
                 if str(add).__contains__("length"):
                     temp = args[1][3]
-                    self.code += "assign " + temp + " = " + "*(" + args[0] + ")\n"
+                    self.code += "assign " + temp + " = "  + args[0] + "\n"
                     self.code += "arith " + temp + " = " + temp + " + -4\n"
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     self.var_types[temp] = "int"

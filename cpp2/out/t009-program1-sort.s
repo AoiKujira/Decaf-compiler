@@ -79,7 +79,6 @@ lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, items0
 lw $t9, items0
-lw $t9, ($t9)
 sw $t9, tempo0
 lw $t1, tempo0
 lw $t2, ______4_____
@@ -248,6 +247,10 @@ lw $t1, tempo28
 lw $t2, _____4_____
 mul $t3, $t1, $t2
 sw $t3, tempo29
+lw $t1, tempo29
+lw $t2, _____4_____
+add $t3, $t1, $t2
+sw $t3, tempo29
 lw	$t9, tempo29
 li	$v0, 9
 move	$a0, $t9
@@ -315,6 +318,10 @@ l11:
 lw $t1, i3
 lw $t2, _____4_____
 mul $t3, $t1, $t2
+sw $t3, tempo40
+lw $t1, tempo40
+lw $t2, _____4_____
+add $t3, $t1, $t2
 sw $t3, tempo40
 lw	$t9, tempo40
 li	$v0, 9
@@ -395,7 +402,6 @@ lw $t9, tempo49
 sw $t9, i3
 l18:
 lw $t9, items3
-lw $t9, ($t9)
 sw $t9, tempo50
 lw $t1, tempo50
 lw $t2, ______4_____
