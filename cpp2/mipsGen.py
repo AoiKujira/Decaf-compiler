@@ -29,8 +29,8 @@ arith a = b f< c
 arith a = b s== c
 arith a = b s!= c
 ......arith bool........
-*arith a = b b== c
-*arith a = b b!= c
+arith a = b b== c
+arith a = b b!= c
 ......arith int........
 arith a = b + c
 arith a = b * c
