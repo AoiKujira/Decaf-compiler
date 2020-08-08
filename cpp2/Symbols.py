@@ -156,7 +156,7 @@ class SymbolTable(Transformer):
         lee = args[0].children
         child = lee
         # print("function", child)
-        if child[1] is not None:
+        if child[1] is not None and isinstance(child[1], str):
             self.function_types_specific["init_" + child[1]] = child[0]
         if isinstance(child[1], str):
             add_to_code = child[1]
