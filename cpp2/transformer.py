@@ -1008,7 +1008,7 @@ class Test(Transformer):
             add_to_code = child[0]
         # print(add_to_code)
         self.this_function_vars = self.function_vars[add_to_code]
-        for var in self.function_vars[add_to_code]:
+        for var in self.function_vars[add_to_code][::-1]:
             pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
