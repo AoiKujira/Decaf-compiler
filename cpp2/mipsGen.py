@@ -272,10 +272,16 @@ def mipsGen(input_code):
                     if instruction[4] == 's!=':
                         mipsTextCode += 'sw $v1, ' + instruction[1] + '\n'
                 if instruction[4][0] == 'b':
-                    if instruction[4] == 'b==':
-                        pass
+                    if instruction[4] == 'b==':#arith a = b b== c
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'seq $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                     if instruction[4] == 'b!=':
-                        pass
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
+                        mipsTextCode += 'sne $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                 if not instruction[1] in vars.keys():
                     mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                     vars[instruction[1]] = 0
@@ -408,7 +414,7 @@ def mipsGen(input_code):
                     mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
                     mipsTextCode += 'cvt.w.s $t9, $f9\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1]  +'\n'
-                if instruction[3] == 'itob':#arith ab c= btoi bi
+                if instruction[3] == 'itob':#arith ab c= itob bi
                     convertZeroLable = '____convertZero' + myLableCount + '____'
                     myLableCount += 1
                     convertEndLable = '____convertEnd' + myLableCount + '____'
@@ -421,7 +427,7 @@ def mipsGen(input_code):
                     mipsTextCode += 'li $t9, 0\n'
                     mipsTextCode += convertEndLable + ':\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
-                if instruction[3] == 'btoi':#arith ai c= itob bb
+                if instruction[3] == 'btoi':#arith ai c= btoi bb
                     mipsTextCode += 'lw $t9, ' + instruction[4] + '\n'
                     mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if len(instruction) == 1:#pushra or #popra or #a:
