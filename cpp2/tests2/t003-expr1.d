@@ -16,7 +16,7 @@ int main() {
     z = 2 * a + ((a + b) / (c + d));
     b = z / a;
     c = b * a + z;
-    d = a + b - c + d - z;
+    d = a - b - c - d - z;
 
     Print(a);
     Print(b);
