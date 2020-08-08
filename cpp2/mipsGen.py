@@ -89,7 +89,7 @@ return
 '''
 def mipsGen(input_code):
     def check_int(x):
-        if x[0] == '+':
+        if x[0] == '+' or x[0] == '-':
             return x[1:].isdigit()
         return x.isdigit()
     vars = {}
