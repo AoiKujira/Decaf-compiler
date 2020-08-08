@@ -53,7 +53,7 @@ tempo37: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 Person_setName:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -69,7 +69,7 @@ lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, Person_this
 lw $t9, name
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
@@ -88,7 +88,7 @@ lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, Person_this
 lw $t9, age
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
@@ -138,7 +138,7 @@ lw $t9, ($sp)
 addi $sp, $sp, 4
 sw $t9, Student_this
 lw $t9, grade
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
@@ -199,14 +199,21 @@ li	$v0, 8
 li	$a1, 1010  #MAX_String_Read_SIZE==1000
 move	$a0, $t9
 syscall
-
-subi $sp, $sp, 4
+____len_to_new_line0____:
+lb $t2, ($a0)
+li $t3, '\n'
+beq $t2, $t3, ____endofreadline1____
+addi $a0, $a0, 1
+b ____len_to_new_line0____
+____endofreadline1____:
+sb $zero, ($a0)
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo6
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_setName
 lw $ra, ($sp)
@@ -215,13 +222,13 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo8
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo8
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_setAge
 lw $ra, ($sp)
@@ -241,14 +248,21 @@ li	$v0, 8
 li	$a1, 1010  #MAX_String_Read_SIZE==1000
 move	$a0, $t9
 syscall
-
-subi $sp, $sp, 4
+____len_to_new_line3____:
+lb $t2, ($a0)
+li $t3, '\n'
+beq $t2, $t3, ____endofreadline4____
+addi $a0, $a0, 1
+b ____len_to_new_line3____
+____endofreadline4____:
+sb $zero, ($a0)
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo11
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, n9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Nameable_setName
 lw $ra, ($sp)
@@ -257,13 +271,13 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo13
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo13
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p29
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal person_setAge
 lw $ra, ($sp)
@@ -281,14 +295,21 @@ li	$v0, 8
 li	$a1, 1010  #MAX_String_Read_SIZE==1000
 move	$a0, $t9
 syscall
-
-subi $sp, $sp, 4
+____len_to_new_line6____:
+lb $t2, ($a0)
+li $t3, '\n'
+beq $t2, $t3, ____endofreadline7____
+addi $a0, $a0, 1
+b ____len_to_new_line6____
+____endofreadline7____:
+sb $zero, ($a0)
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo16
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, s19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_setName
 lw $ra, ($sp)
@@ -297,13 +318,13 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo18
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo18
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, s19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_setAge
 lw $ra, ($sp)
@@ -312,13 +333,13 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo20
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo20
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, s19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_setGrade
 lw $ra, ($sp)
@@ -338,14 +359,21 @@ li	$v0, 8
 li	$a1, 1010  #MAX_String_Read_SIZE==1000
 move	$a0, $t9
 syscall
-
-subi $sp, $sp, 4
+____len_to_new_line9____:
+lb $t2, ($a0)
+li $t3, '\n'
+beq $t2, $t3, ____endofreadline10____
+addi $a0, $a0, 1
+b ____len_to_new_line9____
+____endofreadline10____:
+sb $zero, ($a0)
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo23
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, n9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Nameable_setName
 lw $ra, ($sp)
@@ -356,13 +384,13 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo25
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo25
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, p9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_setAge
 lw $ra, ($sp)
@@ -371,45 +399,45 @@ li	$v0, 5
 syscall
 move	$t9, $v0
 sw $t9, tempo27
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, tempo27
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, s29
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_setGrade
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, p19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_print
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, p29
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal person_print
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, s19
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_print
 lw $ra, ($sp)
 addi $sp, $sp, 4
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, s29
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Student_print
 lw $ra, ($sp)
@@ -417,7 +445,7 @@ addi $sp, $sp, 4
 lw $t9, p19
 sw $t9, n9
 lw $t9, n9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Nameable_getName
 lw $ra, ($sp)
@@ -428,7 +456,7 @@ syscall
 lw $t9, s29
 sw $t9, n9
 lw $t9, n9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Nameable_getName
 lw $ra, ($sp)
@@ -439,7 +467,7 @@ syscall
 lw $t9, p29
 sw $t9, p9
 lw $t9, p9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_getName
 lw $t9, ($sp)
@@ -456,7 +484,7 @@ li	$v0, 11
 li	$a0, 10
 syscall
 lw $t9, p9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_getAge
 lw $t9, ($sp)
@@ -474,7 +502,7 @@ syscall
 lw $t9, s19
 sw $t9, p9
 lw $t9, p9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_getAge
 lw $t9, ($sp)
@@ -489,10 +517,10 @@ syscall
 li	$v0, 11
 li	$a0, 10
 syscall
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, p9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Person_print
 lw $ra, ($sp)
@@ -500,7 +528,7 @@ addi $sp, $sp, 4
 lw $t9, s29
 sw $t9, n9
 lw $t9, n9
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal Nameable_getName
 lw $ra, ($sp)

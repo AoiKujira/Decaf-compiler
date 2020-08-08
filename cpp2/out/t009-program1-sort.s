@@ -69,7 +69,7 @@ tempo54: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 sort:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -354,7 +354,7 @@ sw $t8, ($t9)
 j l17
 l16:
 lw $t9, items3
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal sort
 lw $ra, ($sp)

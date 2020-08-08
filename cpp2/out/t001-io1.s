@@ -8,7 +8,7 @@ b1: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 ___main___:
 la $ra,EndOfWorld
 li	$v0, 5

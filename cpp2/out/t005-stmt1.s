@@ -14,7 +14,7 @@ tempo5: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 test:
 lw $t9, ($sp)
 addi $sp, $sp, 4
@@ -27,7 +27,7 @@ lw $t2, b0
 mul $t3, $t1, $t2
 sw $t3, tempo0
 lw $t9, tempo0
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jr $ra
 jr $ra
@@ -45,13 +45,13 @@ move	$t9, $v0
 sw $t9, tempo2
 lw $t9, tempo2
 sw $t9, b2
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $ra, ($sp)
 lw $t9, a2
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 lw $t9, b2
-subi $sp, $sp, 4
+addi $sp, $sp, -4
 sw $t9, ($sp)
 jal test
 lw $t9, ($sp)

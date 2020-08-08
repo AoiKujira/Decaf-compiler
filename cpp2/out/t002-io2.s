@@ -24,7 +24,7 @@ tempo12: .word 0
 
 .text
 main:
-j ___main___
+b ___main___
 ___main___:
 la $ra,EndOfWorld
 lw $t9, tempo0
