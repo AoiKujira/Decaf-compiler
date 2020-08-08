@@ -45,6 +45,7 @@ class Test(Transformer):
         self.left = False
         self.this_class_vars = {}
         self.this_function_vars = []
+        self.correct_after_dot = False
 
     def expr(self, args):
         # print("expr", args)
@@ -254,6 +255,7 @@ class Test(Transformer):
             self.var_types[iden + str(cur.number)] = cur.table[iden]
             return iden + str(cur.number)
         except:
+            self.correct_after_dot = True
             return iden
 
     def exp_mem(self, args):
@@ -1108,13 +1110,17 @@ class Test(Transformer):
     def actuals(self, args):
         count = 0
         # self.code += "pushra\n"
-        print(args, self.var_types)
+        print(args, self.correct_after_dot)
         if len(args):
             for x in args[0]:
                 if not isinstance(x, list):
                     count += 1
                     # if not str(x).__contains__("this"):
-                    self.code += "push " + x + " \n"
+                    if not self.correct_after_dot:
+                        self.code += "push " + x + " \n"
+                    else:
+                        self.code += "push " + x + str(self.current_scope.number) + " \n"
+        self.correct_after_dot = False
 
     def push_args(self, args):
         # print("push_args", args)
