@@ -135,9 +135,8 @@ class Test(Transformer):
         self.is_varring = False
 
     def exp_assign(self, args):
-        # print("exp assign", args)
-        # if str(args[1]).__contains__("["):
-        #     print(self.code, "\n\nheheh\n\n")
+        print("exp assign", args, self.func_call)
+        # print(self.code, "\n\nheheh\n\n")
         if not isinstance(args[1][0], str):
             args[1] = args[1][0][0]
         # print("exp assign", args)
@@ -575,12 +574,12 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args, self.mem_checker)
+        print("exp_nine", args, self.func_call)
         # print(self.code, "\n\nhehe\n\n")
-        # if len(args) == 1 and isinstance(args[0], list):
-        #     args = args[0]
         if isinstance(args[0], str) and not args[0].count("["):
             return args[0]
+        if len(args) == 1 and isinstance(args[0], list) and len(args[0]) > 1:
+            args = args[0]
         # if str(args).count("correct_init_this"):
         #     self.func_call = True
         if str(args).count("correct_init_this") and isinstance(args[0], list) and isinstance(args[0][1], list) \
@@ -614,14 +613,14 @@ class Test(Transformer):
             # print(self.var_types)
         # print(args)
         if self.new:
-            # print(1)
+            print(1)
             self.new = False
             return args[0][0]
         if not isinstance(args[0], list) and str(args).__contains__("exp_this"):
             print(2)
             return "init_this"
         if isinstance(args[0], list) and isinstance(args[0][1], list) and self.func_call:
-            # print(3, args)
+            print(3, args)
             self.func_call = False
             args = args[0]
             args = [args[0], args[1][0], args[1][1]]
@@ -707,35 +706,44 @@ class Test(Transformer):
             # print(args, self.var_types)
             # args = [[args[1][3], args[2]]]
         if self.func_call and not self.left and not isinstance(args[0], str):
-            # print(4, args)
+            print(4, args)
             # print("heyyy", args, self.function_types)
             self.func_call = False
-            if str(args).__contains__("exp_this"):
-                self.code += "push init_this\n"
-                add = args[0][1]
-            else:
-                add = args[0][0]
-                if self.function_types.__contains__("init_" + add):
+            for arg in args:
+                if arg[0].__contains__("length"):
+                    tem = temp
+                    temp = arg[3]
+                    self.code += "assign " + temp + " = " + tem + "\n"
+                    self.code += "arith " + temp + " = " + temp + " + -4\n"
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
+                    self.var_types[temp] = "int"
+                    return temp
+                if str(args).__contains__("exp_this"):
                     self.code += "push init_this\n"
-                elif self.in_class:
-                    self.code += "push father_this\n"
-            if self.in_class:
-                self.code += "Lcall init_" + add + "\n"
-            else:
-                self.code += "Lcall " + add + "\n"
-            print("Lcall4", add)
-            temp = args[0]
-            if self.function_types_specific.__contains__(add):
-                temp = self.make_temp()
-                self.var_types[temp] = self.function_types_specific[add]
-                self.code += "pop " + temp + "\n"
-            self.code += "popra\n"
+                    add = args[0][1]
+                else:
+                    add = args[0][0]
+                    if self.function_types.__contains__("init_" + add):
+                        self.code += "push init_this\n"
+                    elif self.in_class:
+                        self.code += "push father_this\n"
+                if self.in_class and not self.function_types.__contains__(add):
+                    self.code += "Lcall init_" + add + "\n"
+                else:
+                    self.code += "Lcall " + add + "\n"
+                if str(arg).__contains__("correct_init_this"):
+                    temp = arg[3]
+                    if self.function_types_specific.__contains__(add):
+                        temp = self.make_temp()
+                        self.var_types[temp] = self.function_types_specific[add]
+                        self.code += "pop " + temp + "\n"
+                    self.code += "popra\n"
             return temp
         # print(args[0][1])
         if not isinstance(args[0], str) and self.var_types.__contains__(args[0][0]) and \
                 not isinstance(args[0][1], list) and not self.function_types.__contains__(args[0][1]) \
                 and self.classes[self.var_types[args[0][0]]].var_offsets.__contains__(args[0][1]):
-            # print(5)
+            print(5)
             t = self.make_temp()
             # print(t)
             offset = self.classes[self.var_types[args[0][0]]].var_offsets[args[0][1]]
@@ -762,7 +770,7 @@ class Test(Transformer):
             return self.exp_nine([[args[0][0], args[0][1], args[0][2][0], args[0][2][1]]])
         if len(args[0]) == 3 and self.var_types.__contains__(args[0][2]) and self.function_types.__contains__(
                 args[0][1]):
-            # print(6)
+            print(6)
             # print("yaaaaaaaaay")
             self.code = self.last_code
             self.code += "push " + args[0][2] + "\n"
@@ -776,15 +784,26 @@ class Test(Transformer):
             self.code += "popra\n"
             return t
         if str(args).__contains__('exp_this'):
-            # print(7)
+            print(7)
             # print("here")
             return 'init_this.' + args[0][1]
         if isinstance(args[0], list) and (not self.mem_checker or str(args).__contains__("correct_init_this")):
-            # print(8)
+            print(8)
             # print("here")
             return args
+        if isinstance(args, list) and len(args) == 4 and str(args).__contains__("correct_init_this")\
+            and self.function_types.__contains__(args[0]):
+            print("new", args)
+            self.code += "Lcall " + args[0] + "\n"
+            if self.function_types[args[0]] == "return":
+                self.var_types[args[3]] = self.function_types_specific[args[0]]
+                self.code += "pop " + args[3] + "\n"
+                self.code += "popra\n"
+                return args[3]
+            self.code += "popra\n"
+            return ""
         if not self.mem_checker:
-            # print(9)
+            print(9)
             if not isinstance(args[0], str):
                 ret = args[0].children[0]
                 self.tstack.append(ret)
@@ -808,7 +827,7 @@ class Test(Transformer):
                 self.tstack.append(args[0])
                 return args[0]
         else:
-            # print(10)
+            print(10)
             # print("memmmmm", args)
             # print(self.code)
             self.left = False
