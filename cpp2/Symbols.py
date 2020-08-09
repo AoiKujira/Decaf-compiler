@@ -31,6 +31,7 @@ class SymbolTable(Transformer):
         self.function_types = {}
         self.function_types_specific = {}
         self.has_finished = False
+        self.var_types = {}
         # self.class_numbers = {}
         # self.counter = 0
 
@@ -191,3 +192,7 @@ class SymbolTable(Transformer):
     double = lambda self, _: "double"
     str = lambda self, _: "string"
     bool = lambda self, _: "bool"
+
+    def global_type(self, args):
+        print("global", args)
+        self.var_types[args[0][1]] = args[0][0]

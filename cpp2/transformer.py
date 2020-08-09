@@ -31,7 +31,7 @@ class Test(Transformer):
         self.is_funcy = False
         self.classes = sym.classes
         self.sym = sym
-        self.var_types = {}
+        self.var_types = sym.var_types
         self.mem_checker = False
         self.function_types = sym.function_types
         self.function_types_specific = sym.function_types_specific
@@ -290,6 +290,8 @@ class Test(Transformer):
                 # if str(add).__contains__("["):
 
                 self.code += "push " + lee[0] + "\n"
+                if add.count("int_"):
+                    add = add[len("int_"):]
                 self.code += "Lcall " + add + "\n"
                 print("Lcall1", add)
                 # print(self.function_types)

@@ -4,7 +4,7 @@ last_mission:
 
 program: decl+
 
-decl: variable_decl
+decl: variable_decl -> global_type
     | function_decl -> function
     | class_decl
     | interface_decl
