@@ -8,7 +8,7 @@ tempo1: .word 0
 a2: .word 0
 tempo2: .word 0
 b2: .word 0
-tempo4: .word 0
+tempo3: .word 0
 
 .text
 main:
@@ -54,10 +54,10 @@ sw $t9, ($sp)
 jal test
 lw $t9, ($sp)
 addi $sp, $sp, 4
-sw $t9, tempo4
+sw $t9, tempo3
 lw $ra, ($sp)
 addi $sp, $sp, 4
-lw $t9, tempo4
+lw $t9, tempo3
 li	$v0, 1
 move 	$a0, $t9
 syscall
