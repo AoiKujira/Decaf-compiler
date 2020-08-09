@@ -1132,7 +1132,7 @@ class Test(Transformer):
             if last_line.__contains__("*(") and (last_line.count("+") or last_line.count("*") > 1
                 or last_line.count("-") or last_line.count("<") or last_line.count(">")
                 or last_line.count("&") or last_line.count("|") or last_line.count("!=") or
-                last_line.count("%") or last_line.count("/")):
+                last_line.count("%") or last_line.count("/")) or last_line.count("=="):
                 # print("last_line", last_line)
                 star = last_line[last_line.find("*("):]
                 star = star[:star.find(")") + 1]
