@@ -28,8 +28,8 @@ int main(){
     b.dogness = NewArray(10, Dog);
     b.wetdog = 2;
     b.dogness[5] = a;
-    Print(b.dogness[a.return_thing(b.getwetdog())].thesaga);
-    //Print(a.thesaga);
+    //Print(b.dogness[a.return_thing(b.getwetdog())].thesaga);
+    Print(a.thesaga);
     //Print(a.return_thing(b.getwetdog()));
     //Print(b.dogness[5]);
     //Print(b.dogness[5].thesaga);
