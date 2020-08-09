@@ -220,12 +220,12 @@ class Test(Transformer):
             return args[1]
 
     def new_class(self, args):
-        # print("new_class", self.classes, args)
-        self.last_class = args[0]
+        print("new_class", self.classes, args)
+        # self.last_class = args[0]
         size = self.classes[args[0]].size
         t = self.make_temp()
         self.code += "assign " + t + " = allocate " + str(size) + "\n"
-        self.var_types[t] = "int"
+        self.var_types[t] = args[0]
         self.new = True
         # print(self.code, "\n\nhehe\n\n")
         return [t, args[0]]
