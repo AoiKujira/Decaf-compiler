@@ -977,7 +977,7 @@ class Test(Transformer):
             self.code = self.code.replace(" " + x + " ", " " + args[1] + "_this." + x + " ")
             self.code = self.code.replace("\n" + x + "\n", "\n" + args[1] + "_this." + x + "\n")
 
-        # print(self.code, "\n\nhehe\n\n\n")
+        print(self.code, "\n\nhehe\n\n\n")
 
         total_code = self.code
         new_code = ""
@@ -1044,8 +1044,9 @@ class Test(Transformer):
                             t = self.exp_nine([t + code[code.find("["):]])
                             add_code += self.code[self.code.find(total_code) + len(total_code):]
                         add_code += "push " + t + "\n"
-                    if line.count("Print "):
+                    if line.count("Print") and line.count("."):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
+                        # print("Print", t)
                         add_code += self.print_stmt([None, [t], None])
                     # print(line.count("Print"))
 
@@ -1097,20 +1098,21 @@ class Test(Transformer):
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
             if last_line.count("Print "):
-                t = last_line[len("Print "):]
+                # print("Print\n\n", last_line)
+                t = last_line[len("Print"):]
                 t = t[:t.find("\n")]
                 last_line = self.print_stmt([None, [t], None])
             # if last_line.__contains__("push"):
             #     print(push_flag)
-            if (not total_code.__contains__("Print ") or
-                (total_code.find("Print ") > total_code.find("Lcall ") and total_code.__contains__("Lcall "))
+            if (not total_code.startswith("Print") or
+                (total_code.find("Print") > total_code.find("Lcall ") and total_code.__contains__("Lcall "))
                 or line.__contains__("Lcall ")) \
                     and not line.__contains__("return") and \
                     not push_flag and last_line.__contains__("push"):
                 push_flag = True
                 new_code += "pushra\n"
-            if last_line.__contains__("push ") and total_code.__contains__("Print ") and \
-                    (not total_code.__contains__("Lcall ") or total_code.find("Print ") < total_code.find("Lcall ")) \
+            if last_line.__contains__("push ") and total_code.startswith("Print") and \
+                    (not total_code.__contains__("Lcall ") or total_code.find("Print") < total_code.find("Lcall ")) \
                     and not line.__contains__("return") and not line.__contains__("Lcall "):
                 # print("ganddddddddd", last_line)
                 last_line = ""
