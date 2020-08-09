@@ -575,7 +575,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        # print("exp_nine", args, self.mem_checker)
+        print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
@@ -843,15 +843,19 @@ class Test(Transformer):
                     ind = hold.group(1).strip("[").strip("]")
                     o = c.var_offsets[name]
                     tem = self.make_temp()
-                    self.code += "arith " + tem + " = " + first + " + " + str(o) + "\n"
-                    self.code += "assign " + temp + " = " + "*(" + tem + ")" + "\n"
-                    self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
-                    self.code += "arith " + temp + " = " + temp + " + " + tem + "\n"
+                    code = ""
+                    code += "arith " + tem + " = " + first + " + " + str(o) + "\n"
+                    code += "assign " + temp + " = " + "*(" + tem + ")" + "\n"
+                    code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
+                    code += "arith " + temp + " = " + temp + " + " + tem + "\n"
+                    # print("hold", sec, "\n", code, "\n\nheeeyyyy\n\n")
+                    self.code += code
                     self.var_types[temp] = ty
                     self.var_types[tem] = "int"
                     first = temp
-                    if i == len(lee) - 1:
-                        self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
+                    # print("shart", i, len(lee) - 1, "\n\n")
+                    # if i == len(lee) - 1:
+                    self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                     continue
                 # print(c.var_offsets, sec)
                 o = c.var_offsets[sec]
