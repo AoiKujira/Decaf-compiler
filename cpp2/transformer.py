@@ -858,7 +858,7 @@ class Test(Transformer):
                 # except:
                 #     print(c.var_offsets, self.classes[self.var_types[first]].var_offsets)
                 #     # o = c.var_offsets[self.var_types[first]]
-                self.code += "arith" + temp + " = " + first + " + " + str(o) + "\n"
+                self.code += "arith " + temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
                         i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
