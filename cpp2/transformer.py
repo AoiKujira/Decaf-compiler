@@ -361,7 +361,7 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         self.var_types[t] = "bool"
-        self.code += "arith " + t + " = not(" + args[0] + ")\n"
+        self.code += "arith " + t + " = " + args[0] + " !b" + "\n"
         return t
 
     def exp_neg(self, args):
@@ -528,7 +528,8 @@ class Test(Transformer):
             self.code += "assign " + t + " i= " + str(int(args[0].children[0])) + "\n"
         elif ty == "DOUBLE_INT":
             self.var_types[t] = "double"
-            self.code += "assign " + t + " f= " + args[0].children[0] + "\n"
+            doub = str(eval(args[0].children[0]))
+            self.code += "assign " + t + " f= " + doub + "\n"
         return t
 
     def print_stmt(self, args):

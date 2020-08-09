@@ -257,6 +257,13 @@ sw $t3, tempo24
 lw $t9, tempo24
 lw $t9, ($t9)
 sw $t9, tempo24
+lw $t1, tempo24
+lw $t2, _____4_____
+add $t3, $t1, $t2
+sw $t3, tempo24
+lw $t9, tempo24
+lw $t9, ($t9)
+sw $t9, tempo24
 lw $t9, tempo24
 li	$v0, 1
 move 	$a0, $t9
