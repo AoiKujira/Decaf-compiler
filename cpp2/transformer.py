@@ -230,7 +230,7 @@ class Test(Transformer):
 
     def make_array(self, args):
         ty = args[1]
-        if ["int", "bool", "double", "string"].__contains__(ty):
+        if ["int", "bool", "double", "string"].__contains__(ty) or re.match(".*\[\]", ty):
             size = 4
         else:
             size = self.classes[ty].size
@@ -792,8 +792,8 @@ class Test(Transformer):
             print(8)
             # print("here")
             return args
-        if isinstance(args, list) and len(args) == 4 and str(args).__contains__("correct_init_this")\
-            and self.function_types.__contains__(args[0]):
+        if isinstance(args, list) and len(args) == 4 and str(args).__contains__("correct_init_this") \
+                and self.function_types.__contains__(args[0]):
             print("new", args)
             self.code += "Lcall " + args[0] + "\n"
             if self.function_types[args[0]] == "return":
@@ -810,15 +810,16 @@ class Test(Transformer):
                 self.tstack.append(ret)
                 return ret
             else:
-                if re.match(".*\[.*\]", args[0]):
-                    name = re.sub("\[.*\]", "", args[0])
-                    print(args)
+                the_thing = args[0]
+                if re.match(".*\[.*\]", the_thing):
+                    name = re.sub("\[.*\]", "", the_thing)
                     ty = self.var_types[name].strip("[]")
-                    if ["int", "bool", "double", "string"].__contains__(ty):
+                    if ["int", "bool", "double", "string"].__contains__(ty) or \
+                            re.match(".*(\[.*\])+\[.*\]", the_thing):
                         size = 4
                     else:
                         size = self.classes[ty].size
-                    ind = re.match(".*(\[.*\])", args[0]).group(1).strip("[").strip("]")
+                    ind = re.match(".*(\[.*\])", the_thing).group(1).strip("[").strip("]")
                     tem = self.make_temp()
                     self.code += "arith " + tem + " = " + str(size) + " * " + ind + "\n"
                     self.code += "arith " + tem + " = " + name + " + " + tem + "\n"
