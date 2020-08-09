@@ -31,6 +31,7 @@ arith a = b s!= c
 ......arith bool........
 arith a = b b== c
 arith a = b b!= c
+arith a = b b! // a = not(b)
 ......arith int........
 arith a = b + c
 arith a = b * c
@@ -238,6 +239,9 @@ def mipsGen(input_code):
                         mipsTextCode += ceqendLable + ':\n'
                         mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                 if instruction[4][0] == 's':#arith a = s1 s== s2
+                    if not instruction[1] in vars.keys():
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                        vars[instruction[1]] = 0
                     loopLable = '____loop' + str(myLableCount) + '____'
                     myLableCount += 1
                     missmatchLable = '____missmatch' + str(myLableCount) + '____'
@@ -272,15 +276,23 @@ def mipsGen(input_code):
                     if instruction[4] == 's!=':
                         mipsTextCode += 'sw $v1, ' + instruction[1] + '\n'
                 if instruction[4][0] == 'b':
+                    if not instruction[1] in vars.keys():
+                        mipsDataCode += instruction[1] + ': ' + '.word 0\n'
+                        vars[instruction[1]] = 0
                     if instruction[4] == 'b==':#arith a = b b== c
                         mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                         mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
                         mipsTextCode += 'seq $t3, $t1, $t2\n'
                         mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
-                    if instruction[4] == 'b!=':
+                    if instruction[4] == 'b!=':#arith a = b b!= c
                         mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                         mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
                         mipsTextCode += 'sne $t3, $t1, $t2\n'
+                        mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
+                    if instruction[4] == 'b!':#arith a = b b! // a = not(b)
+                        mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
+                        mipsTextCode += 'li $t2, 1\n'
+                        mipsTextCode += 'sub $t3, $t2, $t1\n'
                         mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                 if not instruction[1] in vars.keys():
                     mipsDataCode += instruction[1] + ': ' + '.word 0\n'
