@@ -529,7 +529,8 @@ class Test(Transformer):
             self.code += "assign " + t + " i= " + str(int(args[0].children[0])) + "\n"
         elif ty == "DOUBLE_INT":
             self.var_types[t] = "double"
-            self.code += "assign " + t + " f= " + args[0].children[0] + "\n"
+            doub = str(eval(args[0].children[0]))
+            self.code += "assign " + t + " f= " + doub + "\n"
         return t
 
     def print_stmt(self, args):

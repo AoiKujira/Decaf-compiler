@@ -1,1 +1,0 @@
-The following symbols are undefined:person_setAgeStudent_setNameStudent_setAgeNameable_getNameperson_printNameable_setName[0x00400418]	0x0c000000  jal 0x00000000 [Nameable_setName]; 267: jal Nameable_setName
