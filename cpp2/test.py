@@ -8,7 +8,7 @@ from Symbols import SymbolTable
 if __name__ == "__main__":
     # t031
     # input_file = open("tests2/t014-the-sag-saga.d", "r")
-    input_file = open("tests_Agha_Sadegh/array2.d", "r")
+    input_file = open("tests_Agha_Sadegh/array4.d", "r")
     # input_file = open("tests/t019farzam02.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()

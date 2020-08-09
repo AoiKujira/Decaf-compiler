@@ -47,6 +47,8 @@ class Test(Transformer):
         self.this_function_vars = []
         self.correct_after_dot = False
         self.should_return = False
+        self.take_care = {}
+        self.add_code = {}
 
     def expr(self, args):
         # print("expr", args)
@@ -575,7 +577,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args, self.func_call)
+        # print("exp_nine", args, self.func_call)
         # print(self.code, "\n\nhehe\n\n")
         if isinstance(args[0], str) and not args[0].count("["):
             return args[0]
@@ -794,8 +796,9 @@ class Test(Transformer):
             print(8)
             # print("here")
             return args
+        # print("function types", self.function_types)
         if isinstance(args, list) and len(args) == 4 and str(args).__contains__("correct_init_this")\
-            and self.function_types.__contains__(args[0]):
+            and (self.function_types.__contains__(args[0]) or self.function_types.__contains__("init_" + args[0])):
             print("new", args)
             self.code += "Lcall " + args[0] + "\n"
             if self.function_types[args[0]] == "return":
@@ -826,12 +829,16 @@ class Test(Transformer):
                     self.code += "arith " + tem + " = " + name + " + " + tem + "\n"
                     self.code += "assign " + tem + " = " + "*(" + tem + ")" + "\n"
                     self.var_types[tem] = ty
+                    if str(args).__contains__("correct_init_this"):
+                        self.take_care[tem] = args
                     return tem
                 self.tstack.append(args[0])
+                if str(args).__contains__("correct_init_this"):
+                    self.take_care[args[0]] = args
                 return args[0]
         else:
             print(10)
-            print("memmmmm", args)
+            # print("memmmmm", args)
             # args = [args]
             # print(self.code)
             self.left = False
@@ -891,6 +898,8 @@ class Test(Transformer):
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
                 self.var_types[temp] = c.var_types[sec]
                 first = temp
+            if str(args).__contains__("correct_init_this"):
+                self.take_care[temp] = args
             return temp
 
     def exp_arr(self, args):
@@ -994,7 +1003,7 @@ class Test(Transformer):
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
-                print(args[1], code)
+                # print(args[1], code)
                 key = code
                 if code.count("["):
                     key = code[:code.find("[")]
@@ -1003,6 +1012,25 @@ class Test(Transformer):
                 t = self.make_temp()
                 add_code = "arith " + t + " = " + args[1] + "_this + " + str(offset) + "\n"
                 self.var_types[t] = "int"
+                # print("take care", code, self.take_care)
+                tempo = line[line.find("tempo"):]
+                tempo = tempo[:tempo.find(" ")]
+                # print(tempo)
+                if self.take_care.__contains__(tempo):
+                    self.take_care[tempo] = [tempo, self.take_care[tempo][1]]
+                    if str(self.take_care[tempo]).__contains__("correct_init_this"):
+                        self.func_call = True
+                    length = len(self.code)
+                    type = self.classes[args[1]].var_types[code]
+                    if str(type).__contains__("["):
+                        type = type[:type.find("[")]
+                    self.var_types[tempo] = type
+                    # print(self.var_types[tempo])
+                    self.exp_mem(self.take_care[tempo])
+                    self.exp_nine([self.take_care[tempo]])
+                    # print(self.code[length:])
+                    self.add_code[tempo] = self.code[length:]
+                    # new_code += self.code[length:]
                 if line.count("="):
                     add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
                 else:
@@ -1044,6 +1072,24 @@ class Test(Transformer):
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
         total_code = total_code[total_code.find("\n") + len("\n"):]
+        while total_code.count("\n"):
+            last_line = line
+            line = total_code[:total_code.find("\n") + len("\n")]
+            total_code = total_code[total_code.find("\n") + len("\n"):]
+            new_code += last_line
+            tempo = last_line[last_line.find("tempo"):]
+            tempo = tempo[:tempo.find(" ")]
+            if self.add_code.__contains__(tempo) and not total_code.__contains__(tempo) \
+                    and not line.__contains__(tempo):
+                # print(line, "heyyyy\n\n\n")
+                new_code += self.add_code[tempo]
+        new_code += line
+        self.code = new_code
+
+        total_code = self.code
+        new_code = ""
+        line = total_code[:total_code.find("\n") + len("\n")]
+        total_code = total_code[total_code.find("\n") + len("\n"):]
         push_flag = False
         while total_code.count("\n"):
             last_line = line
@@ -1069,7 +1115,7 @@ class Test(Transformer):
                 last_line = ""
             if line.__contains__("Lcall "):
                 push_flag = False
-            if last_line.__contains__("*(") and last_line.__contains__("+"):
+            if (last_line.__contains__("*(") and last_line.__contains__("+")) or last_line.count("*") > 1:
                 # print("last_line", last_line)
                 star = last_line[last_line.find("*("):]
                 star = star[:star.find(")") + 1]
@@ -1077,8 +1123,6 @@ class Test(Transformer):
                 in_star = in_star[:in_star.find(")")]
                 new_code += "assign " + in_star + " = " + star + "\n"
                 last_line = last_line.replace(star, in_star)
-            # if line.count("init_"):
-            #     line = line.replace("init_", "")
             new_code += last_line
         new_code += line
         self.code = new_code
