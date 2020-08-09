@@ -51,7 +51,7 @@ arith a c= itob b
 arith a c= btoi b
 arith a c= itod b
 arith a c= dtoi b
------------function call-----------
+---------function call format----------
 pushra
 push input1 (optional)
 .
@@ -60,7 +60,7 @@ push input1 (optional)
 Lcall lable
 pop output (optional)
 popra
-
+--------------------------------
 lable:
 .
 .
@@ -72,10 +72,10 @@ Ifz a goto lable
 #pushaddressof... gooya nadarim ino
 jumpto lable
 ---------print---------
-Printf lable
-Printb lable
-Printi lable
-Prints lable
+Printf a
+Printb a
+Printi a
+Prints a //the address of first byte of our string is in a
 Printe
 --------read----------
 ReadInt t = ReadInt()
@@ -491,7 +491,7 @@ def mipsGen(input_code):
             mipsTextCode += printEndLable + ':\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
-                mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
+                mipsDataCode += instruction[1] + ': ' + '.float ' + instruction[3] + '\n'
                 vars[instruction[1]] = 0
             if instruction[2] == 'i=':#assign a i= 12
                 mipsDataCode += instruction[1] + ': ' + '.word ' + instruction[3] + '\n'
