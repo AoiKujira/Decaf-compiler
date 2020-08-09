@@ -1020,7 +1020,7 @@ class Test(Transformer):
                 ty = self.classes[args[1]].var_types[key]
                 t = self.make_temp()
                 add_code = "arith " + t + " = " + args[1] + "_this + " + str(offset) + "\n"
-                self.var_types[t] = "int"
+                self.var_types[t] = ty
                 # print("take care", code, self.take_care)
                 tempo = line[line.find("tempo"):]
                 tempo = tempo[:tempo.find(" ")]
