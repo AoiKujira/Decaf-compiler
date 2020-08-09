@@ -361,7 +361,7 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         self.var_types[t] = "bool"
-        self.code += "arith " + t + " = " + args[0] + " !b" + "\n"
+        self.code += "arith " + t + " = " + args[0] + " b!" + "\n"
         return t
 
     def exp_neg(self, args):
