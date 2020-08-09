@@ -616,7 +616,7 @@ class Test(Transformer):
         if self.new:
             print(1)
             self.new = False
-            return args[0][0]
+            return args[0]
         if not isinstance(args[0], list) and str(args).__contains__("exp_this"):
             print(2)
             return "init_this"
