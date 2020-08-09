@@ -96,10 +96,6 @@ def mipsGen(input_code):
     vars = {}
     myLableCount = 0
     MAX_SIZE = 1010
-    maxSizedString = '\"'
-    for i in range(MAX_SIZE-1):
-        maxSizedString += ' '
-    maxSizedString += '\"'
     instructions = input_code.split('\n')
     mipsDataCode = '.data\n'
     mipsDataCode += '____true____: .asciiz \"true\"\n'
@@ -567,7 +563,7 @@ def mipsGen(input_code):
             mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
         if instruction[0] == 'ReadLine':#ReadLine t = ReadLine()
             if not instruction[1] in vars.keys():
-                mipsDataCode += '___' + instruction[1] + '___: ' + '.asciiz ' + maxSizedString + '\n'
+                mipsDataCode += '___' + instruction[1] + '___: ' + '.space ' + str(MAX_SIZE) + '\n'
                 mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                 vars['___' + instruction[1] + '___'] = 0
                 vars[instruction[1]] = 0
@@ -592,5 +588,5 @@ def mipsGen(input_code):
         if instruction[0] == 'Ifz':#Ifz a goto lable
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
-    mipsTextCode += '_____EndOfWorld_____:\nli	$v0, 10\nsyscall\nli	$v0, 8\nli	$v0, 8\nli	$v0, 8\n'
+    mipsTextCode += '_____EndOfWorld_____:\n'
     return  mipsDataCode + '\n' + mipsTextCode
