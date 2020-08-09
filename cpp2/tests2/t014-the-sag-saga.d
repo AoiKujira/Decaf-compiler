@@ -29,4 +29,10 @@ int main(){
     b.wetdog = 2;
     b.dogness[5] = a;
     Print(b.dogness[a.return_thing(b.getwetdog())].thesaga);
+    //Print(a.thesaga);
+    //Print(a.return_thing(b.getwetdog()));
+    //Print(b.dogness[5]);
+    //Print(b.dogness[5].thesaga);
+    //Print(a.thesaga);
+
 }
