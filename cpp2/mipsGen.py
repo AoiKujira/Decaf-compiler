@@ -159,9 +159,7 @@ def mipsGen(input_code):
                             mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         ceqtrueLable = '____ceqstrue' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqfalseLable = '____ceqsfalse' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqendLable = '____ceqsend' + str(myLableCount) + '____'
                         myLableCount += 1
                         mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
@@ -180,9 +178,7 @@ def mipsGen(input_code):
                             mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         ceqtrueLable = '____ceqstrue' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqfalseLable = '____ceqsfalse' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqendLable = '____ceqsend' + str(myLableCount) + '____'
                         myLableCount += 1
                         mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
@@ -201,14 +197,12 @@ def mipsGen(input_code):
                             mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         ceqtrueLable = '____ceqstrue' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqfalseLable = '____ceqsfalse' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqendLable = '____ceqsend' + str(myLableCount) + '____'
                         myLableCount += 1
                         mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
                         mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                        mipsTextCode += 'c.le.s $t1, $t2\n'
+                        mipsTextCode += 'c.le.s $f1, $f2\n'
                         mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
                         mipsTextCode += ceqtrueLable + ':\n'
                         mipsTextCode += 'li $t3, 1\n'
@@ -222,14 +216,12 @@ def mipsGen(input_code):
                             mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                             vars[instruction[1]] = 0
                         ceqtrueLable = '____ceqstrue' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqfalseLable = '____ceqsfalse' + str(myLableCount) + '____'
-                        myLableCount += 1
                         ceqendLable = '____ceqsend' + str(myLableCount) + '____'
                         myLableCount += 1
                         mipsTextCode += 'l.s $f1, ' + instruction[3] + '\n'
                         mipsTextCode += 'l.s $f2, ' + instruction[5] + '\n'
-                        mipsTextCode += 'c.lt.s $t1, $t2\n'
+                        mipsTextCode += 'c.lt.s $f1, $f2\n'
                         mipsTextCode += 'bc1f ' + ceqfalseLable + '\n'
                         mipsTextCode += ceqtrueLable + ':\n'
                         mipsTextCode += 'li $t3, 1\n'
@@ -243,11 +235,8 @@ def mipsGen(input_code):
                         mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                         vars[instruction[1]] = 0
                     loopLable = '____loop' + str(myLableCount) + '____'
-                    myLableCount += 1
                     missmatchLable = '____missmatch' + str(myLableCount) + '____'
-                    myLableCount += 1
                     endfunctionLable = '____endfunction' + str(myLableCount) + '____'
-                    myLableCount += 1
                     checkt2Lable = '____checkt2' + str(myLableCount) + '____'
                     myLableCount += 1
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
@@ -393,26 +382,34 @@ def mipsGen(input_code):
                     mipsTextCode += 'sle $t3, $t1, $t2\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                 if instruction[4] == '||':#
+                    Arg1Is0Lable = '___Arg1Is0_' + str(myLableCount) + '___'
+                    endOrOrLable = '___endOrOr_' + str(myLableCount) + '___'
+                    Arg2IsAlso0Lable = '___Arg2IsAlso0_' + str(myLableCount) + '___'
+                    myLableCount += 1
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'beqz $t1, __branch__here__if__arg1__is__0__\n'
-                    mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
-                    mipsTextCode += '__branch__here__if__arg1__is__0__:\n'
-                    mipsTextCode += 'beqz $t2, __branch__here__if__arg2__isAlso__0__\n'
-                    mipsTextCode += 'li $t3, 1\nb __branch__here__to__end__oror__\n'
-                    mipsTextCode += '__branch__here__if__arg2__isAlso__0__:\n'
-                    mipsTextCode += 'li $t3, 0\n__branch__here__to__end__oror__:\n'
+                    mipsTextCode += 'beqz $t1, ' + Arg1Is0Lable+ '\n'
+                    mipsTextCode += 'li $t3, 1\nb '+endOrOrLable+'\n'
+                    mipsTextCode += Arg1Is0Lable + ':\n'
+                    mipsTextCode += 'beqz $t2, ' + Arg2IsAlso0Lable + '\n'
+                    mipsTextCode += 'li $t3, 1\nb ' + endOrOrLable + '\n'
+                    mipsTextCode += Arg2IsAlso0Lable + ':\n'
+                    mipsTextCode += 'li $t3, 0\n' + endOrOrLable + ':\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
                 if instruction[4] == '&&':#
+                    Arg1Is1Lable = '___Arg1Is1_' + str(myLableCount) + '___'
+                    endAndAndLable = '___endAndAnd_' + str(myLableCount) + '___'
+                    Arg2IsAlso1Lable = '___Arg2IsAlso1_' + str(myLableCount) + '___'
+                    myLableCount += 1
                     mipsTextCode += 'lw $t1, ' + instruction[3] + '\n'
                     mipsTextCode += 'lw $t2, ' + instruction[5] + '\n'
-                    mipsTextCode += 'bnez $t1, __branch__here__if__arg1__is__1__\n'
-                    mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
-                    mipsTextCode += '__branch__here__if__arg1__is__1__:\n'
-                    mipsTextCode += 'bnez $t2, __branch__here__if__arg2__isAlso__1__\n'
-                    mipsTextCode += 'li $t3, 0\nb __branch__here__to__end__andand__\n'
-                    mipsTextCode += '__branch__here__if__arg2__isAlso__1__:\n'
-                    mipsTextCode += 'li $t3, 1\n__branch__here__to__end__andand__:\n'
+                    mipsTextCode += 'bnez $t1, ' + Arg1Is1Lable+ '\n'
+                    mipsTextCode += 'li $t3, 0\nb '+endAndAndLable+'\n'
+                    mipsTextCode += Arg1Is1Lable + ':\n'
+                    mipsTextCode += 'bnez $t2, ' + Arg2IsAlso1Lable + '\n'
+                    mipsTextCode += 'li $t3, 0\nb ' + endAndAndLable + '\n'
+                    mipsTextCode += Arg2IsAlso1Lable + ':\n'
+                    mipsTextCode += 'li $t3, 1\n' + endAndAndLable + ':\n'
                     mipsTextCode += 'sw $t3, ' + instruction[1] + '\n'
             elif instruction[2] == 'c=':#arith a c= xtoy b
                 if not instruction[1] in vars.keys():
@@ -485,9 +482,7 @@ def mipsGen(input_code):
         if instruction[0] == 'Printb':#Printb a
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             printFalseLable = '____printFalse' + str(myLableCount) + '____'
-            myLableCount += 1
             printTrueLable = '____printTrue' + str(myLableCount) + '____'
-            myLableCount += 1
             printEndLable = '____printEnd' + str(myLableCount) + '____'
             myLableCount += 1
             mipsTextCode += 'beqz $t9, ' + printFalseLable + '\n'
@@ -579,9 +574,7 @@ def mipsGen(input_code):
                 mipsTextCode += 'la $t9, ' + '___' + instruction[1] + '___\n'
                 mipsTextCode += 'sw $t9, ' + instruction[1] + '\n'
             len_to_new_lineLable = '____len_to_new_line' + str(myLableCount) + '____'
-            myLableCount += 1
             endofreadlineLable = '____endofreadline' + str(myLableCount) + '____'
-            myLableCount += 1
             endfunctionLable = '____endfunction' + str(myLableCount) + '____'
             myLableCount += 1
 
