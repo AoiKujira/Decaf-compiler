@@ -7,8 +7,8 @@ from Symbols import SymbolTable
 
 if __name__ == "__main__":
     # t031
-    input_file = open("tests/t019farzam02.in", "r")
-    # input_file = open("tests/t092while4.in", "r")
+    input_file = open("tests2/t009-program1-sort.d", "r")
+    # input_file = open("tests/t019farzam02.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
     # lark_test.check_errors(text, output_file)
@@ -16,7 +16,6 @@ if __name__ == "__main__":
     grammar = open_file.read()
     parser = Lark(grammar, parser='lalr', debug=False)
     tree = parser.parse(text)
-    #print(tree.pretty())
     # print(tree.pretty())
     sym = SymbolTable()
     while not (sym.has_finished):

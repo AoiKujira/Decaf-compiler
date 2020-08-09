@@ -858,7 +858,7 @@ class Test(Transformer):
                 # except:
                 #     print(c.var_offsets, self.classes[self.var_types[first]].var_offsets)
                 #     # o = c.var_offsets[self.var_types[first]]
-                self.code += temp + " = " + first + " + " + str(o) + "\n"
+                self.code += "arith" + temp + " = " + first + " + " + str(o) + "\n"
                 if i != len(lee) - 1 or (
                         i == len(lee) - 1 and ["int", "bool", "double", "string"].__contains__(c.var_types[sec])):
                     self.code += "assign " + temp + " = " + "*(" + temp + ")\n"
@@ -969,9 +969,8 @@ class Test(Transformer):
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
-                # print(args[1], self.classes[args[1]].var_offsets, code)
-                offset = self.classes[args[1]].var_offsets[code]
-                ty = self.classes[args[1]].var_types[code]
+                offset = self.classes[args[1]].var_offsets[code[:code.find("[")]]
+                ty = self.classes[args[1]].var_types[code[:code.find("[")]]
                 t = self.make_temp()
                 add_code = "arith " + t + " = " + args[1] + "_this + " + str(offset) + "\n"
                 self.var_types[t] = "int"
@@ -979,9 +978,14 @@ class Test(Transformer):
                     add_code += line.replace(args[1] + "_this." + code, "*(" + t + ")")
                 else:
                     add_code += "assign " + t + " = *(" + t + ")\n"
-                    if line.count("push"):
-                        add_code += "push " + t + "\n"
                     self.var_types[t] = ty
+                    if line.count("push"):
+                        if code.count("["):
+                            self.func_call = False
+                            self.mem_checker = False
+                            t = self.exp_nine([t + code[code.find("["):]])
+                            add_code += self.code[self.code.find(total_code) + len(total_code):]
+                        add_code += "push " + t + "\n"
                     if line.count("Print"):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
                         add_code += self.print_stmt([None, [t], None])
@@ -1020,8 +1024,8 @@ class Test(Transformer):
                 t = last_line[len("Print "):]
                 t = t[:t.find("\n")]
                 last_line = self.print_stmt([None, [t], None])
-            if last_line.__contains__("push"):
-                print(push_flag)
+            # if last_line.__contains__("push"):
+            #     print(push_flag)
             if (not total_code.__contains__("Print") or
                 (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))
                 or line.__contains__("Lcall")) \
