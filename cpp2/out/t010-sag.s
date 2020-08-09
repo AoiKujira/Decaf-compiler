@@ -15,6 +15,8 @@ tempo5: .word 2
 tempo7: .word 0
 tempo6: .word 0
 tempo8: .word 2
+tempo10: .word 0
+tempo9: .word 0
 
 .text
 main:
@@ -79,7 +81,25 @@ sw $t3, tempo6
 lw $t9, tempo6
 lw $t8, c1
 sw $t8, ($t9)
-lw $t9, a1
+lw $t1, a1
+lw $t2, _____0_____
+add $t3, $t1, $t2
+sw $t3, tempo10
+lw $t9, tempo10
+lw $t9, ($t9)
+sw $t9, tempo9
+lw $t1, _____4_____
+lw $t2, tempo8
+mul $t3, $t1, $t2
+sw $t3, tempo10
+lw $t1, tempo9
+lw $t2, tempo10
+add $t3, $t1, $t2
+sw $t3, tempo9
+lw $t9, tempo9
+lw $t9, ($t9)
+sw $t9, tempo9
+lw $t9, tempo9
 li	$v0, 1
 move 	$a0, $t9
 syscall

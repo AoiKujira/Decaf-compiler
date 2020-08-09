@@ -21,10 +21,16 @@ tempo9: .word 10
 tempo10: .word 0
 tempo11: .word 0
 tempo12: .word 2
-tempo13: .word 99
-tempo15: .word 0
 tempo14: .word 0
-tempo16: .word 2
+tempo13: .word 0
+tempo15: .word 99
+tempo17: .word 0
+tempo16: .word 0
+tempo18: .word 2
+tempo20: .word 0
+tempo19: .word 0
+tempo22: .word 0
+tempo21: .word 0
 
 .text
 main:
@@ -123,25 +129,79 @@ sw $t3, tempo11
 lw $t9, tempo11
 lw $t8, tempo10
 sw $t8, ($t9)
-lw $t1, b1
+lw $t1, a1
 lw $t2, _____0_____
-add $t3, $t1, $t2
-sw $t3, tempo15
-lw $t9, tempo15
-lw $t9, ($t9)
-sw $t9, tempo14
-lw $t1, _____4_____
-lw $t2, a1
-mul $t3, $t1, $t2
-sw $t3, tempo15
-lw $t1, tempo14
-lw $t2, tempo15
 add $t3, $t1, $t2
 sw $t3, tempo14
 lw $t9, tempo14
-lw $t8, tempo13
+lw $t9, ($t9)
+sw $t9, tempo13
+lw $t1, _____4_____
+lw $t2, tempo12
+mul $t3, $t1, $t2
+sw $t3, tempo14
+lw $t1, tempo13
+lw $t2, tempo14
+add $t3, $t1, $t2
+sw $t3, tempo13
+lw $t9, tempo13
+lw $t9, ($t9)
+sw $t9, tempo13
+lw $t1, b1
+lw $t2, _____0_____
+add $t3, $t1, $t2
+sw $t3, tempo17
+lw $t9, tempo17
+lw $t9, ($t9)
+sw $t9, tempo16
+lw $t1, _____4_____
+lw $t2, tempo13
+mul $t3, $t1, $t2
+sw $t3, tempo17
+lw $t1, tempo16
+lw $t2, tempo17
+add $t3, $t1, $t2
+sw $t3, tempo16
+lw $t9, tempo16
+lw $t8, tempo15
 sw $t8, ($t9)
-lw $t9, b1
+lw $t1, a1
+lw $t2, _____0_____
+add $t3, $t1, $t2
+sw $t3, tempo20
+lw $t9, tempo20
+lw $t9, ($t9)
+sw $t9, tempo19
+lw $t1, _____4_____
+lw $t2, tempo18
+mul $t3, $t1, $t2
+sw $t3, tempo20
+lw $t1, tempo19
+lw $t2, tempo20
+add $t3, $t1, $t2
+sw $t3, tempo19
+lw $t9, tempo19
+lw $t9, ($t9)
+sw $t9, tempo19
+lw $t1, b1
+lw $t2, _____0_____
+add $t3, $t1, $t2
+sw $t3, tempo22
+lw $t9, tempo22
+lw $t9, ($t9)
+sw $t9, tempo21
+lw $t1, _____4_____
+lw $t2, tempo19
+mul $t3, $t1, $t2
+sw $t3, tempo22
+lw $t1, tempo21
+lw $t2, tempo22
+add $t3, $t1, $t2
+sw $t3, tempo21
+lw $t9, tempo21
+lw $t9, ($t9)
+sw $t9, tempo21
+lw $t9, tempo21
 li	$v0, 1
 move 	$a0, $t9
 syscall
