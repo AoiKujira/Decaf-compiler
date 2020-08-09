@@ -969,8 +969,12 @@ class Test(Transformer):
                 code = code[:code.find(" ")]
                 if code.count("\n"):
                     code = code[:code.find("\n")]
-                offset = self.classes[args[1]].var_offsets[code[:code.find("[")]]
-                ty = self.classes[args[1]].var_types[code[:code.find("[")]]
+                print(args[1], code)
+                key = code
+                if code.count("["):
+                    key = code[:code.find("[")]
+                offset = self.classes[args[1]].var_offsets[key]
+                ty = self.classes[args[1]].var_types[key]
                 t = self.make_temp()
                 add_code = "arith " + t + " = " + args[1] + "_this + " + str(offset) + "\n"
                 self.var_types[t] = "int"
