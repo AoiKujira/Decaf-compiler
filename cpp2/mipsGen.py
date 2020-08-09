@@ -592,5 +592,5 @@ def mipsGen(input_code):
         if instruction[0] == 'Ifz':#Ifz a goto lable
             mipsTextCode += 'lw $t9, ' + instruction[1] + '\n'
             mipsTextCode += 'beqz $t9, ' + instruction[3] + '\n'
-    mipsTextCode += '_____EndOfWorld_____:\n\n'
+    mipsTextCode += '_____EndOfWorld_____:\nli	$v0, 10\nsyscall\n'
     return  mipsDataCode + '\n' + mipsTextCode
