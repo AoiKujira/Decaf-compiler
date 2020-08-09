@@ -348,7 +348,7 @@ class Test(Transformer):
         t = self.make_temp()
         dec = args[0]
         self.var_types[t] = "int"
-        self.code += "assign " + t + " i= " + dec + "\n"
+        self.code += "assign " + t + " i= " + str(int(dec)) + "\n"
         return t
 
     def hex_const(self, args):
