@@ -264,7 +264,7 @@ class Test(Transformer):
         for a in args:
             if a is not None:
                 lee.append(a)
-        # print("exp_mem", lee)
+        print("exp_mem", lee)
         if str(lee).__contains__("correct_init_this"):
             self.func_call = True
         self.afterdot = False
@@ -579,8 +579,10 @@ class Test(Transformer):
         # print(self.code, "\n\nhehe\n\n")
         if isinstance(args[0], str) and not args[0].count("["):
             return args[0]
-        if len(args) == 1 and isinstance(args[0], list) and len(args[0]) > 1:
+        if len(args) == 1 and isinstance(args[0], list) and len(args[0]) > 1 and\
+                (self.new or str(args).__contains__("correct_init_this")):
             args = args[0]
+
         # if str(args).count("correct_init_this"):
         #     self.func_call = True
         if str(args).count("correct_init_this") and isinstance(args[0], list) and isinstance(args[0][1], list) \
@@ -830,7 +832,8 @@ class Test(Transformer):
                 return args[0]
         else:
             print(10)
-            # print("memmmmm", args)
+            print("memmmmm", args)
+            # args = [args]
             # print(self.code)
             self.left = False
             self.mem_checker = False
@@ -1006,14 +1009,14 @@ class Test(Transformer):
                 else:
                     add_code += "assign " + t + " = *(" + t + ")\n"
                     self.var_types[t] = ty
-                    if line.count("push"):
+                    if line.count("push "):
                         if code.count("["):
                             self.func_call = False
                             self.mem_checker = False
                             t = self.exp_nine([t + code[code.find("["):]])
                             add_code += self.code[self.code.find(total_code) + len(total_code):]
                         add_code += "push " + t + "\n"
-                    if line.count("Print"):
+                    if line.count("Print "):
                         self.var_types[t] = self.classes[args[1]].var_types[code]
                         add_code += self.print_stmt([None, [t], None])
                     # print(line.count("Print"))
@@ -1037,7 +1040,7 @@ class Test(Transformer):
         self.in_class = False
 
     def last_mission(self, args):
-        # print(self.var_types)
+        # print(self.code, "\n\n\nhahaha\n\n")
         total_code = self.code
         new_code = ""
         line = total_code[:total_code.find("\n") + len("\n")]
@@ -1053,21 +1056,22 @@ class Test(Transformer):
                 last_line = self.print_stmt([None, [t], None])
             # if last_line.__contains__("push"):
             #     print(push_flag)
-            if (not total_code.__contains__("Print") or
-                (total_code.find("Print") > total_code.find("Lcall") and total_code.__contains__("Lcall"))
-                or line.__contains__("Lcall")) \
+            if (not total_code.__contains__("Print ") or
+                (total_code.find("Print ") > total_code.find("Lcall ") and total_code.__contains__("Lcall "))
+                or line.__contains__("Lcall ")) \
                     and not line.__contains__("return") and \
                     not push_flag and last_line.__contains__("push"):
                 push_flag = True
                 new_code += "pushra\n"
-            if last_line.__contains__("push") and total_code.__contains__("Print") and \
-                    (not total_code.__contains__("Lcall") or total_code.find("Print") < total_code.find("Lcall")) \
-                    and not line.__contains__("return") and not line.__contains__("Lcall"):
+            if last_line.__contains__("push ") and total_code.__contains__("Print ") and \
+                    (not total_code.__contains__("Lcall ") or total_code.find("Print ") < total_code.find("Lcall ")) \
+                    and not line.__contains__("return") and not line.__contains__("Lcall "):
                 # print("ganddddddddd", last_line)
                 last_line = ""
-            if line.__contains__("Lcall"):
+            if line.__contains__("Lcall "):
                 push_flag = False
             if last_line.__contains__("*(") and last_line.__contains__("+"):
+                # print("last_line", last_line)
                 star = last_line[last_line.find("*("):]
                 star = star[:star.find(")") + 1]
                 in_star = last_line[last_line.find("*(") + len("*("):]

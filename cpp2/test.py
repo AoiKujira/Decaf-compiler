@@ -8,7 +8,7 @@ from Symbols import SymbolTable
 if __name__ == "__main__":
     # t031
     # input_file = open("tests2/t014-the-sag-saga.d", "r")
-    input_file = open("tests_Agha_Sadegh/array_2.d", "r")
+    input_file = open("tests_Agha_Sadegh/array2.d", "r")
     # input_file = open("tests/t019farzam02.in", "r")
     # output_file = open("outputfile.txt", "w")
     text = input_file.read()
@@ -17,7 +17,7 @@ if __name__ == "__main__":
     grammar = open_file.read()
     parser = Lark(grammar, parser='lalr', debug=False)
     tree = parser.parse(text)
-    #print(tree.pretty())
+    # print(tree.pretty())
     sym = SymbolTable()
     while not (sym.has_finished):
         # print("doing the thing")

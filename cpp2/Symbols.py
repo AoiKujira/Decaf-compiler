@@ -31,6 +31,8 @@ class SymbolTable(Transformer):
         self.function_types = {}
         self.function_types_specific = {}
         self.has_finished = False
+        # self.class_numbers = {}
+        # self.counter = 0
 
     def prep(self):
         self.has_finished = True
@@ -46,6 +48,8 @@ class SymbolTable(Transformer):
 
     def class_decl(self, args):
         # print(args[1])
+        # self.class_numbers
+        # self.counter += 1
         new_function_types = {}
         for x in self.function_types:
             if str(x).__contains__("init_"):
