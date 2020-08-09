@@ -51,7 +51,7 @@ arith a c= itob b
 arith a c= btoi b
 arith a c= itod b
 arith a c= dtoi b
------------function call-----------
+---------function call format----------
 pushra
 push input1 (optional)
 .
@@ -60,7 +60,7 @@ push input1 (optional)
 Lcall lable
 pop output (optional)
 popra
-
+--------------------------------
 lable:
 .
 .
@@ -72,10 +72,10 @@ Ifz a goto lable
 #pushaddressof... gooya nadarim ino
 jumpto lable
 ---------print---------
-Printf lable
-Printb lable
-Printi lable
-Prints lable
+Printf a
+Printb a
+Printi a
+Prints a //the address of first byte of our string is in a
 Printe
 --------read----------
 ReadInt t = ReadInt()
@@ -407,13 +407,13 @@ def mipsGen(input_code):
                     mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                     vars[instruction[1]] = 0
                 if instruction[3] == 'itod':#arith ad c= itod bi
-                    mipsTextCode += 'lw $t9, ' + instruction[4]  +'\n'
-                    mipsTextCode += 'cvt.s.w $f9, $t9\n'
+                    mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
+                    mipsTextCode += 'cvt.s.w $f9, $f9\n'
                     mipsTextCode += 's.s $f9, ' + instruction[1]  +'\n'
                 if instruction[3] == 'dtoi':#arith ai c= dtoi bd
                     mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
-                    mipsTextCode += 'cvt.w.s $t9, $f9\n'
-                    mipsTextCode += 'sw $t9, ' + instruction[1]  +'\n'
+                    mipsTextCode += 'cvt.w.s $f9, $f9\n'
+                    mipsTextCode += 's.s $f9, ' + instruction[1]  +'\n'
                 if instruction[3] == 'itob':#arith ab c= itob bi
                     convertZeroLable = '____convertZero' + myLableCount + '____'
                     myLableCount += 1
@@ -491,7 +491,7 @@ def mipsGen(input_code):
             mipsTextCode += printEndLable + ':\n'
         if instruction[0] == 'assign':
             if instruction[2] == 'f=':#assign a f= 1.2
-                mipsDataCode += instruction[1] + ': ' + '.double ' + instruction[3] + '\n'
+                mipsDataCode += instruction[1] + ': ' + '.float ' + instruction[3] + '\n'
                 vars[instruction[1]] = 0
             if instruction[2] == 'i=':#assign a i= 12
                 mipsDataCode += instruction[1] + ': ' + '.word ' + instruction[3] + '\n'
