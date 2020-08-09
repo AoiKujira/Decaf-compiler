@@ -944,14 +944,12 @@ class Test(Transformer):
             code = code[str(code).find(x):]
             code = code[:str(code).find("return from " + x)]
             # print(code, "\n hehe\n\n")
-            # print(x, self.function_vars[x])
+            # print("function vars", self.function_vars[x])
             if str(x).startswith(args[1] + "_") and self.function_vars[x] is not None:
                 for obj in self.function_vars[x]:
-                    obj = obj[1]
-                    for y in self.var_types:
-                        if str(y).startswith(obj):
-                            obj = y
-                    code = code.replace(x + ":\n", x + ":\npop " + obj + "\n")
+                    object = obj[1] + str(self.current_scope.number)
+                    code = code.replace(x + ":\n", x + ":\npop " + object + "\n")
+                    self.var_types[object] = obj[0]
             code = before + code + after
 
         for x in self.function_types:
@@ -1068,6 +1066,13 @@ class Test(Transformer):
                 last_line = ""
             if line.__contains__("Lcall"):
                 push_flag = False
+            if last_line.__contains__("*(") and last_line.__contains__("+"):
+                star = last_line[last_line.find("*("):]
+                star = star[:star.find(")") + 1]
+                in_star = last_line[last_line.find("*(") + len("*("):]
+                in_star = in_star[:in_star.find(")")]
+                new_code += "assign " + in_star + " = " + star + "\n"
+                last_line = last_line.replace(star, in_star)
             # if line.count("init_"):
             #     line = line.replace("init_", "")
             new_code += last_line
@@ -1088,6 +1093,7 @@ class Test(Transformer):
         self.this_function_vars = self.function_vars[add_to_code]
         for var in self.function_vars[add_to_code][::-1]:
             pop_args += "pop " + var[1] + str(self.current_scope.number) + "\n"
+            self.var_types[var[1] + str(self.current_scope.number)] = var[0]
         self.code += "return from " + add_to_code + "\n\n"
         before = self.code[:self.code.find("init_func")]
         after = self.code[(self.code.find("init_func") + 10):]
