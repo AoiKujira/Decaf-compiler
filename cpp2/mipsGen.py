@@ -407,13 +407,13 @@ def mipsGen(input_code):
                     mipsDataCode += instruction[1] + ': ' + '.word 0\n'
                     vars[instruction[1]] = 0
                 if instruction[3] == 'itod':#arith ad c= itod bi
-                    mipsTextCode += 'lw $t9, ' + instruction[4]  +'\n'
-                    mipsTextCode += 'cvt.s.w $f9, $t9\n'
+                    mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
+                    mipsTextCode += 'cvt.s.w $f9, $f9\n'
                     mipsTextCode += 's.s $f9, ' + instruction[1]  +'\n'
                 if instruction[3] == 'dtoi':#arith ai c= dtoi bd
                     mipsTextCode += 'l.s $f9, ' + instruction[4]  +'\n'
-                    mipsTextCode += 'cvt.w.s $t9, $f9\n'
-                    mipsTextCode += 'sw $t9, ' + instruction[1]  +'\n'
+                    mipsTextCode += 'cvt.w.s $f9, $f9\n'
+                    mipsTextCode += 's.s $f9, ' + instruction[1]  +'\n'
                 if instruction[3] == 'itob':#arith ab c= itob bi
                     convertZeroLable = '____convertZero' + myLableCount + '____'
                     myLableCount += 1
