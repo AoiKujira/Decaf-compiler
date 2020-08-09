@@ -1089,6 +1089,19 @@ class Test(Transformer):
             last_line = line
             line = total_code[:total_code.find("\n") + len("\n")]
             total_code = total_code[total_code.find("\n") + len("\n"):]
+            if last_line.count("."):
+                this_ins = last_line
+                while this_ins.count(" "):
+                    this_ins = this_ins[this_ins.find(" ") + 1:]
+                this_ins = this_ins[:this_ins.find(".")]
+                after_ins = last_line[last_line.find(".") + 1:]
+                if self.classes.__contains__(this_ins):
+                    offset = self.classes[this_ins].var_offsets[after_ins]
+                    t = self.make_temp()
+                    add_code = "arith " + t + " = " + this_ins + str(offset) + "\n"
+                    new_code += add_code
+                    last_line = last_line.replace(this_ins + "." + after_ins, t)
+                    self.var_types[t] = self.classes[this_ins].var_types[after_ins]
             new_code += last_line
             tempo = last_line[last_line.find("tempo"):]
             tempo = tempo[:tempo.find(" ")]
