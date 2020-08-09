@@ -870,14 +870,14 @@ syscall
 l7:
 l.s $f1, tempo29
 l.s $f2, tempo28
-c.lt.s $t1, $t2
-bc1f ____ceqsfalse1____
+c.lt.s $f1, $f2
+bc1f ____ceqsfalse0____
 ____ceqstrue0____:
 li $t3, 1
-j ____ceqsend2____
-____ceqsfalse1____:
+j ____ceqsend0____
+____ceqsfalse0____:
 li $t3, 0
-____ceqsend2____:
+____ceqsend0____:
 sw $t3, tempo30
 lw $t9, tempo30
 beqz $t9, l8
@@ -891,14 +891,14 @@ syscall
 l8:
 l.s $f1, tempo33
 l.s $f2, tempo32
-c.le.s $t1, $t2
-bc1f ____ceqsfalse4____
-____ceqstrue3____:
+c.le.s $f1, $f2
+bc1f ____ceqsfalse1____
+____ceqstrue1____:
 li $t3, 1
-j ____ceqsend5____
-____ceqsfalse4____:
+j ____ceqsend1____
+____ceqsfalse1____:
 li $t3, 0
-____ceqsend5____:
+____ceqsend1____:
 sw $t3, tempo34
 lw $t9, tempo34
 beqz $t9, l9
@@ -916,14 +916,14 @@ mul.s $f3, $f1, $f2
 s.s $f3, tempo38
 l.s $f1, tempo39
 l.s $f2, tempo38
-c.le.s $t1, $t2
-bc1f ____ceqsfalse7____
-____ceqstrue6____:
+c.le.s $f1, $f2
+bc1f ____ceqsfalse2____
+____ceqstrue2____:
 li $t3, 1
-j ____ceqsend8____
-____ceqsfalse7____:
+j ____ceqsend2____
+____ceqsfalse2____:
 li $t3, 0
-____ceqsend8____:
+____ceqsend2____:
 sw $t3, tempo40
 lw $t9, tempo40
 beqz $t9, l10
@@ -1006,17 +1006,17 @@ lw $t2, tempo60
 slt $t3, $t1, $t2
 sw $t3, tempo61
 lw $t9, tempo61
-beqz $t9, ____printFalse9____
-____printTrue10____:
+beqz $t9, ____printFalse3____
+____printTrue3____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd11____
-____printFalse9____:
+j ____printEnd3____
+____printFalse3____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd11____:
+____printEnd3____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1025,17 +1025,17 @@ lw $t2, tempo63
 sle $t3, $t1, $t2
 sw $t3, tempo64
 lw $t9, tempo64
-beqz $t9, ____printFalse12____
-____printTrue13____:
+beqz $t9, ____printFalse4____
+____printTrue4____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd14____
-____printFalse12____:
+j ____printEnd4____
+____printFalse4____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd14____:
+____printEnd4____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1044,17 +1044,17 @@ lw $t2, tempo66
 sle $t3, $t1, $t2
 sw $t3, tempo67
 lw $t9, tempo67
-beqz $t9, ____printFalse15____
-____printTrue16____:
+beqz $t9, ____printFalse5____
+____printTrue5____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd17____
-____printFalse15____:
+j ____printEnd5____
+____printFalse5____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd17____:
+____printEnd5____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1063,17 +1063,17 @@ lw $t2, tempo68
 slt $t3, $t1, $t2
 sw $t3, tempo70
 lw $t9, tempo70
-beqz $t9, ____printFalse18____
-____printTrue19____:
+beqz $t9, ____printFalse6____
+____printTrue6____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd20____
-____printFalse18____:
+j ____printEnd6____
+____printFalse6____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd20____:
+____printEnd6____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1082,17 +1082,17 @@ lw $t2, tempo71
 sle $t3, $t1, $t2
 sw $t3, tempo73
 lw $t9, tempo73
-beqz $t9, ____printFalse21____
-____printTrue22____:
+beqz $t9, ____printFalse7____
+____printTrue7____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd23____
-____printFalse21____:
+j ____printEnd7____
+____printFalse7____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd23____:
+____printEnd7____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1101,17 +1101,17 @@ lw $t2, tempo74
 sle $t3, $t1, $t2
 sw $t3, tempo76
 lw $t9, tempo76
-beqz $t9, ____printFalse24____
-____printTrue25____:
+beqz $t9, ____printFalse8____
+____printTrue8____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd26____
-____printFalse24____:
+j ____printEnd8____
+____printFalse8____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd26____:
+____printEnd8____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1120,17 +1120,17 @@ lw $t2, tempo78
 seq $t3, $t1, $t2
 sw $t3, tempo79
 lw $t9, tempo79
-beqz $t9, ____printFalse27____
-____printTrue28____:
+beqz $t9, ____printFalse9____
+____printTrue9____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd29____
-____printFalse27____:
+j ____printEnd9____
+____printFalse9____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd29____:
+____printEnd9____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1139,17 +1139,17 @@ lw $t2, tempo81
 sne $t3, $t1, $t2
 sw $t3, tempo82
 lw $t9, tempo82
-beqz $t9, ____printFalse30____
-____printTrue31____:
+beqz $t9, ____printFalse10____
+____printTrue10____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd32____
-____printFalse30____:
+j ____printEnd10____
+____printFalse10____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd32____:
+____printEnd10____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -1158,172 +1158,176 @@ lw $t2, tempo84
 seq $t3, $t1, $t2
 sw $t3, tempo85
 lw $t9, tempo85
-beqz $t9, ____printFalse33____
-____printTrue34____:
+beqz $t9, ____printFalse11____
+____printTrue11____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd35____
-____printFalse33____:
+j ____printEnd11____
+____printFalse11____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd35____:
+____printEnd11____:
 li	$v0, 11
 li	$a0, 10
 syscall
 lw $t1, tempo86
 lw $t2, tempo87
-bnez $t1, __branch__here__if__arg1__is__1__
+bnez $t1, ___Arg1Is1_12___
 li $t3, 0
-b __branch__here__to__end__andand__
-__branch__here__if__arg1__is__1__:
-bnez $t2, __branch__here__if__arg2__isAlso__1__
+b ___endAndAnd_12___
+___Arg1Is1_12___:
+bnez $t2, ___Arg2IsAlso1_12___
 li $t3, 0
-b __branch__here__to__end__andand__
-__branch__here__if__arg2__isAlso__1__:
+b ___endAndAnd_12___
+___Arg2IsAlso1_12___:
 li $t3, 1
-__branch__here__to__end__andand__:
+___endAndAnd_12___:
 sw $t3, tempo88
 lw $t9, tempo88
-beqz $t9, ____printFalse36____
-____printTrue37____:
+beqz $t9, ____printFalse13____
+____printTrue13____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd38____
-____printFalse36____:
+j ____printEnd13____
+____printFalse13____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd38____:
+____printEnd13____:
 li	$v0, 11
 li	$a0, 10
 syscall
 lw $t1, tempo89
 lw $t2, tempo90
-bnez $t1, __branch__here__if__arg1__is__1__
+bnez $t1, ___Arg1Is1_14___
 li $t3, 0
-b __branch__here__to__end__andand__
-__branch__here__if__arg1__is__1__:
-bnez $t2, __branch__here__if__arg2__isAlso__1__
+b ___endAndAnd_14___
+___Arg1Is1_14___:
+bnez $t2, ___Arg2IsAlso1_14___
 li $t3, 0
-b __branch__here__to__end__andand__
-__branch__here__if__arg2__isAlso__1__:
+b ___endAndAnd_14___
+___Arg2IsAlso1_14___:
 li $t3, 1
-__branch__here__to__end__andand__:
+___endAndAnd_14___:
 sw $t3, tempo91
 lw $t9, tempo91
-beqz $t9, ____printFalse39____
-____printTrue40____:
+beqz $t9, ____printFalse15____
+____printTrue15____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd41____
-____printFalse39____:
+j ____printEnd15____
+____printFalse15____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd41____:
+____printEnd15____:
 li	$v0, 11
 li	$a0, 10
 syscall
 lw $t1, tempo92
 lw $t2, tempo93
-beqz $t1, __branch__here__if__arg1__is__0__
+beqz $t1, ___Arg1Is0_16___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg1__is__0__:
-beqz $t2, __branch__here__if__arg2__isAlso__0__
+b ___endOrOr_16___
+___Arg1Is0_16___:
+beqz $t2, ___Arg2IsAlso0_16___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg2__isAlso__0__:
+b ___endOrOr_16___
+___Arg2IsAlso0_16___:
 li $t3, 0
-__branch__here__to__end__oror__:
+___endOrOr_16___:
 sw $t3, tempo94
 lw $t9, tempo94
-beqz $t9, ____printFalse42____
-____printTrue43____:
+beqz $t9, ____printFalse17____
+____printTrue17____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd44____
-____printFalse42____:
+j ____printEnd17____
+____printFalse17____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd44____:
+____printEnd17____:
 li	$v0, 11
 li	$a0, 10
 syscall
 lw $t1, tempo95
 lw $t2, tempo96
-beqz $t1, __branch__here__if__arg1__is__0__
+beqz $t1, ___Arg1Is0_18___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg1__is__0__:
-beqz $t2, __branch__here__if__arg2__isAlso__0__
+b ___endOrOr_18___
+___Arg1Is0_18___:
+beqz $t2, ___Arg2IsAlso0_18___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg2__isAlso__0__:
+b ___endOrOr_18___
+___Arg2IsAlso0_18___:
 li $t3, 0
-__branch__here__to__end__oror__:
+___endOrOr_18___:
 sw $t3, tempo97
 lw $t9, tempo97
-beqz $t9, ____printFalse45____
-____printTrue46____:
+beqz $t9, ____printFalse19____
+____printTrue19____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd47____
-____printFalse45____:
+j ____printEnd19____
+____printFalse19____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd47____:
+____printEnd19____:
 li	$v0, 11
 li	$a0, 10
 syscall
 lw $t1, tempo98
 lw $t2, tempo99
-beqz $t1, __branch__here__if__arg1__is__0__
+beqz $t1, ___Arg1Is0_20___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg1__is__0__:
-beqz $t2, __branch__here__if__arg2__isAlso__0__
+b ___endOrOr_20___
+___Arg1Is0_20___:
+beqz $t2, ___Arg2IsAlso0_20___
 li $t3, 1
-b __branch__here__to__end__oror__
-__branch__here__if__arg2__isAlso__0__:
+b ___endOrOr_20___
+___Arg2IsAlso0_20___:
 li $t3, 0
-__branch__here__to__end__oror__:
+___endOrOr_20___:
 sw $t3, tempo100
 lw $t9, tempo100
-beqz $t9, ____printFalse48____
-____printTrue49____:
+beqz $t9, ____printFalse21____
+____printTrue21____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd50____
-____printFalse48____:
+j ____printEnd21____
+____printFalse21____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd50____:
+____printEnd21____:
 li	$v0, 11
 li	$a0, 10
 syscall
+lw $t1, tempo101
+li $t2, 1
+sub $t3, $t2, $t1
+sw $t3, tempo102
 lw $t9, tempo102
-beqz $t9, ____printFalse51____
-____printTrue52____:
+beqz $t9, ____printFalse22____
+____printTrue22____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd53____
-____printFalse51____:
+j ____printEnd22____
+____printFalse22____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd53____:
+____printEnd22____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -2414,27 +2418,27 @@ add.s $f3, $f1, $f2
 s.s $f3, tempo628
 l.s $f1, tempo629
 l.s $f2, tempo628
-c.lt.s $t1, $t2
-bc1f ____ceqsfalse55____
-____ceqstrue54____:
+c.lt.s $f1, $f2
+bc1f ____ceqsfalse23____
+____ceqstrue23____:
 li $t3, 1
-j ____ceqsend56____
-____ceqsfalse55____:
+j ____ceqsend23____
+____ceqsfalse23____:
 li $t3, 0
-____ceqsend56____:
+____ceqsend23____:
 sw $t3, tempo630
 lw $t9, tempo630
-beqz $t9, ____printFalse57____
-____printTrue58____:
+beqz $t9, ____printFalse24____
+____printTrue24____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd59____
-____printFalse57____:
+j ____printEnd24____
+____printFalse24____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd59____:
+____printEnd24____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -2528,27 +2532,27 @@ add.s $f3, $f1, $f2
 s.s $f3, tempo675
 l.s $f1, tempo675
 l.s $f2, tempo676
-c.lt.s $t1, $t2
-bc1f ____ceqsfalse61____
-____ceqstrue60____:
+c.lt.s $f1, $f2
+bc1f ____ceqsfalse25____
+____ceqstrue25____:
 li $t3, 1
-j ____ceqsend62____
-____ceqsfalse61____:
+j ____ceqsend25____
+____ceqsfalse25____:
 li $t3, 0
-____ceqsend62____:
+____ceqsend25____:
 sw $t3, tempo677
 lw $t9, tempo677
-beqz $t9, ____printFalse63____
-____printTrue64____:
+beqz $t9, ____printFalse26____
+____printTrue26____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd65____
-____printFalse63____:
+j ____printEnd26____
+____printFalse26____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd65____:
+____printEnd26____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -2606,27 +2610,27 @@ sub.s $f3, $f1, $f2
 s.s $f3, tempo704
 l.s $f1, tempo705
 l.s $f2, tempo704
-c.lt.s $t1, $t2
-bc1f ____ceqsfalse67____
-____ceqstrue66____:
+c.lt.s $f1, $f2
+bc1f ____ceqsfalse27____
+____ceqstrue27____:
 li $t3, 1
-j ____ceqsend68____
-____ceqsfalse67____:
+j ____ceqsend27____
+____ceqsfalse27____:
 li $t3, 0
-____ceqsend68____:
+____ceqsend27____:
 sw $t3, tempo706
 lw $t9, tempo706
-beqz $t9, ____printFalse69____
-____printTrue70____:
+beqz $t9, ____printFalse28____
+____printTrue28____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd71____
-____printFalse69____:
+j ____printEnd28____
+____printFalse28____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd71____:
+____printEnd28____:
 li	$v0, 11
 li	$a0, 10
 syscall
@@ -2684,27 +2688,27 @@ sub.s $f3, $f1, $f2
 s.s $f3, tempo733
 l.s $f1, tempo733
 l.s $f2, tempo734
-c.lt.s $t1, $t2
-bc1f ____ceqsfalse73____
-____ceqstrue72____:
+c.lt.s $f1, $f2
+bc1f ____ceqsfalse29____
+____ceqstrue29____:
 li $t3, 1
-j ____ceqsend74____
-____ceqsfalse73____:
+j ____ceqsend29____
+____ceqsfalse29____:
 li $t3, 0
-____ceqsend74____:
+____ceqsend29____:
 sw $t3, tempo735
 lw $t9, tempo735
-beqz $t9, ____printFalse75____
-____printTrue76____:
+beqz $t9, ____printFalse30____
+____printTrue30____:
 la $a0, ____true____
 li $v0, 4
 syscall
-j ____printEnd77____
-____printFalse75____:
+j ____printEnd30____
+____printFalse30____:
 la $a0, ____false____
 li $v0, 4
 syscall
-____printEnd77____:
+____printEnd30____:
 li	$v0, 11
 li	$a0, 10
 syscall

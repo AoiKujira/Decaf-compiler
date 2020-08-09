@@ -112,10 +112,10 @@ syscall
 ____len_to_new_line0____:
 lb $t2, ($a0)
 li $t3, 10
-beq $t2, $t3, ____endofreadline1____
+beq $t2, $t3, ____endofreadline0____
 addi $a0, $a0, 1
 b ____len_to_new_line0____
-____endofreadline1____:
+____endofreadline0____:
 sb $zero, ($a0)
 lw $t9, tempo6
 sw $t9, name4

@@ -362,7 +362,7 @@ class Test(Transformer):
         t = self.make_temp()
         # typecheck here
         self.var_types[t] = "bool"
-        self.code += "arith " + t + " = " + args[0] + " !b" + "\n"
+        self.code += "arith " + t + " = " + args[0] + " b!" + "\n"
         return t
 
     def exp_neg(self, args):
@@ -576,7 +576,7 @@ class Test(Transformer):
         return t
 
     def exp_nine(self, args):
-        print("exp_nine", args, self.mem_checker)
+        #print("exp_nine", args, self.mem_checker)
         # print(self.code, "\n\nhehe\n\n")
         # if len(args) == 1 and isinstance(args[0], list):
         #     args = args[0]
