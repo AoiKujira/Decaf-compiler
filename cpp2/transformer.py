@@ -801,8 +801,13 @@ class Test(Transformer):
                 and (self.function_types.__contains__(args[0]) or self.function_types.__contains__("init_" + args[0])):
             print("new", args)
             self.code += "Lcall " + args[0] + "\n"
-            if self.function_types[args[0]] == "return":
-                self.var_types[args[3]] = self.function_types_specific[args[0]]
+            if (self.function_types.__contains__(args[0]) and self.function_types[args[0]] == "return")\
+                    or (self.function_types.__contains__("init_" + args[0]) and
+                        self.function_types["init_" + args[0]] == "return"):
+                if self.function_types_specific.__contains__(args[0]):
+                    self.var_types[args[3]] = self.function_types_specific[args[0]]
+                else:
+                    self.var_types[args[3]] = self.function_types_specific["init_" + args[0]]
                 self.code += "pop " + args[3] + "\n"
                 self.code += "popra\n"
                 return args[3]
@@ -977,7 +982,7 @@ class Test(Transformer):
             self.code = self.code.replace(" " + x + " ", " " + args[1] + "_this." + x + " ")
             self.code = self.code.replace("\n" + x + "\n", "\n" + args[1] + "_this." + x + "\n")
 
-        print(self.code, "\n\nhehe\n\n\n")
+        # print(self.code, "\n\nhehe\n\n\n")
 
         total_code = self.code
         new_code = ""
@@ -1053,7 +1058,8 @@ class Test(Transformer):
                 new_code += add_code
             else:
                 if len(cl) and line.__contains__(":") and \
-                        line.__contains__(self.classes[args[1]].parents[0]):
+                        line.__contains__(self.classes[args[1]].parents[0]) and\
+                    not self.code.__contains__(line.replace(self.classes[args[1]].parents[0], args[1])):
                     # print("class_decl", self.classes[args[1]].parents, args[1])
                     line += line.replace(self.classes[args[1]].parents[0], args[1])
                 new_code += line
@@ -1118,7 +1124,10 @@ class Test(Transformer):
                 last_line = ""
             if line.__contains__("Lcall "):
                 push_flag = False
-            if (last_line.__contains__("*(") and last_line.__contains__("+")) or last_line.count("*") > 1:
+            if last_line.__contains__("*(") and (last_line.count("+") or last_line.count("*") > 1
+                or last_line.count("-") or last_line.count("<") or last_line.count(">") or
+                last_line.count("=") or last_line.count("&") or last_line.count("|") or
+                last_line.count("%") or last_line.count("/")):
                 # print("last_line", last_line)
                 star = last_line[last_line.find("*("):]
                 star = star[:star.find(")") + 1]
@@ -1154,6 +1163,9 @@ class Test(Transformer):
     def var_field(self, args):
         # print("variable", args[0].children[0])
         self.this_class_vars[args[0].children[0][1]] = args[0].children[0][0]
+        # print("this class", self.this_class_vars)
+        for x in self.this_class_vars:
+            self.var_types[x] = self.this_class_vars[x]
         return args
 
     def func_field(self, args):

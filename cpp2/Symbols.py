@@ -55,16 +55,14 @@ class SymbolTable(Transformer):
             if str(x).__contains__("init_"):
                 # print(args[1], x, x[(x.find["_"] + 1):])
                 new_function_types[args[1] + x[x.find("_"):]] = self.function_types[x]
-            else:
-                new_function_types[x] = self.function_types[x]
+            new_function_types[x] = self.function_types[x]
         self.function_types = new_function_types
         new_function_types = {}
         for x in self.function_types_specific:
             if str(x).__contains__("init_"):
                 # print(args[1], x, x[(x.find["_"] + 1):])
                 new_function_types[args[1] + x[x.find("_"):]] = self.function_types_specific[x]
-            else:
-                new_function_types[x] = self.function_types_specific[x]
+            new_function_types[x] = self.function_types_specific[x]
         self.function_types_specific = new_function_types
         new_function_vars = {}
         for x in self.function_vars:
