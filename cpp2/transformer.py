@@ -1099,7 +1099,7 @@ class Test(Transformer):
         if name == "itod":
             t = self.make_temp()
             self.var_types[t] = "double"
-            arg = args[1].children[0][0]
+            arg = self.tstack.pop()
             # print(arg)
             self.code = self.code[:-(7 + len(arg))]
             self.code += "arith " + t + " c= itod " + arg + "\n"
@@ -1107,7 +1107,7 @@ class Test(Transformer):
         elif name == "dtoi":
             t = self.make_temp()
             self.var_types[t] = "int"
-            arg = args[1].children[0][0]
+            arg = self.tstack.pop()
             self.code = self.code[:-(7 + len(arg))]
             # print(arg)
             self.code += "arith " + t + " c= dtoi " + arg + "\n"
@@ -1115,14 +1115,14 @@ class Test(Transformer):
         elif name == "btoi":
             t = self.make_temp()
             self.var_types[t] = "int"
-            arg = args[1].children[0][0]
+            arg = self.tstack.pop()
             self.code = self.code[:-(7 + len(arg))]
             self.code += "arith " + t + " c= btoi " + arg + "\n"
             return t
         elif name == "itob":
             t = self.make_temp()
             self.var_types[t] = "bool"
-            arg = args[1].children[0][0]
+            arg = self.tstack.pop()
             self.code = self.code[:-(7 + len(arg))]
             # print(arg)
             self.code += "arith " + t + " c= itob " + arg + "\n"
