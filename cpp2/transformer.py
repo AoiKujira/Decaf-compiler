@@ -800,7 +800,10 @@ class Test(Transformer):
         if isinstance(args, list) and len(args) == 4 and str(args).__contains__("correct_init_this") \
                 and (self.function_types.__contains__(args[0]) or self.function_types.__contains__("init_" + args[0])):
             print("new", args)
-            self.code += "Lcall " + args[0] + "\n"
+            if self.function_types.__contains__(args[0]):
+                self.code += "Lcall " + args[0] + "\n"
+            else:
+                self.code += "Lcall init_" + args[0] + "\n"
             if (self.function_types.__contains__(args[0]) and self.function_types[args[0]] == "return")\
                     or (self.function_types.__contains__("init_" + args[0]) and
                         self.function_types["init_" + args[0]] == "return"):
